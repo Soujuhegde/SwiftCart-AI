@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>SwiftCart AI - Demand Forecast</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-[#111418] dark:text-white font-display">
+    <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+        <!-- Top Navigation -->
+        <header
+            class="sticky top-0 z-50 flex items-center justify-between border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-[#101922] px-6 py-3 lg:px-10">
+            <div class="flex items-center gap-8">
+                <div class="flex items-center gap-3 text-[#111418] dark:text-white">
+                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white">
+                        <span class="material-symbols-outlined !text-[20px]">shopping_cart_checkout</span>
+                    </div>
+                    <h2 class="text-lg font-bold leading-tight tracking-tight">SwiftCart AI</h2>
+                </div>
+                <!-- Search Bar -->
+                <div class="hidden md:flex min-w-[280px] h-10">
+                    <div class="flex w-full items-center rounded-lg bg-background-light dark:bg-gray-800 px-3">
+                        <span class="material-symbols-outlined text-gray-500" style="font-size: 20px;">search</span>
+                        <input
+                            class="w-full bg-transparent px-3 py-2 text-sm text-[#111418] dark:text-white placeholder-gray-500 focus:outline-none"
+                            placeholder="Search inventory, forecasts..." />
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-6">
+                <nav class="hidden lg:flex items-center gap-6">
+                    <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors"
+                        href="#">Dashboard</a>
+                    <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors"
+                        href="#">Inventory</a>
+                    <a class="text-sm font-medium text-primary" href="#">Demand Forecast</a>
+                    <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors"
+                        href="#">Reports</a>
+                </nav>
+                <div class="flex items-center gap-3">
+                    <button
+                        class="flex h-9 w-9 items-center justify-center rounded-lg bg-background-light dark:bg-gray-800 text-[#111418] dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                        <span class="material-symbols-outlined !text-[20px]">notifications</span>
+                    </button>
+                    <button
+                        class="flex h-9 w-9 items-center justify-center rounded-lg bg-background-light dark:bg-gray-800 text-[#111418] dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                        <span class="material-symbols-outlined !text-[20px]">settings</span>
+                    </button>
+                    <div class="h-9 w-9 rounded-full bg-cover bg-center ring-2 ring-white dark:ring-gray-800"
+                        data-alt="User profile avatar showing a professional looking person"
+                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBb3oVbYv7WTcMomkkhkcMF2FjL88Fzhjla-E-so0sa2le5RE6FnOJHfWmvceJD6D2tj2HPEAzbo73bqhHAb87vGRxIc9GpbivkbPIk5l1yvoiXFuKYI8bFUpg1FmhZ2IDkoH98YZlUsBl40Y-wMszet7d8zAqov0r733XoUZuBt0I9UTKLQqVmOt32uAYoO5g_y_4gD87UU5scepkdCI5t1OH3CnUURY-985k5riag4dIJmWVs9iKR9IhIE_70hoo4BM_ba8qrwDFy");'>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <main class="flex-1 px-6 py-8 lg:px-10 xl:px-40">
+            <div class="mx-auto max-w-[1200px] flex flex-col gap-8">
+                <!-- Page Header -->
+                <div class="flex flex-wrap items-end justify-between gap-4">
+                    <div class="flex flex-col gap-1">
+                        <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                            <span>Intelligence</span>
+                            <span class="material-symbols-outlined !text-[14px]">chevron_right</span>
+                            <span>Forecasts</span>
+                        </div>
+                        <h1 class="text-3xl font-black tracking-tight text-[#111418] dark:text-white sm:text-4xl">Azure
+                            ML Demand Forecast</h1>
+                        <p class="text-base text-gray-600 dark:text-gray-400 max-w-2xl">AI-powered predictive analytics
+                            for inventory optimization over the next 5 days.</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button
+                            class="flex h-10 items-center gap-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 text-sm font-semibold text-[#111418] dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                            <span class="material-symbols-outlined !text-[18px]">calendar_today</span>
+                            <span>Next 5 Days</span>
+                        </button>
+                        <button
+                            class="flex h-10 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-bold text-white shadow-md hover:bg-primary/90 transition-colors">
+                            <span class="material-symbols-outlined !text-[18px]">download</span>
+                            <span>Export Report</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <!-- Metric 1 -->
+                    <div
+                        class="flex flex-col gap-1 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 shadow-sm">
+                        <div class="flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400">
+                            <span class="material-symbols-outlined !text-[18px] text-primary">trending_up</span>
+                            Total Predicted Sales
+                        </div>
+                        <div class="flex items-end gap-3">
+                            <span class="text-2xl font-bold text-[#111418] dark:text-white">1,240 Units</span>
+                            <span
+                                class="mb-1 text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 dark:text-green-400 px-1.5 py-0.5 rounded">+12%
+                                vs LW</span>
+                        </div>
+                    </div>
+                    <!-- Metric 2 -->
+                    <div
+                        class="flex flex-col gap-1 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 shadow-sm">
+                        <div class="flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400">
+                            <span class="material-symbols-outlined !text-[18px] text-primary">category</span>
+                            Highest Demand
+                        </div>
+                        <div class="flex items-end gap-3">
+                            <span class="text-2xl font-bold text-[#111418] dark:text-white">Dairy</span>
+                            <span class="mb-1 text-xs font-medium text-gray-500 dark:text-gray-400">320 Units</span>
+                        </div>
+                    </div>
+                    <!-- Metric 3 -->
+                    <div
+                        class="flex flex-col gap-1 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 shadow-sm">
+                        <div class="flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400">
+                            <span class="material-symbols-outlined !text-[18px] text-primary">verified</span>
+                            Forecast Confidence
+                        </div>
+                        <div class="flex items-end gap-3">
+                            <span class="text-2xl font-bold text-[#111418] dark:text-white">94%</span>
+                            <span
+                                class="mb-1 text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 dark:text-green-400 px-1.5 py-0.5 rounded">+2%</span>
+                        </div>
+                    </div>
+                    <!-- Metric 4 -->
+                    <div
+                        class="flex flex-col gap-1 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/10 p-5 shadow-sm relative overflow-hidden">
+                        <div
+                            class="absolute -right-4 -top-4 h-16 w-16 rounded-full bg-red-100 dark:bg-red-800/20 blur-xl">
+                        </div>
+                        <div class="flex items-center gap-2 text-sm font-medium text-red-700 dark:text-red-400">
+                            <span class="material-symbols-outlined !text-[18px]">warning</span>
+                            Stockout Risk
+                        </div>
+                        <div class="flex items-end gap-3 relative z-10">
+                            <span class="text-2xl font-bold text-red-900 dark:text-red-300">3 Items</span>
+                            <span class="mb-1 text-xs font-semibold text-red-700 dark:text-red-400">Action Needed</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Main Content Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Chart Section (2 cols) -->
+                    <div
+                        class="lg:col-span-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-sm">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h3 class="text-lg font-bold text-[#111418] dark:text-white">5-Day Demand Trend</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Projected unit sales vs historical
+                                    average</p>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="h-3 w-3 rounded-full bg-primary"></span>
+                                    <span class="text-xs font-medium text-gray-600 dark:text-gray-300">Predicted</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="h-3 w-3 rounded-full bg-gray-300 dark:bg-gray-600"></span>
+                                    <span class="text-xs font-medium text-gray-600 dark:text-gray-300">Historical</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Chart Visualization -->
+                        <div class="relative w-full h-[320px] pt-4">
+                            <!-- Y-axis labels -->
+                            <div
+                                class="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-400 font-medium pr-2 pb-8">
+                                <span>500</span>
+                                <span>400</span>
+                                <span>300</span>
+                                <span>200</span>
+                                <span>100</span>
+                                <span>0</span>
+                            </div>
+                            <!-- Chart Area -->
+                            <div class="ml-8 h-full relative">
+                                <!-- Grid Lines -->
+                                <div class="absolute w-full h-full flex flex-col justify-between pb-8">
+                                    <div class="w-full border-t border-dashed border-gray-100 dark:border-gray-800">
+                                    </div>
+                                    <div class="w-full border-t border-dashed border-gray-100 dark:border-gray-800">
+                                    </div>
+                                    <div class="w-full border-t border-dashed border-gray-100 dark:border-gray-800">
+                                    </div>
+                                    <div class="w-full border-t border-dashed border-gray-100 dark:border-gray-800">
+                                    </div>
+                                    <div class="w-full border-t border-dashed border-gray-100 dark:border-gray-800">
+                                    </div>
+                                    <div class="w-full border-t border-gray-200 dark:border-gray-700"></div>
+                                </div>
+                                <!-- SVG Line Chart -->
+                                <svg class="absolute inset-0 h-[calc(100%-2rem)] w-full overflow-visible"
+                                    preserveaspectratio="none" viewbox="0 0 100 100">
+                                    <!-- Gradient Defs -->
+                                    <defs>
+                                        <lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+                                            <stop offset="0%" stop-color="#137fec" stop-opacity="0.2"></stop>
+                                            <stop offset="100%" stop-color="#137fec" stop-opacity="0"></stop>
+                                        </lineargradient>
+                                    </defs>
+                                    <!-- Historical Data Line (Gray) -->
+                                    <path class="dark:stroke-gray-600" d="M0,70 Q20,65 25,60 T50,55 T75,45 T100,50"
+                                        fill="none" stroke="#cbd5e1" stroke-dasharray="4,4" stroke-width="2"
+                                        vector-effect="non-scaling-stroke"></path>
+                                    <!-- Predicted Data Area (Blue Fill) -->
+                                    <path d="M0,60 Q20,50 25,40 T50,30 T75,20 T100,25 V100 H0 Z"
+                                        fill="url(#chartGradient)" opacity="0.6"></path>
+                                    <!-- Predicted Data Line (Blue) -->
+                                    <path d="M0,60 Q20,50 25,40 T50,30 T75,20 T100,25" fill="none" stroke="#137fec"
+                                        stroke-width="3" vector-effect="non-scaling-stroke"></path>
+                                    <!-- Data Points -->
+                                    <circle class="dark:fill-gray-900" cx="0" cy="60" fill="white" r="3"
+                                        stroke="#137fec" stroke-width="2"></circle>
+                                    <circle class="dark:fill-gray-900" cx="25" cy="40" fill="white" r="3"
+                                        stroke="#137fec" stroke-width="2"></circle>
+                                    <circle class="dark:fill-gray-900" cx="50" cy="30" fill="white" r="3"
+                                        stroke="#137fec" stroke-width="2"></circle>
+                                    <circle class="dark:fill-gray-900" cx="75" cy="20" fill="white" r="3"
+                                        stroke="#137fec" stroke-width="2"></circle>
+                                    <circle class="dark:fill-gray-900" cx="100" cy="25" fill="white" r="3"
+                                        stroke="#137fec" stroke-width="2"></circle>
+                                    <!-- Tooltip Indicator (example on Wed 14) -->
+                                    <g transform="translate(50, 30)">
+                                        <circle fill="#137fec" fill-opacity="0.2" r="6"></circle>
+                                        <circle fill="#137fec" r="3"></circle>
+                                    </g>
+                                </svg>
+                                <!-- Tooltip Card (Positioned Absolute) -->
+                                <div
+                                    class="absolute left-1/2 top-[15%] -translate-x-1/2 rounded-lg bg-gray-900 p-2 text-xs text-white shadow-xl">
+                                    <div class="font-bold">Wed 14</div>
+                                    <div class="flex justify-between gap-3">
+                                        <span class="text-gray-300">Forecast:</span>
+                                        <span class="font-medium text-blue-300">350 Units</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- X-axis labels -->
+                            <div
+                                class="absolute bottom-0 left-8 right-0 flex justify-between text-xs font-semibold text-gray-500 dark:text-gray-400 pt-2">
+                                <span class="w-8 text-center">Mon 12</span>
+                                <span class="w-8 text-center">Tue 13</span>
+                                <span class="w-8 text-center text-primary">Wed 14</span>
+                                <span class="w-8 text-center">Thu 15</span>
+                                <span class="w-8 text-center">Fri 16</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Alerts Panel (1 col) -->
+                    <div class="flex flex-col gap-4">
+                        <h3 class="flex items-center gap-2 text-lg font-bold text-[#111418] dark:text-white px-1">
+                            <span class="material-symbols-outlined text-red-600">notification_important</span>
+                            Low-Stock Alerts
+                        </h3>
+                        <!-- Alert Item 1 -->
+                        <div
+                            class="group flex flex-col gap-3 rounded-xl border border-red-100 dark:border-red-900/30 bg-white dark:bg-gray-900 p-4 shadow-sm transition-all hover:shadow-md hover:border-red-200">
+                            <div class="flex justify-between items-start">
+                                <div class="flex gap-3">
+                                    <div class="h-12 w-12 flex-shrink-0 rounded-lg bg-gray-100 dark:bg-gray-800 bg-cover bg-center"
+                                        data-alt="Bottle of organic whole milk"
+                                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBSAn0MGK_8-A-cMQxNT3nfTYEVjcaHnmR16174ZtSxXRZIPg7AkiGj7gJCoIs0-aGwsjbqW0Ll9towZHzGdSQ5HJwNPaLNcIkZ8yP92uEyXY8L1_enzzxiHgBINmK2moUh2ZbtFsRvpwe3G7ESbodAv_3e_oOFU2KY_aP1EgizOhkN314XM57qM0CtzTy4ud-3k-lmCKIN3s_34l3ar9umQV6CQYzStPKaAiIgpzp0kzqxWdVvP8zdh4v3mEqnuj7JOikbTIfCbq6Z");'>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-[#111418] dark:text-white text-sm line-clamp-1">Organic
+                                            Whole Milk</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">ID: #SKU-9021</p>
+                                    </div>
+                                </div>
+                                <span
+                                    class="inline-flex items-center rounded-full bg-red-50 dark:bg-red-900/30 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-red-700 dark:text-red-400 ring-1 ring-inset ring-red-600/10">
+                                    Low Stock
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-red-600 dark:text-red-400 font-medium">
+                                <span class="material-symbols-outlined !text-[14px]">timer</span>
+                                Predicted stockout in 6 hours
+                            </div>
+                            <button
+                                class="w-full rounded-lg bg-red-50 dark:bg-red-900/20 py-2 text-sm font-bold text-red-700 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors">
+                                Reorder Now
+                            </button>
+                        </div>
+                        <!-- Alert Item 2 -->
+                        <div
+                            class="group flex flex-col gap-3 rounded-xl border border-orange-100 dark:border-orange-900/30 bg-white dark:bg-gray-900 p-4 shadow-sm transition-all hover:shadow-md hover:border-orange-200">
+                            <div class="flex justify-between items-start">
+                                <div class="flex gap-3">
+                                    <div class="h-12 w-12 flex-shrink-0 rounded-lg bg-gray-100 dark:bg-gray-800 bg-cover bg-center"
+                                        data-alt="Avocados in a basket"
+                                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBVAY3wjoo_Az5vpjUOzpf17gLYntHocOyl-F3cacOHwkqx4WgSia4HdU12ZMI1xBV2u4IvC14KAy0hNjEhaTBxyaW56Lasg9_LwQFZQLGSDT2Cl2QkdbbtjSDRbrdGoliNmvNvi4wUAy-COBzczaMLMHkFBzz38BYbpo6diW7wrM8xw4Y8xGk5uJOrfQBlttd2jsGG7VOL4stBJL3EBGUcBEj0f6xOB7UZnJQC4xJS0gofHLUxP0q0KWyv2IZ0sG6kmrSUQ5xgVf5F");'>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-[#111418] dark:text-white text-sm line-clamp-1">Hass
+                                            Avocados (Pack)</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">ID: #SKU-4402</p>
+                                    </div>
+                                </div>
+                                <span
+                                    class="inline-flex items-center rounded-full bg-orange-50 dark:bg-orange-900/30 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-orange-700 dark:text-orange-400 ring-1 ring-inset ring-orange-600/10">
+                                    High Demand
+                                </span>
+                            </div>
+                            <div
+                                class="flex items-center gap-2 text-xs text-orange-600 dark:text-orange-400 font-medium">
+                                <span class="material-symbols-outlined !text-[14px]">trending_up</span>
+                                Demand spiking +25%
+                            </div>
+                            <button
+                                class="w-full rounded-lg bg-orange-50 dark:bg-orange-900/20 py-2 text-sm font-bold text-orange-700 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors">
+                                Adjust Order
+                            </button>
+                        </div>
+                        <!-- Alert Item 3 -->
+                        <div
+                            class="group flex flex-col gap-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 shadow-sm opacity-75">
+                            <div class="flex justify-between items-start">
+                                <div class="flex gap-3">
+                                    <div class="h-12 w-12 flex-shrink-0 rounded-lg bg-gray-100 dark:bg-gray-800 bg-cover bg-center"
+                                        data-alt="Loaf of sourdough bread"
+                                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAodAAG3RV0CKHopgtr5bNaK4-CpxpG9po7g-XnBYJT39nRzmNpVgKXSsacgNBKPUYfP2R_XqmvVcAuRKhtA4KvKODHB8je4th-XQ3oAw7I_qR7IzrNGsGSqjaNmzL2j3lnkuNJf87Vm53pr7lLRdxesTWxAvw2jAaTc5UTLucl8ypqgg5fgql4iqQPUrr6ewrLOLDo_KAffnJKWSoCLm3QqT6ZH76pKRYZgnjmcArbB5JQvTFf1npwNYG1ZFfAF15i4DWP3wtTkCLZ");'>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-[#111418] dark:text-white text-sm line-clamp-1">
+                                            Sourdough Bread</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">ID: #SKU-1123</p>
+                                    </div>
+                                </div>
+                                <span
+                                    class="inline-flex items-center rounded-full bg-yellow-50 dark:bg-yellow-900/30 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-yellow-700 dark:text-yellow-400 ring-1 ring-inset ring-yellow-600/10">
+                                    Warning
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 font-medium">
+                                <span class="material-symbols-outlined !text-[14px]">schedule</span>
+                                Stockout risk in 2 days
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Detailed Table Section -->
+                <div
+                    class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm overflow-hidden">
+                    <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 p-4">
+                        <h3 class="text-lg font-bold text-[#111418] dark:text-white">Detailed Forecast by Category</h3>
+                        <button class="text-sm font-bold text-primary hover:underline">View All Categories</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+                            <thead
+                                class="bg-gray-50 dark:bg-gray-800 text-xs uppercase text-gray-700 dark:text-gray-300">
+                                <tr>
+                                    <th class="px-6 py-3 font-semibold tracking-wide" scope="col">Category</th>
+                                    <th class="px-6 py-3 font-semibold tracking-wide" scope="col">Current Stock</th>
+                                    <th class="px-6 py-3 font-semibold tracking-wide" scope="col">Predicted Sales (5d)
+                                    </th>
+                                    <th class="px-6 py-3 font-semibold tracking-wide" scope="col">Trend</th>
+                                    <th class="px-6 py-3 font-semibold tracking-wide text-right" scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody
+                                class="divide-y divide-gray-100 dark:divide-gray-800 border-t border-gray-100 dark:border-gray-800">
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                                    <td class="px-6 py-4 font-medium text-[#111418] dark:text-white">Dairy Products</td>
+                                    <td class="px-6 py-4">420 units</td>
+                                    <td class="px-6 py-4 text-blue-600 dark:text-blue-400 font-medium">380 units</td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-1 text-green-600">
+                                            <span class="material-symbols-outlined !text-[16px]">trending_up</span>
+                                            <span class="text-xs font-bold">+15%</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <button class="text-primary font-bold hover:text-primary/80">Monitor</button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                                    <td class="px-6 py-4 font-medium text-[#111418] dark:text-white">Fresh Produce</td>
+                                    <td class="px-6 py-4">150 units</td>
+                                    <td class="px-6 py-4 text-blue-600 dark:text-blue-400 font-medium">145 units</td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-1 text-orange-600">
+                                            <span class="material-symbols-outlined !text-[16px]">trending_flat</span>
+                                            <span class="text-xs font-bold">Stable</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <button class="text-primary font-bold hover:text-primary/80">Restock</button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                                    <td class="px-6 py-4 font-medium text-[#111418] dark:text-white">Bakery</td>
+                                    <td class="px-6 py-4">80 units</td>
+                                    <td class="px-6 py-4 text-blue-600 dark:text-blue-400 font-medium">110 units</td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-1 text-green-600">
+                                            <span class="material-symbols-outlined !text-[16px]">trending_up</span>
+                                            <span class="text-xs font-bold">+8%</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <button
+                                            class="bg-red-50 text-red-600 px-3 py-1 rounded-md text-xs font-bold border border-red-200 dark:bg-red-900/20 dark:border-red-900/50 hover:bg-red-100">Critical</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

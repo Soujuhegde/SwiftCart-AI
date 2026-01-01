@@ -2,6 +2,7 @@
 
 import { CheckCircle2, ShieldCheck, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 const ImpactSection = () => {
     return (
@@ -66,9 +67,9 @@ const ImpactSection = () => {
                             Join the autonomous retail revolution.
                         </p>
 
-                        <button className="bg-azure-blue text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-600 transition-all shadow-lg shadow-blue-500/30 relative z-10 w-full sm:w-auto">
+                        <Link href="/demo" className="bg-azure-blue text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-600 transition-all shadow-lg shadow-blue-500/30 relative z-10 w-full sm:w-auto inline-block">
                             Launch Live Agent Demo
-                        </button>
+                        </Link>
 
                         <div className="mt-10 text-[10px] text-gray-500 font-mono relative z-10 uppercase tracking-widest border-t border-white/10 pt-6">
                             Microsoft Imagine Cup • AI for Good • Retail Innovation

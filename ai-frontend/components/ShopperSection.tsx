@@ -2,6 +2,7 @@
 
 import { Smartphone, ShoppingCart, CreditCard, Receipt, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 const ShopperSection = () => {
     const features = [
@@ -49,13 +50,12 @@ const ShopperSection = () => {
                         ))}
                     </div>
 
-                    <motion.a
-                        href="#"
-                        whileHover={{ x: 5 }}
-                        className="inline-flex items-center gap-2 text-azure-blue font-bold mt-8 transition-all"
+                    <Link
+                        href="/customer/scan"
+                        className="inline-flex items-center gap-2 text-azure-blue font-bold mt-8 transition-all hover:translate-x-1"
                     >
                         Try the Shopper App Demo &rarr;
-                    </motion.a>
+                    </Link>
                 </motion.div>
 
                 {/* Right Content - Phone Mockup */}

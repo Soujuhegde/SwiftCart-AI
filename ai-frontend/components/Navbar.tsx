@@ -33,12 +33,18 @@ const Navbar = () => {
 
                 {/* Action Buttons */}
                 <div className="flex items-center gap-6">
-                    <Link href="#" className="hidden md:block text-sm font-medium text-gray-600 hover:text-azure-blue">
+                    <Link href="/customer/scan" className="hidden md:block text-sm font-medium text-gray-600 hover:text-azure-blue">
                         Shopper App
                     </Link>
                     <Link
-                        href="/dashboard"
-                        className="bg-azure-blue text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20"
+                        href="/customer/scan"
+                        className="md:hidden bg-azure-blue text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20"
+                    >
+                        Shopper App
+                    </Link>
+                    <Link
+                        href="/retailer/dashboard"
+                        className="hidden md:block bg-azure-blue text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20"
                     >
                         Retailer Dashboard
                     </Link>

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>SwiftCart AI - Customer Scan &amp; Cart</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Theme Configuration -->
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "primary-dark": "#0b63c1",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a2632",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'float': '0 10px 40px -10px rgba(0, 0, 0, 0.1)',
+                    }
+                },
+            },
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Material Symbols -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Custom Scrollbar for cleaner look */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen flex justify-center items-start sm:py-8 transition-colors duration-200">
+    <!-- Mobile App Container -->
+    <div
+        class="relative w-full max-w-[480px] bg-surface-light dark:bg-surface-dark min-h-screen sm:min-h-[850px] sm:h-[90vh] sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-slate-200 dark:border-slate-800">
+        <!-- Top Navigation Bar -->
+        <header
+            class="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800 bg-surface-light dark:bg-surface-dark z-20 sticky top-0">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white">
+                    <span class="material-symbols-outlined text-[20px]">shopping_cart_checkout</span>
+                </div>
+                <div>
+                    <h1 class="text-sm font-bold leading-tight text-slate-900 dark:text-white">SwiftCart AI</h1>
+                    <div class="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-[14px]">storefront</span>
+                        <span>Downtown Market</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">help</span>
+                </button>
+                <div class="w-9 h-9 rounded-full bg-cover bg-center border border-slate-200 dark:border-slate-700"
+                    data-alt="User profile avatar image"
+                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAELTbfnklwTpY86yNy_tfDIryov8aEm-F44vdjmQ8YOE_kF83fIVhpL4vba4J37gQgegPyDWYfdFrchj4QoubP7MnHZ0VHoCpyI0SsuHx8SPX-iRd1-h13mrDbXBgk5myJ75jsDzF1wnnaQG2CPfdZ4sI1bQR9o-RN-PNAcsOwsvDjBHST41_paD9v1-OcZH2Xc1Q-Aj9SrT42AzoutgJd-d17BHdj85W87mCHmwdUCrsH3qgpJrLKcrSJdSXLB7NgzbYeFTb7SF51');">
+                </div>
+            </div>
+        </header>
+        <!-- Main Scrollable Content -->
+        <main class="flex-1 overflow-y-auto scrollbar-hide pb-40 bg-surface-light dark:bg-surface-dark">
+            <!-- Hero Scan Section -->
+            <div class="p-5">
+                <div class="relative w-full aspect-[4/3] bg-slate-900 rounded-xl overflow-hidden shadow-lg group">
+                    <!-- Camera Viewfinder Simulation -->
+                    <div class="absolute inset-0 bg-cover bg-center opacity-60 mix-blend-overlay"
+                        data-alt="Blurred grocery store aisle background"
+                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCrLuwHZ-I9Y9dNmevHQ2s2TCE2fmtt3cSef01sQK2amam6aRBuA93AUL4q2YW3Kj22z2k3J_ylgsoJ_-jGSK3rqYyef3petrG4Tyyd8sRX6Vq0YaVNtRITHBOPTy3fcChLEKafoYdDB8WN4mXxu-saZDVu1nVHiLXSmF53ASyJrR5KuX_0zJT68zzL1BIwkb7e_58giP3jf2DlCEesLFNDiSNrlBfYZfGw3qlLNSPi_zo4rAiNLa4phCV13NwdDogjmb4cfye83S80');">
+                    </div>
+                    <!-- Scanner UI Overlay -->
+                    <div class="absolute inset-0 flex flex-col items-center justify-center p-6">
+                        <div
+                            class="relative w-48 h-32 border-2 border-white/80 rounded-lg flex items-center justify-center">
+                            <!-- Corner Markers -->
+                            <div class="absolute top-[-2px] left-[-2px] w-4 h-4 border-l-4 border-t-4 border-primary">
+                            </div>
+                            <div class="absolute top-[-2px] right-[-2px] w-4 h-4 border-r-4 border-t-4 border-primary">
+                            </div>
+                            <div
+                                class="absolute bottom-[-2px] left-[-2px] w-4 h-4 border-l-4 border-b-4 border-primary">
+                            </div>
+                            <div
+                                class="absolute bottom-[-2px] right-[-2px] w-4 h-4 border-r-4 border-b-4 border-primary">
+                            </div>
+                            <!-- Laser Line Animation -->
+                            <div class="w-full h-[2px] bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse">
+                            </div>
+                        </div>
+                        <p class="mt-4 text-white text-sm font-medium drop-shadow-md text-center">Point camera at
+                            barcode to scan</p>
+                    </div>
+                </div>
+                <!-- Primary Action Buttons -->
+                <div class="mt-4 flex gap-3">
+                    <button
+                        class="flex-1 bg-primary hover:bg-primary-dark text-white h-12 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98]">
+                        <span class="material-symbols-outlined">barcode_reader</span>
+                        Scan Product
+                    </button>
+                    <button
+                        class="px-4 h-12 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                        title="Enter Code Manually">
+                        <span class="material-symbols-outlined">keyboard</span>
+                    </button>
+                </div>
+            </div>
+            <!-- Cart Section -->
+            <div class="px-5">
+                <div class="flex items-center justify-between mb-4 mt-2">
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Your Cart</h2>
+                    <div class="px-2.5 py-1 bg-primary/10 rounded-full">
+                        <span class="text-primary text-xs font-bold">3 items</span>
+                    </div>
+                </div>
+                <!-- Cart List -->
+                <div class="flex flex-col gap-4">
+                    <!-- Item 1 -->
+                    <div
+                        class="group relative flex gap-3 p-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm transition-all hover:shadow-md">
+                        <div class="w-24 h-24 rounded-xl bg-slate-100 dark:bg-slate-700 flex-shrink-0 bg-cover bg-center"
+                            data-alt="Fresh yellow organic bananas"
+                            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAvfEwYarE2a1JN-oH0BbniCmLUnhtNQSfbu9RMLNE6eo7_VWyGUi_Vv_HKIgwXxa_nPBpjrW90mFORsu1oi3jYFmdjKGUXXqMuSeCWmaEDcHh1XYPkuvwf4lzvg1L9GNsisdn99-tX8NcCticLztZlT93c9EJmO0aaUIqFCTBGWT4J3Qj3osz-nnyHIb1uaG9sDNKGca10IyxKJOFmOtVpNCkidhJhvUyKn2xNaO5MSRkVY1__dCyU9_JR4fwx57u1RU7mf_ah1WIm')">
+                        </div>
+                        <div class="flex-1 flex flex-col justify-between py-1">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-slate-900 dark:text-white line-clamp-1">Organic Bananas
+                                    </h3>
+                                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">$0.69 / lb
+                                    </p>
+                                </div>
+                                <button
+                                    class="text-slate-300 hover:text-red-500 dark:text-slate-600 transition-colors p-1 -mr-2 -mt-2">
+                                    <span class="material-symbols-outlined text-[20px]">close</span>
+                                </button>
+                            </div>
+                            <div class="flex items-end justify-between mt-2">
+                                <!-- Qty Stepper -->
+                                <div
+                                    class="flex items-center bg-slate-50 dark:bg-slate-900 rounded-lg p-1 border border-slate-200 dark:border-slate-700 h-9">
+                                    <button
+                                        class="w-8 h-full flex items-center justify-center text-slate-400 hover:text-primary active:bg-slate-200 dark:active:bg-slate-800 rounded-md transition-colors">
+                                        <span class="material-symbols-outlined text-[18px]">remove</span>
+                                    </button>
+                                    <span
+                                        class="w-6 text-center text-sm font-bold text-slate-900 dark:text-white tabular-nums">1</span>
+                                    <button
+                                        class="w-8 h-full flex items-center justify-center text-slate-900 dark:text-white hover:text-primary active:bg-slate-200 dark:active:bg-slate-800 rounded-md transition-colors">
+                                        <span class="material-symbols-outlined text-[18px]">add</span>
+                                    </button>
+                                </div>
+                                <span
+                                    class="font-bold text-lg text-slate-900 dark:text-white tracking-tight">$0.69</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Item 2 -->
+                    <div
+                        class="group relative flex gap-3 p-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm transition-all hover:shadow-md">
+                        <div class="w-24 h-24 rounded-xl bg-slate-100 dark:bg-slate-700 flex-shrink-0 bg-cover bg-center"
+                            data-alt="Carton of unsweetened almond milk"
+                            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD7ax2LDV98OUlaw2K9Y47keRNc0NPqXfcTXO8xuyyDi2qpdYdOhvVexBvkvZVYdPW9NX1pV5OzpNtvj9dzKkop62n2D8vdB7vmmCB_OVkswzDq78GnU5cTCuTCSrB9cjHwwdW3MxV_MfD8h6HnDpl7RfpY38Kog8kvCGngKtPz3UiYxCQv4sKrTWGtboEwJRk6uO60RjZUDXY-ROnQpaeB6aUqGA45KUr8Z63URzaEZUcwlonGSEAh4kQwV5-iHyYvosA6I1XZQcxr')">
+                        </div>
+                        <div class="flex-1 flex flex-col justify-between py-1">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-slate-900 dark:text-white line-clamp-1">Almond Milk</h3>
+                                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">$3.49 /
+                                        unit</p>
+                                </div>
+                                <button
+                                    class="text-slate-300 hover:text-red-500 dark:text-slate-600 transition-colors p-1 -mr-2 -mt-2">
+                                    <span class="material-symbols-outlined text-[20px]">close</span>
+                                </button>
+                            </div>
+                            <div class="flex items-end justify-between mt-2">
+                                <div
+                                    class="flex items-center bg-slate-50 dark:bg-slate-900 rounded-lg p-1 border border-slate-200 dark:border-slate-700 h-9">
+                                    <button
+                                        class="w-8 h-full flex items-center justify-center text-slate-900 dark:text-white hover:text-primary active:bg-slate-200 dark:active:bg-slate-800 rounded-md transition-colors">
+                                        <span class="material-symbols-outlined text-[18px]">remove</span>
+                                    </button>
+                                    <span
+                                        class="w-6 text-center text-sm font-bold text-slate-900 dark:text-white tabular-nums">2</span>
+                                    <button
+                                        class="w-8 h-full flex items-center justify-center text-slate-900 dark:text-white hover:text-primary active:bg-slate-200 dark:active:bg-slate-800 rounded-md transition-colors">
+                                        <span class="material-symbols-outlined text-[18px]">add</span>
+                                    </button>
+                                </div>
+                                <span
+                                    class="font-bold text-lg text-slate-900 dark:text-white tracking-tight">$6.98</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Item 3 -->
+                    <div
+                        class="group relative flex gap-3 p-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm transition-all hover:shadow-md">
+                        <div class="w-24 h-24 rounded-xl bg-slate-100 dark:bg-slate-700 flex-shrink-0 bg-cover bg-center"
+                            data-alt="Loaf of fresh sourdough bread"
+                            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuApJkvB6NlRTcSRffviscWpCRP-oeLlNseAykcqhYzsx03HSapdr1mGgxmd4REZrRqx6b9ZBbl_1YuahfG2sH9q6VMfPtjLFMOh3nFkJmZaKDq5EuZwFgQ5e0KGFlnlG5oY6FcKt2TfH2XsIGAqV5qMfgZevw5OQUogCItmdKiSX7kgBXdOYz3626IT_h55z_eM5fUjh3KTrB0cEca8rS_zTSdDAqSAtIOkXhlOR5GS5iABXpdgNDG7CW1rz2qPygJTV9GaqUP_Pac4')">
+                        </div>
+                        <div class="flex-1 flex flex-col justify-between py-1">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-slate-900 dark:text-white line-clamp-1">Sourdough Bread
+                                    </h3>
+                                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">$5.00 /
+                                        unit</p>
+                                </div>
+                                <button
+                                    class="text-slate-300 hover:text-red-500 dark:text-slate-600 transition-colors p-1 -mr-2 -mt-2">
+                                    <span class="material-symbols-outlined text-[20px]">close</span>
+                                </button>
+                            </div>
+                            <div class="flex items-end justify-between mt-2">
+                                <div
+                                    class="flex items-center bg-slate-50 dark:bg-slate-900 rounded-lg p-1 border border-slate-200 dark:border-slate-700 h-9">
+                                    <button
+                                        class="w-8 h-full flex items-center justify-center text-slate-400 hover:text-primary active:bg-slate-200 dark:active:bg-slate-800 rounded-md transition-colors">
+                                        <span class="material-symbols-outlined text-[18px]">remove</span>
+                                    </button>
+                                    <span
+                                        class="w-6 text-center text-sm font-bold text-slate-900 dark:text-white tabular-nums">1</span>
+                                    <button
+                                        class="w-8 h-full flex items-center justify-center text-slate-900 dark:text-white hover:text-primary active:bg-slate-200 dark:active:bg-slate-800 rounded-md transition-colors">
+                                        <span class="material-symbols-outlined text-[18px]">add</span>
+                                    </button>
+                                </div>
+                                <span
+                                    class="font-bold text-lg text-slate-900 dark:text-white tracking-tight">$5.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Empty State Hint (Hidden by default but ready for logic) -->
+                <div class="hidden flex-col items-center justify-center py-10 text-center opacity-60">
+                    <span class="material-symbols-outlined text-6xl text-slate-300 mb-2">shopping_basket</span>
+                    <p class="text-slate-500">Your cart is empty</p>
+                </div>
+                <div class="h-6"><!-- Spacer --></div>
+            </div>
+        </main>
+        <!-- Sticky Footer Checkout -->
+        <!-- Using absolute positioning within the container to ensure it stays at bottom -->
+        <footer
+            class="absolute bottom-0 w-full bg-surface-light dark:bg-surface-dark border-t border-slate-100 dark:border-slate-800 p-5 shadow-[0_-8px_30px_rgba(0,0,0,0.04)] z-30">
+            <div class="space-y-3 mb-5">
+                <div class="flex justify-between text-sm font-medium text-slate-500 dark:text-slate-400">
+                    <span>Subtotal</span>
+                    <span>$12.67</span>
+                </div>
+                <div class="flex justify-between text-sm font-medium text-slate-500 dark:text-slate-400">
+                    <span>Tax (8.25%)</span>
+                    <span>$1.05</span>
+                </div>
+                <div
+                    class="flex justify-between items-baseline pt-2 border-t border-dashed border-slate-200 dark:border-slate-700">
+                    <span class="text-base font-semibold text-slate-900 dark:text-white">Total</span>
+                    <span class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">$13.72</span>
+                </div>
+            </div>
+            <button
+                class="w-full h-14 bg-slate-900 dark:bg-primary hover:bg-slate-800 dark:hover:bg-blue-600 text-white rounded-xl font-bold text-lg flex items-center justify-between px-6 shadow-xl transition-all active:scale-[0.99] group">
+                <span>Pay Now</span>
+                <div
+                    class="flex items-center gap-2 bg-white/20 px-3 py-1 rounded-lg text-sm group-hover:bg-white/30 transition-colors">
+                    <span>Card ending 4242</span>
+                    <span class="material-symbols-outlined text-[16px]">credit_card</span>
+                </div>
+            </button>
+        </footer>
+    </div>
+</body>
+
+</html>

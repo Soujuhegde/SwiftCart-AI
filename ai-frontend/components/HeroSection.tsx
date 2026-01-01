@@ -2,6 +2,7 @@
 
 import { ArrowRight, Activity, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 const HeroSection = () => {
     return (
@@ -48,12 +49,12 @@ const HeroSection = () => {
                 className="flex flex-col items-center gap-2 mb-20"
             >
                 <div className="flex flex-col sm:flex-row items-center gap-4">
-                    <button className="bg-azure-blue text-white px-8 py-3.5 rounded-full font-semibold hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 flex items-center gap-2 group">
+                    <Link href="/demo" className="bg-azure-blue text-white px-8 py-3.5 rounded-full font-semibold hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 flex items-center gap-2 group">
                         Watch the Agent Orchestrate <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                    </button>
-                    <button className="bg-white text-gray-700 border border-gray-200 px-8 py-3.5 rounded-full font-semibold hover:bg-gray-50 transition-all">
+                    </Link>
+                    <Link href="/retailer/dashboard" className="hidden md:block bg-white text-gray-700 border border-gray-200 px-8 py-3.5 rounded-full font-semibold hover:bg-gray-50 transition-all">
                         View Retailer Dashboard
-                    </button>
+                    </Link>
                 </div>
                 <p className="text-xs text-gray-400 font-medium">
                     Live demo · Decisions made without human intervention

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>SwiftCart AI - Stock Entry</title>
+    <!-- Material Symbols -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Theme Configuration -->
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <style>
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 overflow-hidden h-screen flex">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r border-slate-200 flex-col hidden md:flex h-full shrink-0 z-20">
+        <div class="p-6 pb-2">
+            <div class="flex items-center gap-3">
+                <div class="bg-center bg-no-repeat bg-cover rounded-full size-10 shrink-0 shadow-sm"
+                    data-alt="Abstract geometric logo in blue gradients"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBgZ0sf-PlsJyEFW9iYOV6OX5Zr5aJhrugLiJ5ixaekY9TTKiZEVbPgQ4bic5Y5xQtSb5OUjI8xkNVeThyJmLPsndwF-6GCFNfwj--fW4xSX960pEsMq6k5J9FVdv3maFwWORVJG_aUM4BF97tm_D95R0JPpWJzosrKs-kEGOVsgylmzLuOPA-Siuk6Js7SKiMixvvtT94iXBAXhJY6G0aQ3tHM5sUrJvzXvVgV4kMKv-clL_f-foTcxMX3RLbI7_UsRrqTpgNeGPF0");'>
+                </div>
+                <div class="flex flex-col">
+                    <h1 class="text-[#111418] text-base font-bold leading-normal">SwiftCart AI</h1>
+                    <p class="text-[#617589] text-xs font-normal leading-normal">Retail Intelligence</p>
+                </div>
+            </div>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-2">
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#617589] hover:bg-slate-50 hover:text-[#111418] transition-colors group"
+                href="#">
+                <span
+                    class="material-symbols-outlined text-[24px] group-hover:text-primary transition-colors">dashboard</span>
+                <span class="text-sm font-medium">Dashboard</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary" href="#">
+                <span class="material-symbols-outlined text-[24px] font-variation-settings-'FILL'1">inventory_2</span>
+                <span class="text-sm font-medium">Inventory</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#617589] hover:bg-slate-50 hover:text-[#111418] transition-colors group"
+                href="#">
+                <span
+                    class="material-symbols-outlined text-[24px] group-hover:text-primary transition-colors">shopping_cart</span>
+                <span class="text-sm font-medium">Orders</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#617589] hover:bg-slate-50 hover:text-[#111418] transition-colors group"
+                href="#">
+                <span
+                    class="material-symbols-outlined text-[24px] group-hover:text-primary transition-colors">group</span>
+                <span class="text-sm font-medium">Customers</span>
+            </a>
+            <div class="h-px bg-slate-100 my-2 mx-3"></div>
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#617589] hover:bg-slate-50 hover:text-[#111418] transition-colors group"
+                href="#">
+                <span
+                    class="material-symbols-outlined text-[24px] group-hover:text-primary transition-colors">analytics</span>
+                <span class="text-sm font-medium">Reports</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#617589] hover:bg-slate-50 hover:text-[#111418] transition-colors group"
+                href="#">
+                <span
+                    class="material-symbols-outlined text-[24px] group-hover:text-primary transition-colors">settings</span>
+                <span class="text-sm font-medium">Settings</span>
+            </a>
+        </nav>
+        <div class="p-4 border-t border-slate-200">
+            <div class="flex items-center gap-3 p-2 rounded-lg bg-slate-50 border border-slate-100">
+                <div class="bg-center bg-no-repeat bg-cover rounded-full size-8 shrink-0"
+                    data-alt="Portrait of a smiling user in a white shirt"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD5-9riqzZghmp_VcxMdQD6Efg4Rl8PfTR7tNqE-f49WGG77ggAq-9-l8pfbngaxWokQluAbnlJxhJnmyDc3AJ1l2FYIRZRIsW3rOkTftToLwIGIEVxxHQIHMHhGbu2x1F-Qa8qBaoc2EbZdiuRRUdUyWBJQSkGkoXNJxkKX8ICW6BhKfND2-nviWLQ5MqC7jTT3fxkua3XpOZ0hM_P-J0kNR9fN_lhkrjftbOs2aa0k6OkAQc7LuLf_edfC3JUn8FUgEe4pAAj1mzx");'>
+                </div>
+                <div class="flex flex-col min-w-0">
+                    <p class="text-sm font-medium text-slate-900 truncate">Alex Morgan</p>
+                    <p class="text-xs text-slate-500 truncate">Store Manager</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col min-w-0 bg-background-light overflow-hidden">
+        <!-- Top Navigation -->
+        <header
+            class="flex items-center justify-between whitespace-nowrap bg-white border-b border-b-[#f0f2f4] px-6 py-3 shrink-0 z-10">
+            <div class="flex items-center gap-4 lg:hidden">
+                <button class="text-[#111418]">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <h2 class="text-[#111418] text-lg font-bold leading-tight tracking-[-0.015em]">SwiftCart AI</h2>
+            </div>
+            <div class="hidden lg:flex flex-1 max-w-xl">
+                <label class="flex flex-col w-full">
+                    <div class="flex w-full items-stretch rounded-lg h-10 relative">
+                        <div
+                            class="absolute left-3 top-1/2 -translate-y-1/2 text-[#617589] flex items-center justify-center">
+                            <span class="material-symbols-outlined text-[20px]">search</span>
+                        </div>
+                        <input
+                            class="w-full rounded-lg text-[#111418] focus:outline-none focus:ring-2 focus:ring-primary/20 border-none bg-[#f0f2f4] placeholder:text-[#617589] pl-10 pr-4 text-sm font-normal leading-normal transition-all"
+                            placeholder="Search inventory, orders, or customers..." value="" />
+                    </div>
+                </label>
+            </div>
+            <div class="flex items-center justify-end gap-4 ml-auto">
+                <button
+                    class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm font-medium">
+                    <span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+                    <span class="hidden sm:inline">AI Insights</span>
+                </button>
+                <div class="h-6 w-px bg-slate-200"></div>
+                <div class="flex gap-2">
+                    <button
+                        class="flex size-10 cursor-pointer items-center justify-center rounded-full hover:bg-slate-100 text-[#111418] transition-colors relative">
+                        <span class="material-symbols-outlined text-[24px]">notifications</span>
+                        <span class="absolute top-2 right-2 size-2 bg-red-500 rounded-full border border-white"></span>
+                    </button>
+                    <button
+                        class="flex size-10 cursor-pointer items-center justify-center rounded-full hover:bg-slate-100 text-[#111418] transition-colors">
+                        <span class="material-symbols-outlined text-[24px]">help</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+        <!-- Scrollable Content Area -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-8 scroll-smooth">
+            <div class="max-w-5xl mx-auto space-y-6 pb-20">
+                <!-- Breadcrumbs -->
+                <nav class="flex items-center text-sm text-[#617589]">
+                    <a class="hover:text-primary transition-colors" href="#">Dashboard</a>
+                    <span class="mx-2 text-slate-300">/</span>
+                    <a class="hover:text-primary transition-colors" href="#">Inventory</a>
+                    <span class="mx-2 text-slate-300">/</span>
+                    <span class="text-[#111418] font-medium">Stock Entry</span>
+                </nav>
+                <!-- Page Header & Actions -->
+                <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                    <div class="flex flex-col gap-2">
+                        <h1 class="text-[#111418] text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em]">
+                            Stock Entry</h1>
+                        <p class="text-[#617589] text-base font-normal">Add or edit product details and manage stock
+                            levels.</p>
+                        <!-- Chips -->
+                        <div class="flex gap-3 pt-2">
+                            <div
+                                class="inline-flex h-8 items-center gap-2 rounded-full bg-slate-100 border border-slate-200 pl-3 pr-4">
+                                <span class="material-symbols-outlined text-[18px] text-slate-500">storefront</span>
+                                <p class="text-slate-700 text-sm font-medium">Source: Retailer Input</p>
+                            </div>
+                            <div
+                                class="inline-flex h-8 items-center gap-2 rounded-full bg-blue-50 border border-blue-100 pl-3 pr-4">
+                                <span class="material-symbols-outlined text-[18px] text-primary">update</span>
+                                <p class="text-primary text-sm font-medium">Auto-Save Enabled</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 mt-2 md:mt-0">
+                        <button
+                            class="px-5 py-2.5 rounded-lg border border-slate-200 text-slate-700 font-medium hover:bg-slate-50 transition-colors bg-white">
+                            Discard
+                        </button>
+                        <button
+                            class="px-5 py-2.5 rounded-lg bg-primary text-white font-bold hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/20 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[20px]">save</span>
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+                <!-- Main Form Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Left Column: Product Details -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <!-- Basic Info Card -->
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                            <div
+                                class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                                <h3 class="text-lg font-bold text-[#111418]">Product Information</h3>
+                                <button
+                                    class="text-primary text-sm font-medium hover:underline flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[16px]">auto_awesome</span>
+                                    Auto-fill with AI
+                                </button>
+                            </div>
+                            <div class="p-6 grid gap-5">
+                                <div class="grid gap-1.5">
+                                    <label class="text-sm font-semibold text-[#111418]">Product Name</label>
+                                    <input
+                                        class="w-full rounded-lg border-slate-200 bg-white text-[#111418] placeholder:text-slate-400 focus:border-primary focus:ring-primary shadow-sm"
+                                        placeholder="e.g. Premium Cotton T-Shirt" type="text" />
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                    <div class="grid gap-1.5">
+                                        <label class="text-sm font-semibold text-[#111418]">Category</label>
+                                        <div class="relative">
+                                            <select
+                                                class="w-full rounded-lg border-slate-200 bg-white text-[#111418] focus:border-primary focus:ring-primary shadow-sm appearance-none pr-10">
+                                                <option>Apparel</option>
+                                                <option>Electronics</option>
+                                                <option>Home &amp; Garden</option>
+                                                <option>Accessories</option>
+                                            </select>
+                                            <span
+                                                class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500 text-[20px]">expand_more</span>
+                                        </div>
+                                    </div>
+                                    <div class="grid gap-1.5">
+                                        <label class="text-sm font-semibold text-[#111418]">SKU / Barcode</label>
+                                        <div class="relative">
+                                            <input
+                                                class="w-full rounded-lg border-slate-200 bg-white text-[#111418] focus:border-primary focus:ring-primary shadow-sm pr-10"
+                                                placeholder="SCAN-0000" type="text" />
+                                            <span
+                                                class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">qr_code_scanner</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid gap-1.5">
+                                    <label class="text-sm font-semibold text-[#111418]">Description</label>
+                                    <textarea
+                                        class="w-full rounded-lg border-slate-200 bg-white text-[#111418] placeholder:text-slate-400 focus:border-primary focus:ring-primary shadow-sm resize-none"
+                                        placeholder="Enter detailed product description..." rows="4"></textarea>
+                                    <p class="text-xs text-slate-500 text-right">0/500 characters</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Pricing Card -->
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                            <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+                                <h3 class="text-lg font-bold text-[#111418]">Pricing</h3>
+                            </div>
+                            <div class="p-6 grid grid-cols-1 sm:grid-cols-3 gap-5">
+                                <div class="grid gap-1.5">
+                                    <label class="text-sm font-semibold text-[#111418]">Base Price</label>
+                                    <div class="relative rounded-lg shadow-sm">
+                                        <div
+                                            class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                            <span class="text-slate-500 sm:text-sm">$</span>
+                                        </div>
+                                        <input
+                                            class="block w-full rounded-lg border-slate-200 pl-7 text-[#111418] focus:border-primary focus:ring-primary"
+                                            placeholder="0.00" type="number" />
+                                    </div>
+                                </div>
+                                <div class="grid gap-1.5">
+                                    <label class="text-sm font-semibold text-[#111418]">Discount Price</label>
+                                    <div class="relative rounded-lg shadow-sm">
+                                        <div
+                                            class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                            <span class="text-slate-500 sm:text-sm">$</span>
+                                        </div>
+                                        <input
+                                            class="block w-full rounded-lg border-slate-200 pl-7 text-[#111418] focus:border-primary focus:ring-primary"
+                                            placeholder="0.00" type="number" />
+                                    </div>
+                                </div>
+                                <div class="grid gap-1.5">
+                                    <label class="text-sm font-semibold text-[#111418]">Tax Rate (%)</label>
+                                    <input
+                                        class="block w-full rounded-lg border-slate-200 text-[#111418] focus:border-primary focus:ring-primary"
+                                        placeholder="8.5" type="number" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Right Column: Inventory & Media -->
+                    <div class="space-y-6">
+                        <!-- Inventory Status Card -->
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                            <div
+                                class="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                                <h3 class="text-lg font-bold text-[#111418]">Inventory</h3>
+                                <span
+                                    class="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded uppercase tracking-wide">In
+                                    Stock</span>
+                            </div>
+                            <div class="p-6 grid gap-5">
+                                <div class="grid gap-1.5">
+                                    <label class="text-sm font-semibold text-[#111418]">Stock Quantity</label>
+                                    <input
+                                        class="w-full rounded-lg border-slate-200 bg-white text-[#111418] focus:border-primary focus:ring-primary shadow-sm font-mono font-medium"
+                                        type="number" value="142" />
+                                </div>
+                                <div class="grid gap-1.5">
+                                    <div class="flex justify-between">
+                                        <label class="text-sm font-semibold text-[#111418]">Low Stock Threshold</label>
+                                        <span class="text-xs text-orange-600 font-medium flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-[14px]">warning</span> Alert
+                                            enabled
+                                        </span>
+                                    </div>
+                                    <input
+                                        class="w-full rounded-lg border-slate-200 bg-white text-[#111418] focus:border-primary focus:ring-primary shadow-sm"
+                                        type="number" value="20" />
+                                    <!-- Low Stock Indicator Visualization -->
+                                    <div class="mt-3 bg-slate-100 rounded-full h-2 w-full overflow-hidden">
+                                        <div class="bg-green-500 w-3/4 h-full rounded-full"></div>
+                                    </div>
+                                    <div class="flex justify-between text-xs text-slate-500 mt-1">
+                                        <span>Alert Level (20)</span>
+                                        <span>Current Level (142)</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3 p-3 bg-blue-50 rounded-lg text-blue-900 text-sm">
+                                    <span class="material-symbols-outlined text-[20px] shrink-0">info</span>
+                                    <p class="leading-snug">SwiftCart AI predicts this item will run out in <strong>14
+                                            days</strong> based on current sales velocity.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Media Card -->
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                            <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+                                <h3 class="text-lg font-bold text-[#111418]">Product Images</h3>
+                            </div>
+                            <div class="p-6">
+                                <div
+                                    class="border-2 border-dashed border-slate-300 rounded-lg p-8 flex flex-col items-center justify-center text-center hover:bg-slate-50 hover:border-primary/50 transition-all cursor-pointer group">
+                                    <div
+                                        class="size-12 rounded-full bg-slate-100 flex items-center justify-center mb-3 group-hover:bg-primary/10 transition-colors">
+                                        <span
+                                            class="material-symbols-outlined text-slate-400 group-hover:text-primary text-[28px]">cloud_upload</span>
+                                    </div>
+                                    <p class="text-sm font-medium text-[#111418]">Click to upload or drag and drop</p>
+                                    <p class="text-xs text-slate-500 mt-1">SVG, PNG, JPG or GIF (max. 800x400px)</p>
+                                </div>
+                                <!-- Preview List -->
+                                <div class="mt-4 space-y-3">
+                                    <div class="flex items-center gap-3 p-2 border border-slate-100 rounded-lg group">
+                                        <div class="size-12 rounded bg-slate-100 bg-center bg-cover"
+                                            data-alt="Small thumbnail of a blue t-shirt"
+                                            style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDbjFS8P9ngkJBqbvKzDTOWieP3ofliCcAYxHi5hiL3PQi0K_v_GtUz4y7M76txIbzCBfcDu2ppzzETY4J0nICyB25Nk-nmPAtB2KqBATyp1ER4f4L7aUMFZT5VPuVRvYEtttL121XpOk0KTiTYqfGCAfF_dJuYH49w7fqfXflbIq_lCH-h1s3EIh0-fdko35d5IzUBVlsLaQokPenqE7quTqvyxbXc6J-8MNyjPeAS6ILSQJKQUF7K-LP2BZjymgDvZGWTLdGNp7-F");'>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-slate-900 truncate">
+                                                front_view_blue_tshirt.jpg</p>
+                                            <p class="text-xs text-slate-500">1.2 MB</p>
+                                        </div>
+                                        <button class="text-slate-400 hover:text-red-500 p-1 rounded transition-colors">
+                                            <span class="material-symbols-outlined text-[20px]">delete</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

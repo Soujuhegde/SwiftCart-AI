@@ -191,7 +191,7 @@ export default function ScanPage() {
                                     exit={{ opacity: 0, y: -10 }}
                                     className="flex gap-3 p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm"
                                 >
-                                    <div className="w-20 h-20 rounded-lg bg-slate-100 overflow-hidden flex-shrink-0">
+                                    <div className="w-20 h-20 rounded-lg bg-slate-100 overflow-hidden shrink-0">
                                         <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                                     </div>
                                     <div className="flex-1 flex flex-col justify-between">

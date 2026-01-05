@@ -9,16 +9,108 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingCart, Barcode, Keyboard, X, Plus, Minus, Store, HelpCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Html5Qrcode } from "html5-qrcode";
 
 export default function ScanPage() {
     const { cart, addToCart, removeFromCart, updateQuantity, cartTotal, inventory } = useDemo();
+    const [isScanning, setIsScanning] = React.useState(true);
+    const scannerRef = React.useRef<Html5Qrcode | null>(null);
 
     // Mock scan function - adds random item from mock inventory that isn't in cart yet or just a specific one
     const simulateScan = () => {
         // Pick a random product from inventory
         const randomProduct = inventory[Math.floor(Math.random() * inventory.length)];
         addToCart(randomProduct);
+        // Also verify the scanner logic works by trying to "simulate" a success if possible, 
+        // but for now we just keep the button as a fallback.
     };
+
+    const onScanSuccess = (decodedText: string, decodedResult: any) => {
+        console.log(`Scan result: ${decodedText}`, decodedResult);
+        // Stop scanning to verify/process
+        if (scannerRef.current && scannerRef.current.isScanning) {
+            scannerRef.current.pause();
+            setIsScanning(false);
+        }
+
+        // For this demo, we can just pick a random product or "find" one based on the code.
+        // Since we don't have real barcodes mapped, let's just use the simulate logic
+        // but adding a toast or something would be nice. For now:
+        const randomProduct = inventory[Math.floor(Math.random() * inventory.length)];
+        // Ideally we would look up: inventory.find(p => p.id === decodedText)
+        addToCart(randomProduct);
+
+        // Resume scanning after a delay
+        setTimeout(() => {
+            if (scannerRef.current) {
+                scannerRef.current.resume();
+                setIsScanning(true);
+            }
+        }, 2000);
+    };
+
+    React.useEffect(() => {
+        let isMounted = true;
+
+        const initScanner = async () => {
+            try {
+                // Dynamic import to avoid SSR issues if any, though standard import works
+                const { Html5Qrcode } = await import("html5-qrcode");
+
+                // If unmounted during import, stop
+                if (!isMounted) return;
+
+                // Extra safety: Clear generic container content if something got stuck
+                const element = document.getElementById("reader");
+                if (element) element.innerHTML = "";
+
+                const scanner = new Html5Qrcode("reader");
+                scannerRef.current = scanner;
+
+                const config = {
+                    fps: 10,
+                    aspectRatio: 1.333333
+                };
+
+                await scanner.start(
+                    { facingMode: "environment" },
+                    config,
+                    onScanSuccess,
+                    (errorMessage) => {
+                        // console.log(errorMessage); // Ignore frame errors
+                    }
+                );
+            } catch (err) {
+                console.error("Error starting scanner", err);
+                if (isMounted) setIsScanning(false);
+            }
+        };
+
+        // Small timeout to allow previous cleanup to finish if in strict mode
+        const timer = setTimeout(() => {
+            initScanner();
+        }, 100);
+
+        return () => {
+            isMounted = false;
+            clearTimeout(timer);
+            if (scannerRef.current) {
+                // We need to capture the current ref processing in a way that doesn't leak
+                const scannerToStop = scannerRef.current;
+                scannerRef.current = null;
+
+                scannerToStop.stop().then(() => {
+                    scannerToStop.clear();
+                }).catch(err => {
+                    console.log("Scanner stop error", err);
+                    // Force clear if stop fails typically means it wasn't running fully yet
+                    // manually clearing innerHTML might be needed if library fails
+                    const element = document.getElementById("reader");
+                    if (element) element.innerHTML = "";
+                });
+            }
+        };
+    }, []);
 
     return (
         <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 pb-20">
@@ -45,19 +137,22 @@ export default function ScanPage() {
 
             <main className="flex-1 overflow-y-auto p-5 space-y-6">
                 {/* Scanner Viewfinder */}
-                <div className="relative w-full aspect-[4/3] bg-black rounded-xl overflow-hidden shadow-lg group">
-                    <div className="absolute inset-0 bg-[url('https://lh3.googleusercontent.com/aida-public/AB6AXuCrLuwHZ-I9Y9dNmevHQ2s2TCE2fmtt3cSef01sQK2amam6aRBuA93AUL4q2YW3Kj22z2k3J_ylgsoJ_-jGSK3rqYyef3petrG4Tyyd8sRX6Vq0YaVNtRITHBOPTy3fcChLEKafoYdDB8WN4mXxu-saZDVu1nVHiLXSmF53ASyJrR5KuX_0zJT68zzL1BIwkb7e_58giP3jf2DlCEesLFNDiSNrlBfYZfGw3qlLNSPi_zo4rAiNLa4phCV13NwdDogjmb4cfye83S80')] bg-cover bg-center opacity-60 mix-blend-overlay"></div>
+                <div className="relative w-full overflow-hidden shadow-lg group rounded-xl bg-black">
+                    {/* The reader div where the camera stream renders */}
+                    <div id="reader" className="w-full h-full min-h-[300px] overflow-hidden rounded-xl"></div>
 
-                    {/* Scanner Overlay UI */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center p-6">
-                        <div className="relative w-48 h-32 border-2 border-white/80 rounded-lg flex items-center justify-center">
-                            <div className="absolute top-[-2px] left-[-2px] w-4 h-4 border-l-4 border-t-4 border-blue-500"></div>
-                            <div className="absolute top-[-2px] right-[-2px] w-4 h-4 border-r-4 border-t-4 border-blue-500"></div>
-                            <div className="absolute bottom-[-2px] left-[-2px] w-4 h-4 border-l-4 border-b-4 border-blue-500"></div>
-                            <div className="absolute bottom-[-2px] right-[-2px] w-4 h-4 border-r-4 border-b-4 border-blue-500"></div>
+                    {/* Scanner Overlay UI - Positioned absolutely over the reader */}
+                    <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center p-6 z-10">
+                        <div className="relative w-64 h-64 rounded-lg flex items-center justify-center">
+                            <div className="absolute top-[-2px] left-[-2px] w-6 h-6 border-l-4 border-t-4 border-blue-500"></div>
+                            <div className="absolute top-[-2px] right-[-2px] w-6 h-6 border-r-4 border-t-4 border-blue-500"></div>
+                            <div className="absolute bottom-[-2px] left-[-2px] w-6 h-6 border-l-4 border-b-4 border-blue-500"></div>
+                            <div className="absolute bottom-[-2px] right-[-2px] w-6 h-6 border-r-4 border-b-4 border-blue-500"></div>
                             <div className="w-full h-[2px] bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse"></div>
                         </div>
-                        <p className="mt-4 text-white text-sm font-medium drop-shadow-md bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm">Point at barcode to scan</p>
+                        <p className="mt-4 text-white text-sm font-medium drop-shadow-md bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">
+                            {isScanning ? "Point at barcode to scan" : "Processing..."}
+                        </p>
                     </div>
                 </div>
 

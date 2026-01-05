@@ -170,3 +170,8 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Hide html5-qrcode default overlay elements */
+#qr-shaded-region {
+  display: none !important;
+}

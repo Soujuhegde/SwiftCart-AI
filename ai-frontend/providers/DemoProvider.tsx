@@ -31,6 +31,11 @@ export type DemoContextType = {
     };
     processPayment: () => void;
     resetDemo: () => void;
+    lastOrder: {
+        items: CartItem[];
+        total: number;
+        date: string;
+    } | null;
 };
 
 const DemoContext = createContext<DemoContextType | undefined>(undefined);
@@ -83,6 +88,7 @@ export const DemoProvider = ({ children }: { children: React.ReactNode }) => {
         transactions: 142,
         itemsSold: 450
     });
+    const [lastOrder, setLastOrder] = useState<DemoContextType['lastOrder']>(null);
 
     const cartTotal = cart.reduce((total, item) => total + item.price * item.qty, 0);
 
@@ -138,7 +144,14 @@ export const DemoProvider = ({ children }: { children: React.ReactNode }) => {
             itemsSold: prev.itemsSold + itemsCount
         }));
 
-        // 3. Clear Cart
+        // 3. Save Order for Receipt
+        setLastOrder({
+            items: [...cart],
+            total: cartTotal * 1.08, // Adding tax
+            date: new Date().toLocaleString()
+        });
+
+        // 4. Clear Cart
         setCart([]);
     };
 
@@ -150,6 +163,7 @@ export const DemoProvider = ({ children }: { children: React.ReactNode }) => {
             transactions: 142,
             itemsSold: 450
         });
+        setLastOrder(null);
     };
 
     return (
@@ -163,7 +177,8 @@ export const DemoProvider = ({ children }: { children: React.ReactNode }) => {
             addProduct,
             salesStats,
             processPayment,
-            resetDemo
+            resetDemo,
+            lastOrder
         }}>
             {children}
         </DemoContext.Provider>

@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function POST(req: Request) {
     try {
-        const { name, userId, price } = await req.json();
+        const { name, userId, price, stock, imageUrl } = await req.json();
 
         if (!name) {
             return NextResponse.json({ error: 'Product name is required' }, { status: 400 });
@@ -33,9 +33,9 @@ export async function POST(req: Request) {
                 data: {
                     barcode: `CUSTOM-${timestamp}-${random}`,
                     name: name,
-                    price: price || 0, // Allow price override or default to 0 (to be set later? user didn't specify flow for price)
-                    // User said "If not found, create a custom product with store-defined price"
-                    // We'll check if price is provided, else default.
+                    price: price || 0,
+                    stock: Number(stock) || 0,
+                    imageUrl: imageUrl || null,
                     isCustom: true,
                     category: 'Custom'
                 }

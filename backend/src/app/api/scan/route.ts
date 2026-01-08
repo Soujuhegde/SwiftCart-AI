@@ -2,134 +2,158 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import axios from 'axios';
 
-// Helper to fetch from OpenFoodFacts
+/* ----------------------------------------------------
+   Helper: Fetch product from OpenFoodFacts
+---------------------------------------------------- */
 async function fetchFromOpenFoodFacts(barcode: string) {
     try {
         const response = await axios.get(
-            `https://world.openfoodfacts.org/api/v0/product/${barcode}.json`
+            `https://world.openfoodfacts.org/api/v0/product/${barcode}.json`,
+            { timeout: 5000 }
         );
-        if (response.data && response.data.status === 1) {
-            const product = response.data.product;
-            return {
-                name: product.product_name || 'Unknown Product',
-                description: product.generic_name || '',
-                imageUrl: product.image_url || '',
-                // OpenFoodFacts doesn't provide price (it varies by store). 
-                // We generate a simulated price for this demo.
-                price: Math.floor(Math.random() * 140) + 10, // Random price between 10 and 150
-            };
-        }
-        return null;
+
+        if (response.data?.status !== 1) return null;
+
+        const product = response.data.product;
+
+        return {
+            name:
+                product.product_name_en ||
+                product.product_name ||
+                `Item ${barcode}`,
+            description:
+                product.generic_name_en ||
+                product.generic_name ||
+                '',
+            imageUrl:
+                product.image_front_url ||
+                product.image_url ||
+                '',
+            price: Math.floor(Math.random() * 140) + 10, // simulated price
+        };
     } catch (error) {
-        console.error('Error fetching from OpenFoodFacts:', error);
+        console.error('OpenFoodFacts error:', error);
         return null;
     }
 }
 
+/* ----------------------------------------------------
+   POST: Scan Barcode
+---------------------------------------------------- */
 export async function POST(req: Request) {
     try {
-        const { barcode, userId } = await req.json();
+        let { barcode, userId } = await req.json();
 
-        if (!barcode) {
-            return NextResponse.json({ error: 'Barcode is required' }, { status: 400 });
+        /* ---------- CLEAN & VALIDATE BARCODE ---------- */
+        barcode = String(barcode || '')
+            .trim()
+            .replace(/\D/g, ''); // remove non-numeric chars
+
+        if (!barcode || barcode.length < 8) {
+            return NextResponse.json(
+                { error: 'Invalid barcode scanned' },
+                { status: 400 }
+            );
         }
 
-        // 1. Check if product exists in our DB
+        /* ---------- FIND PRODUCT LOCALLY ---------- */
         let product = await prisma.product.findUnique({
             where: { barcode },
         });
 
-        // 2. If not, fetch from OpenFoodFacts and create it
+        /* ---------- FETCH FROM OPENFOODFACTS ---------- */
         if (!product) {
-            console.log(`Product ${barcode} not found locally, fetching from OpenFoodFacts...`);
             const offData = await fetchFromOpenFoodFacts(barcode);
 
-            if (!offData) {
-                // Return 404 but allow client to prompt for manual entry
-                return NextResponse.json({ error: 'Product not found', needManualEntry: true }, { status: 404 });
+            if (offData) {
+                product = await prisma.product.create({
+                    data: {
+                        barcode,
+                        name: offData.name,
+                        description: offData.description,
+                        imageUrl: offData.imageUrl,
+                        price: offData.price,
+                        category: 'Grocery',
+                        source: 'openfoodfacts',
+                    },
+                });
+            } else {
+                // fallback auto-create product
+                product = await prisma.product.create({
+                    data: {
+                        barcode,
+                        name: `Item ${barcode}`,
+                        description: 'Auto-detected item',
+                        imageUrl:
+                            'https://placehold.co/400x400?text=Item',
+                        price: Math.floor(Math.random() * 140) + 10,
+                        category: 'General',
+                        source: 'manual-auto',
+                    },
+                });
             }
-
-            // Save to local DB for future lookups
-            product = await prisma.product.create({
-                data: {
-                    barcode,
-                    name: offData.name,
-                    description: offData.description,
-                    imageUrl: offData.imageUrl,
-                    price: offData.price,
-                    category: 'Grocery',
-                    source: 'openfoodfacts'
-                },
-            });
-            console.log(`Product ${barcode} cached to local DB.`);
-        } else {
-            console.log(`Product ${barcode} found in local DB.`);
         }
 
-        // 3. Add to User's Active Cart
-        // Find or create active cart for user (or a guest cart if no userId/using a default demo user)
-        // For simplicity, if userId is not provided, we might fail or create a temporary one. 
-        // Assuming userId is passed or we default to a test user for now.
+        /* ---------- USER HANDLING ---------- */
         const targetUserId = userId || 'demo-user-id';
 
-        // 3a. Ensure User Exists (to prevent P2003 Foreign Key Error)
-        // In a real app, this would be handled by Auth middleware
         await prisma.user.upsert({
             where: { id: targetUserId },
             create: {
                 id: targetUserId,
                 email: `${targetUserId}@example.com`,
-                name: 'Demo User'
+                name: 'Demo User',
             },
-            update: {}
+            update: {},
         });
 
-        // 3b. Add to User's Active Cart
-
+        /* ---------- CART HANDLING ---------- */
         let cart = await prisma.cart.findFirst({
             where: {
                 userId: targetUserId,
-                status: 'ACTIVE'
-            }
+                status: 'ACTIVE',
+            },
         });
 
         if (!cart) {
             cart = await prisma.cart.create({
                 data: {
                     userId: targetUserId,
-                    status: 'ACTIVE'
-                }
+                    status: 'ACTIVE',
+                },
             });
         }
 
-        // 4. Upsert CartItem
+        /* ---------- CART ITEM UPSERT ---------- */
         const cartItem = await prisma.cartItem.upsert({
             where: {
                 cartId_productId: {
                     cartId: cart.id,
-                    productId: product.id
-                }
+                    productId: product.id,
+                },
             },
             update: {
-                quantity: { increment: 1 }
+                quantity: { increment: 1 },
             },
             create: {
                 cartId: cart.id,
                 productId: product.id,
                 quantity: 1,
-                price: product.price
-            }
+                price: product.price,
+            },
         });
 
         return NextResponse.json({
             success: true,
             product,
             cartItem,
-            message: 'Product added to cart'
+            message: 'Product scanned and added to cart',
         });
-
     } catch (error) {
         console.error('Scan API Error:', error);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+        return NextResponse.json(
+            { error: 'Internal Server Error' },
+            { status: 500 }
+        );
     }
 }

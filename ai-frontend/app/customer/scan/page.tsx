@@ -146,9 +146,9 @@ export default function ScanPage() {
 
                 // improved config - relaxed for compatibility
                 const config = {
-                    fps: 15,
-                    qrbox: { width: 250, height: 250 },
-                    // aspectRatio: 1.0, // Let scanner determine best ratio
+                    fps: 10,
+                    // qrbox removed = full screen scanning
+                    aspectRatio: 1.0,
                 };
 
                 setCameraStatus("Starting Camera...");
@@ -171,14 +171,11 @@ export default function ScanPage() {
                     setHasCameraPermission(true);
                     setCameraStatus("Active");
                 }
-
             } catch (err: any) {
                 console.error("Scanner Error:", err);
                 if (isMounted) {
                     setHasCameraPermission(false);
                     setCameraStatus("Camera Error: " + (err?.message || "Check permissions"));
-                    // Fallback to manual if critical
-                    // setShowManualInput(true);
                 }
             }
         };
@@ -228,21 +225,32 @@ export default function ScanPage() {
 
                     {!showManualInput ? (
                         <>
-                            {/* Reader Element for Html5Qrcode */}
                             <div id="reader" className="absolute inset-0 w-full h-full object-cover"></div>
 
                             {/* Scanner Overlay UI */}
                             <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center p-6 z-10">
-                                <div className="relative w-64 h-64 rounded-lg flex items-center justify-center">
-                                    <div className="absolute top-[-2px] left-[-2px] w-6 h-6 border-l-4 border-t-4 border-blue-500"></div>
-                                    <div className="absolute top-[-2px] right-[-2px] w-6 h-6 border-r-4 border-t-4 border-blue-500"></div>
-                                    <div className="absolute bottom-[-2px] left-[-2px] w-6 h-6 border-l-4 border-b-4 border-blue-500"></div>
-                                    <div className="absolute bottom-[-2px] right-[-2px] w-6 h-6 border-r-4 border-b-4 border-blue-500"></div>
-                                    <div className="w-full h-[2px] bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse"></div>
+                                {/* Full screen indicator */}
+                                <div className="absolute inset-4 border-2 border-white/20 rounded-xl"></div>
+                                <div className="absolute inset-4 flex items-center justify-center">
+                                    <p className="text-white/50 text-xs font-medium uppercase tracking-widest bg-black/20 px-2 py-1 rounded">Scan Anywhere</p>
                                 </div>
-                                <p className="mt-4 text-white text-sm font-medium drop-shadow-md bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">
-                                    {cameraStatus}
-                                </p>
+
+                                <div className="mt-auto mb-10 flex flex-col items-center gap-2 pointer-events-auto">
+                                    <p className="text-white text-sm font-medium drop-shadow-md bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">
+                                        {cameraStatus}
+                                    </p>
+                                    {cameraStatus.includes("Error") && (
+                                        <Button size="sm" variant="secondary" onClick={() => window.location.reload()}>
+                                            Retry Camera
+                                        </Button>
+                                    )}
+                                </div>
+                                {/* Debug Log for User Feedback */}
+                                <div className="absolute bottom-4 left-0 right-0 text-center pointer-events-none">
+                                    <p className="text-[10px] text-white/70">
+                                        Mode: Native/Wasm | Last: {itemCount > 0 && cart?.items?.[0]?.product?.name ? "Cart Updated" : "Waiting..."}
+                                    </p>
+                                </div>
                             </div>
                         </>
                     ) : (
@@ -305,7 +313,15 @@ export default function ScanPage() {
                                 >
                                     <div className="w-20 h-20 rounded-lg bg-slate-100 overflow-hidden shrink-0">
                                         {/* Fallback image or item.product.imageUrl */}
-                                        <img src={item.product?.imageUrl || '/placeholder.png'} alt={item.product?.name || 'Product'} className="w-full h-full object-cover" />
+                                        <img
+                                            src={item.product?.imageUrl || item.product?.image || '/placeholder.png'}
+                                            alt={item.product?.name || 'Product'}
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                                console.log("Image failed to load:", item.product?.imageUrl);
+                                                e.currentTarget.src = '/placeholder.png';
+                                            }}
+                                        />
                                     </div>
                                     <div className="flex-1 flex flex-col justify-between">
                                         <div className="flex justify-between items-start">

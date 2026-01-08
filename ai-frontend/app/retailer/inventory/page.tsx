@@ -230,6 +230,14 @@ export default function InventoryPage() {
                                 />
                             </div>
                             <div>
+                                <label className="text-sm font-medium mb-1.5 block text-slate-700 dark:text-slate-300">Product Image URL</label>
+                                <Input
+                                    value={newProduct.image}
+                                    onChange={e => setNewProduct({ ...newProduct, image: e.target.value })}
+                                    placeholder="e.g. https://example.com/apple.jpg"
+                                />
+                            </div>
+                            <div>
                                 <label className="text-sm font-medium mb-1.5 block text-slate-700 dark:text-slate-300">Barcode / SKU</label>
                                 <div className="relative">
                                     <Input

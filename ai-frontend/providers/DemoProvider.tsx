@@ -52,7 +52,7 @@ export type DemoContextType = {
 
 const DemoContext = createContext<DemoContextType | undefined>(undefined);
 
-const API_URL = 'http://localhost:3002';
+const API_URL = ''; // Use relative paths for proxy support
 // const socket = io(API_URL);
 
 export const DemoProvider = ({ children }: { children: React.ReactNode }) => {
@@ -83,10 +83,13 @@ export const DemoProvider = ({ children }: { children: React.ReactNode }) => {
                 const products = data.map((p: any) => ({
                     ...p,
                     price: Number(p.price),
+                    sku: p.barcode || p.sku || `SKU-${p.id}`,
+                    // Prioritize backend image, then fallback
                     image: p.imageUrl ||
                         p.image ||
-                        `https://placehold.co/400x400?text=${encodeURIComponent(p.name)}` // Fallback to placeholder with name
+                        `https://placehold.co/400x400?text=${encodeURIComponent(p.name)}`
                 }));
+                console.log('Sample product:', products[0]?.name, 'imageUrl:', data[0]?.imageUrl, 'mapped image:', products[0]?.image);
                 setInventory(products);
             } catch (error) {
                 console.error("Failed to fetch inventory:", error);
@@ -142,8 +145,23 @@ export const DemoProvider = ({ children }: { children: React.ReactNode }) => {
         });
     };
 
-    const addProduct = (product: Product) => {
+    const addProduct = async (product: Product) => {
+        // Optimistic update
         setInventory(prev => [product, ...prev]);
+
+        // Also call backend API to persist
+        try {
+            await axios.post(`${API_URL}/api/products/manual`, {
+                name: product.name,
+                price: product.price,
+                stock: product.stock,
+                imageUrl: product.image, // Product type has 'image', backend expects 'imageUrl'
+                userId: "retailer-1" // minimal mock auth
+            });
+        } catch (e) {
+            console.error("Failed to persist product manual add", e);
+            toast.error("Failed to save to database");
+        }
     };
 
     const deleteProduct = (productId: string) => {

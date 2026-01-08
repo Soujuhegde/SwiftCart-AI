@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET() {
     try {
+        // Fetch products with stock
         const products = await prisma.product.findMany({
             orderBy: {
                 createdAt: 'desc'

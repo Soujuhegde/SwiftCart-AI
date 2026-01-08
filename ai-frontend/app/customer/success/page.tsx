@@ -30,8 +30,8 @@ export default function OrderSuccessPage() {
         const tableBody = lastOrder.items.map((item: any) => [
             item.product?.name || item.name || 'Unknown',
             item.quantity.toString(),
-            `₹${item.price.toFixed(2)}`,
-            `₹${(item.price * item.quantity).toFixed(2)}`
+            `Rs. ${item.price.toFixed(2)}`,
+            `Rs. ${(item.price * item.quantity).toFixed(2)}`
         ]);
 
         autoTable(doc, {
@@ -39,9 +39,9 @@ export default function OrderSuccessPage() {
             head: [["Item", "Qty", "Price", "Total"]],
             body: tableBody,
             foot: [
-                ["", "", "Subtotal", `$${(lastOrder.total / 1.08).toFixed(2)}`],
-                ["", "", "Tax (8%)", `$${(lastOrder.total - (lastOrder.total / 1.08)).toFixed(2)}`],
-                ["", "", "Total", `₹${lastOrder.total.toFixed(2)}`]
+                ["", "", "Subtotal", `Rs. ${(lastOrder.total / 1.08).toFixed(2)}`],
+                ["", "", "Tax (8%)", `Rs. ${(lastOrder.total - (lastOrder.total / 1.08)).toFixed(2)}`],
+                ["", "", "Total", `Rs. ${lastOrder.total.toFixed(2)}`]
             ],
             theme: 'grid',
             headStyles: { fillColor: [37, 99, 235] }, // Blue-600

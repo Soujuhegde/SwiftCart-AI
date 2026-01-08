@@ -3,6 +3,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from 'axios';
+import { toast } from 'sonner';
 // import { io, Socket } from 'socket.io-client';
 
 // Types
@@ -83,6 +84,7 @@ export const DemoProvider = ({ children }: { children: React.ReactNode }) => {
                 const products = data.map((p: any) => ({
                     ...p,
                     price: Number(p.price),
+                    stock: p.stock || 0,
                     sku: p.barcode || p.sku || `SKU-${p.id}`,
                     // Prioritize backend image, then fallback
                     image: p.imageUrl ||
@@ -155,8 +157,8 @@ export const DemoProvider = ({ children }: { children: React.ReactNode }) => {
                 name: product.name,
                 price: product.price,
                 stock: product.stock,
-                imageUrl: product.image, // Product type has 'image', backend expects 'imageUrl'
-                userId: "retailer-1" // minimal mock auth
+                imageUrl: product.image,
+                userId: "retailer-1"
             });
         } catch (e) {
             console.error("Failed to persist product manual add", e);
@@ -164,8 +166,13 @@ export const DemoProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
-    const deleteProduct = (productId: string) => {
-        setInventory(prev => prev.filter(p => p.id !== productId));
+    const deleteProduct = async (productId: string) => {
+        try {
+            setInventory(prev => prev.filter(p => p.id !== productId));
+            await axios.delete(`${API_URL}/api/products/${productId}`);
+        } catch (error) {
+            console.error("Failed to delete product from backend:", error);
+        }
     };
 
     const removeFromCart = (productId: string) => {

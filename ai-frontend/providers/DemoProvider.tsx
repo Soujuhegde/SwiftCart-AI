@@ -83,6 +83,8 @@ export const DemoProvider = ({ children }: { children: React.ReactNode }) => {
                 const products = data.map((p: any) => ({
                     ...p,
                     price: Number(p.price),
+                    stock: p.stock || 0,
+                    sku: p.barcode || p.sku || 'UNKNOWN',
                     image: p.imageUrl ||
                         p.image ||
                         `https://placehold.co/400x400?text=${encodeURIComponent(p.name)}` // Fallback to placeholder with name
@@ -142,12 +144,34 @@ export const DemoProvider = ({ children }: { children: React.ReactNode }) => {
         });
     };
 
-    const addProduct = (product: Product) => {
-        setInventory(prev => [product, ...prev]);
+    const addProduct = async (product: Product) => {
+        try {
+            // Optimistic update
+            setInventory(prev => [product, ...prev]);
+
+            await axios.post(`${API_URL}/api/manual-add`, {
+                name: product.name,
+                category: product.category,
+                price: product.price,
+                stock: product.stock,
+                barcode: product.sku,
+                imageUrl: product.image
+            });
+
+            // Optionally refetch to get real ID, but for now this is fine
+        } catch (error) {
+            console.error("Failed to add product to backend:", error);
+            // Revert optimistic update if needed, but keeping simple for now
+        }
     };
 
-    const deleteProduct = (productId: string) => {
-        setInventory(prev => prev.filter(p => p.id !== productId));
+    const deleteProduct = async (productId: string) => {
+        try {
+            setInventory(prev => prev.filter(p => p.id !== productId));
+            await axios.delete(`${API_URL}/api/products/${productId}`);
+        } catch (error) {
+            console.error("Failed to delete product from backend:", error);
+        }
     };
 
     const removeFromCart = (productId: string) => {

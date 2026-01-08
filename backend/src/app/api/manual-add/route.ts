@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { name, price, barcode, description, imageUrl, category } = body;
+        const { name, price, barcode, description, imageUrl, category, stock } = body;
 
         // Validation
         if (!name) {
@@ -38,6 +38,7 @@ export async function POST(req: Request) {
                 description: description || null,
                 imageUrl: imageUrl || null,
                 category: category || 'Manual',
+                stock: stock !== undefined ? parseInt(stock) : 0,
                 isCustom: true,
                 source: 'manual', // Explicitly track source
             }

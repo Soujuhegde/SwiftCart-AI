@@ -1,4 +1,4 @@
-// File: C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\SwiftCart-AI\backend\src\app\api\scan\route.ts
+// File: C:\Programming\projects\Microsofthack\SwiftCart-AI\backend\src\app\api\scan\route.ts
 import * as entry from '../../../../../src/app/api/scan/route.js'
 import type { NextRequest } from 'next/server.js'
 

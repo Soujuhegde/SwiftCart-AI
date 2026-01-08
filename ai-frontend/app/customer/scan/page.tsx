@@ -199,8 +199,14 @@ export default function ScanPage() {
         };
     }, [showManualInput]); // Intentionally minimal dependencies
 
+    // Debug logging
+    React.useEffect(() => {
+        console.log("Cart State:", cart);
+        console.log("Items:", cart?.items);
+    }, [cart]);
+
     return (
-        <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 pb-20">
+        <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 pb-0">
             {/* Header */}
             <header className="flex items-center justify-between px-5 py-4 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 sticky top-0 z-20">
                 <Link href="/" className="flex items-center gap-3">
@@ -222,9 +228,9 @@ export default function ScanPage() {
                 </div>
             </header>
 
-            <main className="flex-1 overflow-y-auto p-5 space-y-6">
+            <main className="flex-1 overflow-y-auto p-5 space-y-6 pb-48">
                 {/* Scanner Viewfinder / Manual Input Area */}
-                <div className="relative w-full overflow-hidden shadow-lg group rounded-xl bg-black min-h-[300px] aspect-[4/3]">
+                <div className="relative w-full overflow-hidden shadow-lg group rounded-xl bg-black h-72 sm:h-80">
 
                     {!showManualInput ? (
                         <>
@@ -280,73 +286,67 @@ export default function ScanPage() {
                 </div>
 
                 {/* Cart Section */}
-                <div>
+                <div className="mb-6">
                     <div className="flex items-center justify-between mb-3">
                         <h2 className="text-lg font-bold text-slate-900 dark:text-white">Your Cart</h2>
                         <Badge variant="secondary" className="bg-blue-50 text-blue-700 hover:bg-blue-100">{itemCount} items</Badge>
                     </div>
 
-                    <div className="flex flex-col gap-3">
-                        <AnimatePresence>
-                            {(!cart || !cart.items || cart.items.length === 0) && (
-                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center py-10 opacity-50">
-                                    <ShoppingCart size={48} className="text-slate-300 mb-2" />
-                                    <p className="text-slate-500 text-sm">Cart is empty</p>
-                                </motion.div>
-                            )}
-                            {cart?.items?.map((item: any) => (
-                                <motion.div
-                                    key={item.id}
-                                    layout
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -10 }}
-                                    className="flex gap-3 p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm"
-                                >
-                                    <div className="w-20 h-20 rounded-lg bg-slate-100 overflow-hidden shrink-0">
-                                        {/* Fallback image or item.product.imageUrl */}
-                                        <img src={item.product?.imageUrl || '/placeholder.png'} alt={item.product?.name || 'Product'} className="w-full h-full object-cover" />
-                                    </div>
-                                    <div className="flex-1 flex flex-col justify-between">
-                                        <div className="flex justify-between items-start">
-                                            <div>
-                                                <h3 className="font-bold text-sm text-slate-900 dark:text-white line-clamp-1">{item.product?.name || 'Unknown Item'}</h3>
-                                                <div className="flex items-center gap-2 mt-0.5">
-                                                    <p className="text-xs text-slate-500 dark:text-slate-400">₹{Number(item.price).toFixed(2)} / unit</p>
-                                                    {item.product?.isCustom && (
-                                                        <Badge variant="outline" className="text-[9px] h-4 px-1 py-0 border-slate-200 text-slate-400">
-                                                            Manual
-                                                        </Badge>
-                                                    )}
-                                                </div>
+                    <div className="flex flex-col gap-3 max-h-[320px] overflow-y-auto pr-1 custom-scrollbar">
+                        {(!cart || !cart.items || cart.items.length === 0) && (
+                            <div className="flex flex-col items-center justify-center py-10 opacity-50">
+                                <ShoppingCart size={48} className="text-slate-300 mb-2" />
+                                <p className="text-slate-500 text-sm">Cart is empty</p>
+                            </div>
+                        )}
+                        {cart?.items?.map((item: any) => (
+                            <div
+                                key={item.id}
+                                className="flex gap-3 p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm"
+                            >
+                                <div className="w-20 h-20 rounded-lg bg-slate-100 overflow-hidden shrink-0">
+                                    {/* Fallback image or item.product.imageUrl */}
+                                    <img src={item.product?.imageUrl || '/placeholder.png'} alt={item.product?.name || 'Product'} className="w-full h-full object-cover" />
+                                </div>
+                                <div className="flex-1 flex flex-col justify-between">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <h3 className="font-bold text-sm text-slate-900 dark:text-white line-clamp-1">{item.product?.name || 'Unknown Item'}</h3>
+                                            <div className="flex items-center gap-2 mt-0.5">
+                                                <p className="text-xs text-slate-500 dark:text-slate-400">₹{Number(item.price).toFixed(2)} / unit</p>
+                                                {item.product?.isCustom && (
+                                                    <Badge variant="outline" className="text-[9px] h-4 px-1 py-0 border-slate-200 text-slate-400">
+                                                        Manual
+                                                    </Badge>
+                                                )}
                                             </div>
-                                            <button onClick={() => removeFromCart(item.id)} className="text-slate-300 hover:text-red-500 p-1">
-                                                <X size={16} />
+                                        </div>
+                                        <button onClick={() => removeFromCart(item.id)} className="text-slate-300 hover:text-red-500 p-1">
+                                            <X size={16} />
+                                        </button>
+                                    </div>
+                                    <div className="flex items-end justify-between mt-2">
+                                        <div className="flex items-center bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 h-8">
+                                            <button onClick={() => updateQuantity(item.id, -1)} className="px-2 h-full flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                                                <Minus size={14} />
+                                            </button>
+                                            <span className="w-8 text-center text-xs font-bold">{item.quantity}</span>
+                                            <button onClick={() => updateQuantity(item.id, 1)} className="px-2 h-full flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                                                <Plus size={14} />
                                             </button>
                                         </div>
-                                        <div className="flex items-end justify-between mt-2">
-                                            <div className="flex items-center bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 h-8">
-                                                <button onClick={() => updateQuantity(item.id, -1)} className="px-2 h-full flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                                                    <Minus size={14} />
-                                                </button>
-                                                <span className="w-8 text-center text-xs font-bold">{item.quantity}</span>
-                                                <button onClick={() => updateQuantity(item.id, 1)} className="px-2 h-full flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                                                    <Plus size={14} />
-                                                </button>
-                                            </div>
-                                            <div className="flex flex-col items-end">
-                                                <span className="text-[10px] text-slate-400 font-medium">
-                                                    ₹{Number(item.price).toFixed(2)} x {item.quantity}
-                                                </span>
-                                                <span className="font-bold text-base text-slate-900 dark:text-white">
-                                                    ₹{(Number(item.price) * item.quantity).toFixed(2)}
-                                                </span>
-                                            </div>
+                                        <div className="flex flex-col items-end">
+                                            <span className="text-[10px] text-slate-400 font-medium">
+                                                ₹{Number(item.price).toFixed(2)} x {item.quantity}
+                                            </span>
+                                            <span className="font-bold text-base text-slate-900 dark:text-white">
+                                                ₹{(Number(item.price) * item.quantity).toFixed(2)}
+                                            </span>
                                         </div>
                                     </div>
-                                </motion.div>
-                            ))}
-                        </AnimatePresence>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </main>
@@ -372,7 +372,7 @@ export default function ScanPage() {
                         Checkout
                     </Button>
                 </Link>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }

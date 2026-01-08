@@ -1,0 +1,4 @@
+Status: 200
+First Product Keys: id, barcode, name, description, price, stock, imageUrl, isCustom, source, category, createdAt, updatedAt
+First Product Stock: 0
+Full First Product: {"id":"cmk5q88qq0003ooujs3mrhdz1","barcode":"8901491101844","name":"Lay's Potato Chips","description":"Rippled Potato Chips","price":24,"stock":0,"imageUrl":"https://images.openfoodfacts.org/images/products/890/149/110/1844/front_en.32.400.jpg","isCustom":false,"source":"openfoodfacts","category":"Grocery","createdAt":"2026-01-08T17:34:02.306Z","updatedAt":"2026-01-08T17:34:02.306Z"}

@@ -22,6 +22,7 @@ model Product {
   name        String
   description String?
   price       Float
+  stock       Int        @default(0)
   imageUrl    String?
   isCustom    Boolean    @default(false) // True for manually added products
   source      String?    @default("manual") // "manual", "openfoodfacts", "upcitemdb", etc.

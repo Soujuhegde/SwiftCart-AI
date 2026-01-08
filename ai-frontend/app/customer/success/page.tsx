@@ -1,4 +1,3 @@
-
 "use client";
 
 import React from "react";
@@ -7,12 +6,12 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, ShoppingCart, Lock, Download, Mail } from "lucide-react";
 import { motion } from "framer-motion";
 
-import { useDemo } from "@/providers/DemoProvider";
+import { useCart } from "@/providers/CartContext";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 export default function OrderSuccessPage() {
-    const { lastOrder } = useDemo();
+    const { lastOrder } = useCart();
 
     const handleDownloadInvoice = () => {
         if (!lastOrder) return;
@@ -28,11 +27,11 @@ export default function OrderSuccessPage() {
         doc.text(`Transaction ID: #${Math.floor(Math.random() * 1000000)}`, 14, 35);
 
         // Items Table
-        const tableBody = lastOrder.items.map(item => [
-            item.name,
-            item.qty.toString(),
-            `$${item.price.toFixed(2)}`,
-            `$${(item.price * item.qty).toFixed(2)}`
+        const tableBody = lastOrder.items.map((item: any) => [
+            item.product?.name || item.name || 'Unknown',
+            item.quantity.toString(),
+            `₹${item.price.toFixed(2)}`,
+            `₹${(item.price * item.quantity).toFixed(2)}`
         ]);
 
         autoTable(doc, {
@@ -42,7 +41,7 @@ export default function OrderSuccessPage() {
             foot: [
                 ["", "", "Subtotal", `$${(lastOrder.total / 1.08).toFixed(2)}`],
                 ["", "", "Tax (8%)", `$${(lastOrder.total - (lastOrder.total / 1.08)).toFixed(2)}`],
-                ["", "", "Total", `$${lastOrder.total.toFixed(2)}`]
+                ["", "", "Total", `₹${lastOrder.total.toFixed(2)}`]
             ],
             theme: 'grid',
             headStyles: { fillColor: [37, 99, 235] }, // Blue-600
@@ -96,18 +95,18 @@ export default function OrderSuccessPage() {
                         >
                             <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-3">Purchased Items</h3>
                             <div className="bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 divide-y divide-slate-100 dark:divide-slate-700">
-                                {lastOrder.items.map((item, idx) => (
+                                {lastOrder.items.map((item: any, idx: number) => (
                                     <div key={idx} className="flex justify-between p-3 text-sm">
                                         <div className="flex gap-3">
-                                            <span className="font-medium text-slate-900 dark:text-white">{item.name}</span>
-                                            <span className="text-slate-500">x{item.qty}</span>
+                                            <span className="font-medium text-slate-900 dark:text-white">{item.product?.name || item.name || 'Item'}</span>
+                                            <span className="text-slate-500">x{item.quantity}</span>
                                         </div>
-                                        <span className="font-semibold text-slate-900 dark:text-white">${(item.price * item.qty).toFixed(2)}</span>
+                                        <span className="font-semibold text-slate-900 dark:text-white">₹{(item.price * item.quantity).toFixed(2)}</span>
                                     </div>
                                 ))}
                                 <div className="p-3 flex justify-between font-bold text-base text-slate-900 dark:text-white">
                                     <span>Total</span>
-                                    <span>${lastOrder.total.toFixed(2)}</span>
+                                    <span>₹{lastOrder.total.toFixed(2)}</span>
                                 </div>
                             </div>
                         </motion.div>
@@ -124,7 +123,7 @@ export default function OrderSuccessPage() {
                             <div className="bg-white p-2 rounded-lg shadow-sm">
                                 <div className="w-32 h-32 bg-[url('https://lh3.googleusercontent.com/aida-public/AB6AXuCaL4k0z7LJZ_6fAb5GARk3UuBHWuf6Jkhg1GB1lrwycMKxgyHQgOJKOC7wagHjsF08MMS9fC5hqJeX90nF5dUPrkseLnDnPCgyqVTkatsJvJnikJ2jUw8rgvR5be1grCsaWvWsHEmznlVdOeq5yibVs1ZwzI2ulDWszeod_qjxL5SrqUPS7hjd8DZE3_02am76uI3pAT0RXu9dvLjPu7JQ7uNh08Wj7MkFk3Dwtf8yU_J8-_WAzhTwNHOk0HtCg2AWgN-slcZpBV01')] bg-contain bg-center bg-no-repeat"></div>
                             </div>
-                            <p className="text-slate-400 text-[10px]">can at the door if prompted</p>
+                            <p className="text-slate-400 text-[10px]">scan at the door if prompted</p>
                         </div>
                     </motion.div>
                 </div>

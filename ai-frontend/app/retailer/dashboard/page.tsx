@@ -6,6 +6,7 @@ import { useDemo } from "@/providers/DemoProvider";
 import { MetricCard } from "@/components/MetricCard";
 import { Button } from "@/components/ui/button";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import { RetailAssistant } from "@/components/RetailAssistant";
 import { Download, FileText, ShoppingBag, CreditCard, DollarSign } from "lucide-react";
 
 // Mock data for the chart
@@ -26,9 +27,32 @@ const HOURLY_DATA = [
 
 export default function DashboardPage() {
     const { salesStats, inventory } = useDemo();
+    const [chartData, setChartData] = React.useState(HOURLY_DATA);
+
+    // Simulate Real-time Updates
+    React.useEffect(() => {
+        const interval = setInterval(() => {
+            setChartData(prevData => {
+                const newData = [...prevData];
+                // Randomly update the current hour's data or add a tiny increment to simulate live sales
+                const currentHourIndex = new Date().getHours() - 9; // Assuming 9 AM start
+                if (currentHourIndex >= 0 && currentHourIndex < newData.length) {
+                    newData[currentHourIndex] = {
+                        ...newData[currentHourIndex],
+                        sales: newData[currentHourIndex].sales + Math.floor(Math.random() * 3) // Add 0-2 sales occasionally
+                    };
+                }
+                return newData;
+            });
+        }, 5000); // Update every 5 seconds
+
+        return () => clearInterval(interval);
+    }, []);
 
     return (
-        <div className="p-8 space-y-6">
+        <div className="p-8 space-y-6 relative min-h-screen">
+            <RetailAssistant />
+
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
@@ -81,13 +105,19 @@ export default function DashboardPage() {
                 <div className="lg:col-span-2 bg-white dark:bg-slate-950 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
                     <div className="flex items-center justify-between mb-6">
                         <div>
-                            <h3 className="text-lg font-bold text-slate-900 dark:text-white">Peak Sales Time</h3>
-                            <p className="text-sm text-slate-500">Hourly transaction volume (9 AM - 9 PM)</p>
+                            <h3 className="text-lg font-bold text-slate-900 dark:text-white">Live Sales Activity</h3>
+                            <div className="flex items-center gap-2">
+                                <span className="relative flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                </span>
+                                <p className="text-sm text-slate-500">Updating in real-time</p>
+                            </div>
                         </div>
                     </div>
                     <div className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={HOURLY_DATA}>
+                            <BarChart data={chartData}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                                 <XAxis dataKey="hour" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} dy={10} />
                                 <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
@@ -95,7 +125,7 @@ export default function DashboardPage() {
                                     cursor={{ fill: 'transparent' }}
                                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                                 />
-                                <Bar dataKey="sales" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={40} />
+                                <Bar dataKey="sales" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={40} isAnimationActive={false} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>

@@ -14,6 +14,7 @@ import {
     LogOut,
     Store
 } from "lucide-react";
+import { useDemo } from "@/providers/DemoProvider";
 
 const NAV_ITEMS = [
     { label: "Dashboard", href: "/retailer/dashboard", icon: LayoutDashboard },
@@ -24,6 +25,7 @@ const NAV_ITEMS = [
 
 export function Sidebar() {
     const pathname = usePathname();
+    const { user } = useDemo();
 
     return (
         <aside className="w-64 h-full bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 flex flex-col flex-shrink-0 z-20">
@@ -59,13 +61,13 @@ export function Sidebar() {
             </nav>
 
             <div className="p-4 border-t border-slate-200 dark:border-slate-800">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-cover bg-center bg-[url('https://lh3.googleusercontent.com/aida-public/AB6AXuBgBMLqmC22OkyVbFgGvZBX2kCdC9shAiRVENnhIIXNY4mY9QeQcqSdaieW99oZxI-020rG5nZI0YK3HobjERx00T54J34SSwC6lZw7lyENrUrS-qq0-GhrHLj2ELcffS-N4iyyJwZopEGY6TX0QgbLAjuRUrDXBe3VytlaerSlyMjVtI4BWs5cP1VA5oXVs5pSOn-s8BZclceZJBddn19lOwNiGADiTQgjvHp5PekWGqJJLsO_yWCbv0rSgijAeRRDMXnb9bE2JN90')]"></div>
-                    <div className="flex flex-col">
-                        <p className="text-sm font-medium text-slate-900 dark:text-white">Alex Morgan</p>
-                        <p className="text-xs text-slate-500">Downtown Branch</p>
+                <Link href="/retailer/profile" className="flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-900 p-2 rounded-lg transition-colors mb-2">
+                    <div className="w-10 h-10 rounded-full bg-cover bg-center shrink-0" style={{ backgroundImage: `url('${user.avatar}')` }}></div>
+                    <div className="flex flex-col overflow-hidden">
+                        <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{user.name}</p>
+                        <p className="text-xs text-slate-500 truncate">{user.branch}</p>
                     </div>
-                </div>
+                </Link>
             </div>
         </aside>
     );

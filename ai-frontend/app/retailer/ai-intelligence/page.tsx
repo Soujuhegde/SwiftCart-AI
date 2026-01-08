@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell } from "recharts";
 import { Cpu, BrainCircuit, Sparkles, TrendingUp, AlertOctagon } from "lucide-react";
+import { toast } from "sonner";
 
 const ANOMALY_DATA = [
     { time: '10:00', score: 20 },
@@ -37,7 +38,10 @@ export default function AIIntelligencePage() {
                     <h2 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Intelligence Hub</h2>
                     <p className="text-slate-500 mt-1">AI-driven insights and anomaly detection.</p>
                 </div>
-                <Button className="bg-slate-900 hover:bg-slate-800 text-white gap-2">
+                <Button
+                    className="bg-slate-900 hover:bg-slate-800 text-white gap-2"
+                    onClick={() => toast.info("Model configuration coming soon")}
+                >
                     <Cpu size={18} />
                     Configure Models
                 </Button>
@@ -113,7 +117,7 @@ export default function AIIntelligencePage() {
                                     <p className="text-sm font-medium text-slate-900 dark:text-white">Restock 'Almond Milk'</p>
                                     <p className="text-xs text-slate-500">Predicted depletion in 2 hours.</p>
                                 </div>
-                                <Button size="sm" variant="outline">Apply</Button>
+                                <Button size="sm" variant="outline" onClick={() => toast.success("Recommendation applied!")}>Apply</Button>
                             </div>
                         ))}
                     </div>

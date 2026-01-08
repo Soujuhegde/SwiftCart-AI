@@ -5,6 +5,7 @@ import React from "react";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Calendar, Download } from "lucide-react";
+import { toast } from "sonner";
 
 // Mock projection data
 const FORECAST_DATA = [
@@ -28,11 +29,11 @@ export default function DemandForecastPage() {
                     <p className="text-slate-500 mt-1">Projected sales trends and inventory requirements.</p>
                 </div>
                 <div className="flex gap-2">
-                    <Button variant="outline" className="gap-2">
+                    <Button variant="outline" className="gap-2" onClick={() => toast.info("Date range filter coming soon")}>
                         <Calendar size={18} />
                         Next 7 Days
                     </Button>
-                    <Button variant="outline" className="gap-2">
+                    <Button variant="outline" className="gap-2" onClick={() => toast.warning("Forecast export not yet implemented")}>
                         <Download size={18} />
                         Export Data
                     </Button>

@@ -6,10 +6,44 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Search, Plus, Upload, Filter, MoreHorizontal, AlertTriangle, X, ScanBarcode } from "lucide-react";
+import { Search, Plus, Upload, Filter, MoreHorizontal, AlertTriangle, X, ScanBarcode, Package, Trash, Edit } from "lucide-react";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
+
+const ProductImage = ({ src, alt }: { src?: string; alt: string }) => {
+    const [hasError, setHasError] = React.useState(false);
+
+    React.useEffect(() => {
+        setHasError(false);
+    }, [src]);
+
+    if (hasError || !src) {
+        return (
+            <div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-400">
+                <Package size={20} />
+            </div>
+        );
+    }
+
+    return (
+        <img
+            src={src}
+            alt={alt}
+            className="w-full h-full object-cover"
+            onError={() => setHasError(true)}
+        />
+    );
+};
 
 export default function InventoryPage() {
-    const { inventory, addProduct } = useDemo();
+    const { inventory, addProduct, deleteProduct } = useDemo();
     const [searchTerm, setSearchTerm] = useState("");
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [newProduct, setNewProduct] = useState<Partial<Product>>({
@@ -111,13 +145,13 @@ export default function InventoryPage() {
                             <TableRow key={item.id}>
                                 <TableCell>
                                     <div className="w-12 h-12 rounded-lg bg-slate-100 overflow-hidden">
-                                        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                        <ProductImage src={item.image} alt={item.name} />
                                     </div>
                                 </TableCell>
                                 <TableCell className="font-medium text-slate-900 dark:text-white">{item.name}</TableCell>
                                 <TableCell className="text-slate-500">{item.sku}</TableCell>
                                 <TableCell>{item.category}</TableCell>
-                                <TableCell>${item.price.toFixed(2)}</TableCell>
+                                <TableCell>₹{item.price.toFixed(2)}</TableCell>
                                 <TableCell>
                                     <div className="flex items-center gap-2">
                                         <span>{item.stock}</span>
@@ -136,9 +170,31 @@ export default function InventoryPage() {
                                     )}
                                 </TableCell>
                                 <TableCell className="text-right">
-                                    <Button variant="ghost" size="icon">
-                                        <MoreHorizontal size={18} className="text-slate-400" />
-                                    </Button>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" size="icon">
+                                                <MoreHorizontal size={18} className="text-slate-400" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                            <DropdownMenuItem onClick={() => toast.info("Edit feature coming soon")}>
+                                                <Edit className="mr-2 h-4 w-4" />
+                                                Edit Product
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem
+                                                className="text-red-600 focus:text-red-600"
+                                                onClick={() => {
+                                                    deleteProduct(item.id);
+                                                    toast.success("Product deleted successfully");
+                                                }}
+                                            >
+                                                <Trash className="mr-2 h-4 w-4" />
+                                                Delete Product
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -190,7 +246,7 @@ export default function InventoryPage() {
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="text-sm font-medium mb-1.5 block text-slate-700 dark:text-slate-300">Price ($)</label>
+                                    <label className="text-sm font-medium mb-1.5 block text-slate-700 dark:text-slate-300">Price (₹)</label>
                                     <Input
                                         type="number"
                                         min="0"

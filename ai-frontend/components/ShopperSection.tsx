@@ -82,7 +82,7 @@ const ShopperSection = () => {
                             <div className="flex-1 p-5 space-y-4 bg-gray-50">
                                 <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
                                     <div className="text-xs text-gray-400 font-bold uppercase mb-1">Your Cart</div>
-                                    <div className="text-2xl font-bold text-gray-900">$24.50</div>
+                                    <div className="text-2xl font-bold text-gray-900">₹24.50</div>
                                 </div>
 
                                 <div className="space-y-3">

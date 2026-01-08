@@ -7,7 +7,8 @@ import { MetricCard } from "@/components/MetricCard";
 import { Button } from "@/components/ui/button";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { RetailAssistant } from "@/components/RetailAssistant";
-import { Download, FileText, ShoppingBag, CreditCard, DollarSign } from "lucide-react";
+import { Download, FileText, ShoppingBag, CreditCard, IndianRupee } from "lucide-react";
+import { toast } from "sonner";
 
 // Mock data for the chart
 const HOURLY_DATA = [
@@ -28,9 +29,11 @@ const HOURLY_DATA = [
 export default function DashboardPage() {
     const { salesStats, inventory } = useDemo();
     const [chartData, setChartData] = React.useState(HOURLY_DATA);
+    const [mounted, setMounted] = React.useState(false);
 
     // Simulate Real-time Updates
     React.useEffect(() => {
+        setMounted(true);
         const interval = setInterval(() => {
             setChartData(prevData => {
                 const newData = [...prevData];
@@ -49,6 +52,40 @@ export default function DashboardPage() {
         return () => clearInterval(interval);
     }, []);
 
+    const [isGenerating, setIsGenerating] = React.useState(false);
+
+    const handleExport = () => {
+        const csvContent = [
+            ["ID", "Name", "Stock", "Price", "Category"].join(","),
+            ...inventory.map(item => [item.id, item.name, item.stock, item.price, item.category].join(","))
+        ].join("\n");
+
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `store_analytics_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        toast.success("Sales report downloaded successfully");
+    };
+
+    const handleGenerateReport = () => {
+        setIsGenerating(true);
+        toast.info("Generating report...", {
+            description: " compiling sales data and inventory stats."
+        });
+
+        setTimeout(() => {
+            setIsGenerating(false);
+            toast.success("Report generated successfully", {
+                description: "The daily performance report has been sent to your email."
+            });
+        }, 2000);
+    };
+
     return (
         <div className="p-8 space-y-6 relative min-h-screen">
             <RetailAssistant />
@@ -57,28 +94,32 @@ export default function DashboardPage() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
                     <h2 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Today's Performance</h2>
-                    <p className="text-slate-500 mt-1">Real-time store analytics as of {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                    {mounted ? (
+                        <p className="text-slate-500 mt-1">Real-time store analytics as of {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                    ) : (
+                        <p className="text-slate-500 mt-1">Real-time store analytics...</p>
+                    )}
                 </div>
-                <div className="flex gap-3">
-                    <Button variant="outline" className="gap-2">
-                        <Download size={18} />
-                        Export
-                    </Button>
-                    <Button className="gap-2 bg-blue-600 hover:bg-blue-700">
-                        <FileText size={18} />
-                        Generate Report
-                    </Button>
-                </div>
+            </div>
+            <div className="flex gap-3">
+                <Button variant="outline" className="gap-2" onClick={handleExport}>
+                    <Download size={18} />
+                    Export
+                </Button>
+                <Button className="gap-2 bg-blue-600 hover:bg-blue-700" onClick={handleGenerateReport} disabled={isGenerating}>
+                    <FileText size={18} />
+                    {isGenerating ? "Generating..." : "Generate Report"}
+                </Button>
             </div>
 
             {/* Metrics Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <MetricCard
                     title="Total Revenue"
-                    value={`$${salesStats.revenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
+                    value={`₹${salesStats.revenue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`}
                     change="5.2%"
                     trend="up"
-                    icon={<DollarSign size={20} />}
+                    icon={<IndianRupee size={20} />}
                     iconBgInfo="green"
                 />
                 <MetricCard
@@ -91,7 +132,7 @@ export default function DashboardPage() {
                 />
                 <MetricCard
                     title="Avg. Basket Size"
-                    value={`$${(salesStats.revenue / Math.max(1, salesStats.transactions)).toFixed(2)}`}
+                    value={`₹${(salesStats.revenue / Math.max(1, salesStats.transactions)).toFixed(2)}`}
                     change="-0.5%"
                     trend="down"
                     icon={<ShoppingBag size={20} />}
@@ -168,6 +209,6 @@ export default function DashboardPage() {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

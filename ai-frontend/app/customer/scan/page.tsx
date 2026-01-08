@@ -10,7 +10,7 @@ import { ShoppingCart, Barcode, Keyboard, X, Plus, Minus, Store, HelpCircle, Cam
 import { motion, AnimatePresence } from "framer-motion";
 import { scanProduct } from "@/lib/api";
 import { toast } from "sonner";
-import { Html5Qrcode } from "html5-qrcode";
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 
 // Declare BarcodeDetector on global window for TypeScript if needed, 
 // though we'll try to use the native one or polyfill directly.
@@ -51,128 +51,155 @@ export default function ScanPage() {
 
     // Simulate scan function removed. Using real camera/manual input only.
 
-    const onScanSuccess = async (decodedText: string) => {
-        // Prevent duplicate scans in short window
-        if (!isScanning && !showManualInput) return; // Logic check - manual input overrides scanning lock
-        if (processingRef.current) return; // Double safety
+    // Memoize the success handler to keep it stable
+    const onScanSuccess = React.useCallback(async (rawText: string) => {
+        const decodedText = rawText.trim();
+        // Use ref for immediate blocking to prevent race conditions
+        if (processingRef.current) return;
 
         console.log(`Scan result: ${decodedText}`);
 
-        // DEBUG: Alert user what was scanned (User reported mismatch)
-        toast.info(`Scanned Barcode: ${decodedText}`);
-
+        // Lock processing
         processingRef.current = true;
+        // Optional: Update UI scan state if needed, but don't trigger re-mount
         setIsScanning(false);
 
-        // Optional: vibrate
+        // Vibrate if supported
         if (navigator.vibrate) navigator.vibrate(200);
 
         try {
-            toast.loading("Adding product...");
+            // Show feedback
+            toast.loading("Processing...", { id: "scan-toast" });
+
+            // Call API
             const data = await scanProduct(decodedText);
 
             if (data.success) {
-                toast.dismiss();
-                toast.success(`Added ${data.product.name}`);
+                toast.success(`Added ${data.product.name}`, { id: "scan-toast" });
+                // We use the function form of refreshCart if available, or just call it.
+                // Assuming refreshCart is stable from context
                 await refreshCart();
             } else {
-                toast.dismiss();
-                toast.error("Failed to add product");
+                toast.error("Failed to add product", { id: "scan-toast" });
             }
 
         } catch (error: any) {
-            // Check for expected "Product Not Found" (404)
             if (error.response && error.response.status === 404) {
-                console.log("Product not found in DB or External API.");
-                toast.dismiss();
-                toast.error("Product not found. Please add it manually.", {
+                console.log("Product not found");
+                toast.error("Product not found in database or global registry.", {
+                    id: "scan-toast",
                     action: {
-                        label: "Add Manual",
+                        label: "Try Manual",
                         onClick: () => setShowManualInput(true)
                     }
                 });
             } else {
                 console.error("Scan failed:", error);
-                toast.dismiss();
-                toast.error(error.response?.data?.error || "Scan failed. Check connection.");
+                toast.error(error.response?.data?.error || "Scan failed", { id: "scan-toast" });
             }
         } finally {
-            // Resume scanning after delay
+            // Delay before allowing next scan
             setTimeout(() => {
                 processingRef.current = false;
                 setIsScanning(true);
             }, 2000);
         }
-    };
+    }, [refreshCart, scanProduct]); // Dependencies for the callback
+
+    // Keep a ref to the latest callback to avoid restarting scanner when dependencies change
+    const onScanSuccessRef = React.useRef(onScanSuccess);
+    React.useEffect(() => {
+        onScanSuccessRef.current = onScanSuccess;
+    }, [onScanSuccess]);
 
     React.useEffect(() => {
+        // Html5Qrcode instance reference
         let html5QrCode: Html5Qrcode | null = null;
         let isMounted = true;
 
         const initScanner = async () => {
-            // Wait for manual input to close
+            // If manual input is showing, we don't need the camera running
             if (showManualInput) return;
-            setCameraStatus("Mounting scanner...");
+
+            // wait slightly for DOM to be ready
+            await new Promise(r => setTimeout(r, 100));
+            if (!isMounted) return;
+
+            const element = document.getElementById("reader");
+            if (!element) {
+                return;
+            }
 
             try {
-                // Determine if 'reader' exists
-                if (!document.getElementById("reader")) {
-                    setCameraStatus("Waiting for UI...");
-                    return;
-                }
+                html5QrCode = new Html5Qrcode("reader", {
+                    formatsToSupport: [
+                        Html5QrcodeSupportedFormats.EAN_13,
+                        Html5QrcodeSupportedFormats.EAN_8,
+                        Html5QrcodeSupportedFormats.UPC_A,
+                        Html5QrcodeSupportedFormats.UPC_E,
+                        Html5QrcodeSupportedFormats.QR_CODE
+                    ],
+                    verbose: false
+                });
 
-                html5QrCode = new Html5Qrcode("reader");
+                const config = {
+                    fps: 15,
+                    qrbox: { width: 250, height: 250 },
+                    aspectRatio: 1.333334,
+                    videoConstraints: {
+                        facingMode: "environment",
+                        focusMode: "continuous", // Crucial for proper scanning
+                        height: { min: 480, ideal: 720, max: 1080 }
+                    }
+                };
 
-                setCameraStatus("Requesting Camera...");
+                setCameraStatus("Starting Camera...");
+
                 await html5QrCode.start(
                     { facingMode: "environment" },
-                    {
-                        fps: 10,
-                        qrbox: { width: 250, height: 250 },
-                        aspectRatio: 1.0
-                    },
+                    config,
                     (decodedText) => {
-                        if (!isMounted) return;
-                        onScanSuccess(decodedText);
-                        html5QrCode?.pause(true);
-                        setCameraStatus("Scanned!");
+                        // Always call the latest version of the function
+                        if (isMounted && onScanSuccessRef.current) {
+                            onScanSuccessRef.current(decodedText);
+                        }
                     },
                     (errorMessage) => {
-                        // ignore frame errors
+                        // ignore errors
                     }
                 );
 
                 if (isMounted) {
                     setHasCameraPermission(true);
-                    setCameraStatus("Active - Point at barcode");
+                    setCameraStatus("Active");
                 }
 
             } catch (err: any) {
-                console.error("Error starting Html5Qrcode:", err);
+                console.error("Scanner Error:", err);
                 if (isMounted) {
                     setHasCameraPermission(false);
-                    setCameraStatus(`Error: ${err.message || err}`);
-                    setShowManualInput(true);
+                    setCameraStatus("Camera Error: " + (err?.message || "Check permissions"));
+                    // Fallback to manual if critical
+                    // setShowManualInput(true);
                 }
             }
         };
 
-        // Delay to allow layout paint
-        const timeoutId = setTimeout(() => {
-            initScanner();
-        }, 800);
+        // Start initialization
+        initScanner();
 
+        // Cleanup
         return () => {
             isMounted = false;
-            clearTimeout(timeoutId);
             if (html5QrCode) {
                 if (html5QrCode.isScanning) {
-                    html5QrCode.stop().catch(err => console.error("Stop failed", err));
+                    html5QrCode.stop().then(() => html5QrCode?.clear()).catch(console.error);
+                } else {
+                    html5QrCode.clear();
                 }
-                html5QrCode.clear();
             }
         };
-    }, [isScanning, showManualInput]);
+    }, [showManualInput]); // Intentionally minimal dependencies
 
     return (
         <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 pb-20">
@@ -304,12 +331,19 @@ export default function ScanPage() {
                                                 <button onClick={() => updateQuantity(item.id, -1)} className="px-2 h-full flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
                                                     <Minus size={14} />
                                                 </button>
-                                                <span className="w-6 text-center text-xs font-bold">{item.quantity}</span>
+                                                <span className="w-8 text-center text-xs font-bold">{item.quantity}</span>
                                                 <button onClick={() => updateQuantity(item.id, 1)} className="px-2 h-full flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
                                                     <Plus size={14} />
                                                 </button>
                                             </div>
-                                            <span className="font-bold text-base text-slate-900 dark:text-white">Total: ₹{(Number(item.price) * item.quantity).toFixed(2)}</span>
+                                            <div className="flex flex-col items-end">
+                                                <span className="text-[10px] text-slate-400 font-medium">
+                                                    ₹{Number(item.price).toFixed(2)} x {item.quantity}
+                                                </span>
+                                                <span className="font-bold text-base text-slate-900 dark:text-white">
+                                                    ₹{(Number(item.price) * item.quantity).toFixed(2)}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </motion.div>

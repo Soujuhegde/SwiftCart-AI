@@ -28,6 +28,7 @@ export type DemoContextType = {
     cartTotal: number;
     inventory: Product[];
     addProduct: (product: Product) => void;
+    deleteProduct: (productId: string) => void;
     salesStats: {
         revenue: number;
         transactions: number;
@@ -40,6 +41,13 @@ export type DemoContextType = {
         total: number;
         date: string;
     } | null;
+    user: {
+        name: string;
+        role: string;
+        branch: string;
+        avatar: string;
+    };
+    updateUser: (updates: Partial<{ name: string; role: string; branch: string; avatar: string }>) => void;
 };
 
 const DemoContext = createContext<DemoContextType | undefined>(undefined);
@@ -56,6 +64,12 @@ export const DemoProvider = ({ children }: { children: React.ReactNode }) => {
         itemsSold: 0
     });
     const [lastOrder, setLastOrder] = useState<DemoContextType['lastOrder']>(null);
+    const [user, setUser] = useState({
+        name: "Alex Morgan",
+        role: "Store Manager",
+        branch: "Downtown Branch",
+        avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuBgBMLqmC22OkyVbFgGvZBX2kCdC9shAiRVENnhIIXNY4mY9QeQcqSdaieW99oZxI-020rG5nZI0YK3HobjERx00T54J34SSwC6lZw7lyENrUrS-qq0-GhrHLj2ELcffS-N4iyyJwZopEGY6TX0QgbLAjuRUrDXBe3VytlaerSlyMjVtI4BWs5cP1VA5oXVs5pSOn-s8BZclceZJBddn19lOwNiGADiTQgjvHp5PekWGqJJLsO_yWCbv0rSgijAeRRDMXnb9bE2JN90"
+    });
 
     const cartTotal = cart.reduce((total, item) => total + Number(item.price) * item.qty, 0);
 
@@ -68,7 +82,10 @@ export const DemoProvider = ({ children }: { children: React.ReactNode }) => {
                 const data = res.data.products || [];
                 const products = data.map((p: any) => ({
                     ...p,
-                    price: Number(p.price)
+                    price: Number(p.price),
+                    image: p.imageUrl ||
+                        p.image ||
+                        `https://placehold.co/400x400?text=${encodeURIComponent(p.name)}` // Fallback to placeholder with name
                 }));
                 setInventory(products);
             } catch (error) {
@@ -126,7 +143,11 @@ export const DemoProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     const addProduct = (product: Product) => {
-        setInventory(prev => [...prev, product]);
+        setInventory(prev => [product, ...prev]);
+    };
+
+    const deleteProduct = (productId: string) => {
+        setInventory(prev => prev.filter(p => p.id !== productId));
     };
 
     const removeFromCart = (productId: string) => {
@@ -179,6 +200,10 @@ export const DemoProvider = ({ children }: { children: React.ReactNode }) => {
         // We might want to reset DB too via API, but for now just frontend reset
     };
 
+    const updateUser = (updates: Partial<typeof user>) => {
+        setUser(prev => ({ ...prev, ...updates }));
+    };
+
     return (
         <DemoContext.Provider value={{
             cart,
@@ -188,10 +213,13 @@ export const DemoProvider = ({ children }: { children: React.ReactNode }) => {
             cartTotal,
             inventory,
             addProduct,
+            deleteProduct,
             salesStats,
             processPayment,
             resetDemo,
-            lastOrder
+            lastOrder,
+            user,
+            updateUser
         }}>
             {children}
         </DemoContext.Provider>

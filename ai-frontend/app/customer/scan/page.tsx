@@ -137,20 +137,18 @@ export default function ScanPage() {
                         Html5QrcodeSupportedFormats.EAN_8,
                         Html5QrcodeSupportedFormats.UPC_A,
                         Html5QrcodeSupportedFormats.UPC_E,
+                        Html5QrcodeSupportedFormats.CODE_128,
+                        Html5QrcodeSupportedFormats.CODE_39,
                         Html5QrcodeSupportedFormats.QR_CODE
                     ],
                     verbose: false
                 });
 
+                // improved config - relaxed for compatibility
                 const config = {
                     fps: 15,
                     qrbox: { width: 250, height: 250 },
-                    aspectRatio: 1.333334,
-                    videoConstraints: {
-                        facingMode: "environment",
-                        focusMode: "continuous", // Crucial for proper scanning
-                        height: { min: 480, ideal: 720, max: 1080 }
-                    }
+                    // aspectRatio: 1.0, // Let scanner determine best ratio
                 };
 
                 setCameraStatus("Starting Camera...");

@@ -53,7 +53,7 @@ export type DemoContextType = {
 
 const DemoContext = createContext<DemoContextType | undefined>(undefined);
 
-const API_URL = ''; // Use relative paths for proxy support
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
 // const socket = io(API_URL);
 
 export const DemoProvider = ({ children }: { children: React.ReactNode }) => {
@@ -151,18 +151,35 @@ export const DemoProvider = ({ children }: { children: React.ReactNode }) => {
         // Optimistic update
         setInventory(prev => [product, ...prev]);
 
-        // Also call backend API to persist
+        // Call backend API to persist to inventory
         try {
-            await axios.post(`${API_URL}/api/products/manual`, {
+            const response = await axios.post(`${API_URL}/api/products`, {
                 name: product.name,
                 price: product.price,
                 stock: product.stock,
                 imageUrl: product.image,
-                userId: "retailer-1"
+                category: product.category,
+                barcode: product.sku // Use SKU as barcode
             });
+
+            // Update with the actual product from backend (has real ID and barcode)
+            if (response.data.product) {
+                setInventory(prev => prev.map(p =>
+                    p.id === product.id ? {
+                        ...p,
+                        id: response.data.product.id,
+                        sku: response.data.product.barcode,
+                        image: response.data.product.imageUrl || p.image
+                    } : p
+                ));
+            }
+
+            toast.success("Product added to inventory successfully");
         } catch (e) {
-            console.error("Failed to persist product manual add", e);
+            console.error("Failed to persist product to inventory", e);
             toast.error("Failed to save to database");
+            // Rollback optimistic update
+            setInventory(prev => prev.filter(p => p.id !== product.id));
         }
     };
 

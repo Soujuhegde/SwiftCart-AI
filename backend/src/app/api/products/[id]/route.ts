@@ -3,10 +3,11 @@ import { prisma } from '@/lib/prisma';
 
 export async function DELETE(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const id = params.id;
+        // Await params in Next.js 15+
+        const { id } = await params;
 
         // Check if product exists
         const product = await prisma.product.findUnique({
@@ -19,6 +20,11 @@ export async function DELETE(
                 { status: 404 }
             );
         }
+
+        // Delete associated cart items first to avoid foreign key constraint violation
+        await prisma.cartItem.deleteMany({
+            where: { productId: id }
+        });
 
         // Delete product
         await prisma.product.delete({

@@ -112,26 +112,85 @@ export default function ScanPage() {
         onScanSuccessRef.current = onScanSuccess;
     }, [onScanSuccess]);
 
+    const [logs, setLogs] = React.useState<string[]>([]);
+
+    const addLog = (msg: string) => {
+        setLogs(prev => [...prev.slice(-10), `${new Date().toLocaleTimeString()}: ${msg}`]);
+        console.log(msg);
+    };
+
+    // Use a ref to track the scanner instance across renders
+    const html5QrCodeRef = React.useRef<Html5Qrcode | null>(null);
+    // Lock to prevent race conditions between start and stop
+    const scannerLock = React.useRef(false);
+
     React.useEffect(() => {
-        // Html5Qrcode instance reference
-        let html5QrCode: Html5Qrcode | null = null;
         let isMounted = true;
+        let isInitializing = false;
+
+        const safeStop = async () => {
+            if (!html5QrCodeRef.current) return;
+            try {
+                // We always try to clear first as it's less prone to state errors than stop()
+                // But Html5Qrcode recommends stop() then clear()
+                if ((html5QrCodeRef.current as any).isScanning) {
+                    await html5QrCodeRef.current.stop();
+                }
+                html5QrCodeRef.current.clear();
+            } catch (e: any) {
+                // Ignore "not running" errors which are common
+                const msg = e?.message || e?.toString() || "";
+                if (!msg.includes("not running") && !msg.includes("not being used")) {
+                    console.warn("Scanner stop error:", e);
+                }
+            }
+        };
 
         const initScanner = async () => {
-            // If manual input is showing, we don't need the camera running
-            if (showManualInput) return;
-
-            // wait slightly for DOM to be ready
-            await new Promise(r => setTimeout(r, 100));
-            if (!isMounted) return;
-
-            const element = document.getElementById("reader");
-            if (!element) {
+            if (isInitializing) return;
+            if (scannerLock.current) {
+                // already doing something, wait? or just abort
                 return;
             }
 
+            scannerLock.current = true;
+            isInitializing = true;
+
+            if (typeof window !== "undefined" && !window.isSecureContext) {
+                setCameraStatus("Error: Not Secure Context (HTTPS required)");
+                scannerLock.current = false;
+                isInitializing = false;
+                return;
+            }
+
+            // If manual input is showing, we pause/stop camera if it was running
+            if (showManualInput) {
+                await safeStop();
+                scannerLock.current = false;
+                isInitializing = false;
+                return;
+            }
+
+            // wait slightly for DOM to be ready
+            await new Promise(r => setTimeout(r, 500));
+            if (!isMounted) {
+                scannerLock.current = false;
+                isInitializing = false;
+                return;
+            }
+
+            const element = document.getElementById("reader");
+            if (!element) {
+                scannerLock.current = false;
+                isInitializing = false;
+                return;
+            }
+
+            // Clean up previous instance if it exists
+            await safeStop();
+
             try {
-                html5QrCode = new Html5Qrcode("reader", {
+                const html5QrCode = new Html5Qrcode("reader", {
                     formatsToSupport: [
                         Html5QrcodeSupportedFormats.EAN_13,
                         Html5QrcodeSupportedFormats.EAN_8,
@@ -144,26 +203,40 @@ export default function ScanPage() {
                     verbose: false
                 });
 
-                // improved config - relaxed for compatibility
+                html5QrCodeRef.current = html5QrCode;
+
+                const devices = await Html5Qrcode.getCameras().catch(e => {
+                    throw e;
+                });
+
+                if (!devices || !devices.length) {
+                    throw new Error("No cameras found");
+                }
+
                 const config = {
                     fps: 10,
-                    // qrbox removed = full screen scanning
                     aspectRatio: 1.0,
+                    qrbox: { width: 250, height: 250 }
                 };
 
                 setCameraStatus("Starting Camera...");
 
+                // Try to find a back camera
+                const backCamera = devices.find(d => d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('environment'));
+                const cameraIdOrConfig = backCamera ? { deviceId: backCamera.id } : { facingMode: "environment" };
+
+                if (!isMounted) throw new Error("Unmounted during start");
+
                 await html5QrCode.start(
-                    { facingMode: "environment" },
+                    cameraIdOrConfig,
                     config,
                     (decodedText) => {
-                        // Always call the latest version of the function
                         if (isMounted && onScanSuccessRef.current) {
                             onScanSuccessRef.current(decodedText);
                         }
                     },
                     (errorMessage) => {
-                        // ignore errors
+                        // ignore errors to reduce noise
                     }
                 );
 
@@ -173,10 +246,17 @@ export default function ScanPage() {
                 }
             } catch (err: any) {
                 console.error("Scanner Error:", err);
-                if (isMounted) {
+                const msg = err?.message || "Unknown error";
+                // Don't show error if we just replaced it/interrupted
+                if (msg.includes("already under transition")) {
+                    // ignore, we will retry or it's fine
+                } else if (isMounted) {
                     setHasCameraPermission(false);
-                    setCameraStatus("Camera Error: " + (err?.message || "Check permissions"));
+                    setCameraStatus("Error: " + msg);
                 }
+            } finally {
+                scannerLock.current = false;
+                isInitializing = false;
             }
         };
 
@@ -186,20 +266,27 @@ export default function ScanPage() {
         // Cleanup
         return () => {
             isMounted = false;
-            if (html5QrCode) {
-                if (html5QrCode.isScanning) {
-                    html5QrCode.stop().then(() => html5QrCode?.clear()).catch(console.error);
-                } else {
-                    html5QrCode.clear();
-                }
+            // Cleanup on unmount
+            // We can't await here, so we fire and forget, but the lock should help
+            if (html5QrCodeRef.current) {
+                const instance = html5QrCodeRef.current;
+                // Mark as busy so new effects wait
+                scannerLock.current = true;
+                // Attempt stop
+                instance.stop().then(() => instance.clear()).catch(e => {
+                    // ignore common stop errors on unmount
+                }).finally(() => {
+                    scannerLock.current = false;
+                });
             }
         };
-    }, [showManualInput]); // Intentionally minimal dependencies
+    }, [showManualInput]);
 
     // Debug logging
     React.useEffect(() => {
-        console.log("Cart State:", cart);
-        console.log("Items:", cart?.items);
+        if (cart) {
+            // console.log("Cart State:", cart);
+        }
     }, [cart]);
 
     return (
@@ -245,17 +332,19 @@ export default function ScanPage() {
                                     <p className="text-white text-sm font-medium drop-shadow-md bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">
                                         {cameraStatus}
                                     </p>
-                                    {cameraStatus.includes("Error") && (
+
+                                    {cameraStatus.includes("Not Secure") && (
+                                        <div className="bg-red-500/80 text-white text-xs p-2 rounded max-w-[200px] text-center">
+                                            Browsers block camera on HTTP. Use localhost or enable HTTPS.
+                                        </div>
+                                    )}
+
+                                    {cameraStatus.includes("Error") && !cameraStatus.includes("Not Secure") && (
                                         <Button size="sm" variant="secondary" onClick={() => window.location.reload()}>
                                             Retry Camera
                                         </Button>
                                     )}
-                                </div>
-                                {/* Debug Log for User Feedback */}
-                                <div className="absolute bottom-4 left-0 right-0 text-center pointer-events-none">
-                                    <p className="text-[10px] text-white/70">
-                                        Mode: Native/Wasm | Last: {itemCount > 0 && cart?.items?.[0]?.product?.name ? "Cart Updated" : "Waiting..."}
-                                    </p>
+
                                 </div>
                             </div>
                         </>

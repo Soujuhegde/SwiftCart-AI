@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { ShoppingBag } from 'lucide-react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 
 const Navbar = () => {
@@ -15,9 +15,13 @@ const Navbar = () => {
             <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2 group">
-                    <div className="bg-azure-blue text-white p-1.5 rounded-lg">
-                        <ShoppingBag size={20} strokeWidth={2.5} />
-                    </div>
+                    <Image 
+                        src="/logo.png" 
+                        alt="SwiftCart AI Logo" 
+                        width={32} 
+                        height={32} 
+                        className="object-contain"
+                    />
                     <span className="font-bold text-xl tracking-tight text-gray-900 group-hover:text-azure-blue transition-colors">
                         SwiftCart AI
                     </span>

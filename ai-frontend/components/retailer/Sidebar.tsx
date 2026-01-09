@@ -11,9 +11,9 @@ import {
     Settings,
     BarChart3,
     ShoppingBag,
-    LogOut,
-    Store
+    LogOut
 } from "lucide-react";
+import Image from "next/image";
 import { useDemo } from "@/providers/DemoProvider";
 
 const NAV_ITEMS = [
@@ -30,9 +30,13 @@ export function Sidebar() {
     return (
         <aside className="w-64 h-full bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 flex flex-col flex-shrink-0 z-20">
             <Link href="/" className="p-6 flex items-center gap-3 hover:opacity-80 transition-opacity">
-                <div className="bg-blue-600/10 p-2 rounded-lg text-blue-600">
-                    <Store size={24} />
-                </div>
+                <Image
+                    src="/logo.png"
+                    alt="SwiftCart AI Logo"
+                    width={32}
+                    height={32}
+                    className="object-contain"
+                />
                 <div>
                     <h1 className="font-bold text-lg leading-tight tracking-tight text-slate-900 dark:text-white">SwiftCart AI</h1>
                     <p className="text-xs text-slate-500">Retail Intelligence</p>

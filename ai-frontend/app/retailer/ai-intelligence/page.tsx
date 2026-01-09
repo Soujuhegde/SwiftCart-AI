@@ -1,10 +1,10 @@
 
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell, Legend } from "recharts";
 import { Cpu, BrainCircuit, Sparkles, TrendingUp, AlertOctagon } from "lucide-react";
 import { toast } from "sonner";
 
@@ -26,6 +26,38 @@ const CATEGORY_DATA = [
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 export default function AIIntelligencePage() {
+    const [data, setData] = useState<{
+        anomalyData: any[];
+        categoryData: any[];
+        insights: any;
+    } | null>(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const res = await fetch('http://localhost:3002/api/ai/intelligence');
+                if (res.ok) {
+                    const json = await res.json();
+                    setData(json);
+                }
+            } catch (error) {
+                console.error("Failed to fetch intelligence data", error);
+            }
+        };
+
+        fetchData();
+        const interval = setInterval(fetchData, 5000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const anomalyData = data ? data.anomalyData : ANOMALY_DATA;
+    const categoryData = data ? data.categoryData : CATEGORY_DATA;
+    const insights = data ? data.insights : {
+        peakTraffic: '5:30 PM',
+        footfallIncrease: 45,
+        stockoutRisk: 'High'
+    };
+
     return (
         <div className="p-8 space-y-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -61,12 +93,12 @@ export default function AIIntelligencePage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm border border-white/10">
                                 <p className="text-indigo-100 text-sm mb-1">Predicted Peak Traffic</p>
-                                <p className="text-2xl font-bold">5:30 PM</p>
-                                <p className="text-xs text-indigo-200 mt-2">Expect +45% footfall</p>
+                                <p className="text-2xl font-bold">{insights.peakTraffic}</p>
+                                <p className="text-xs text-indigo-200 mt-2">Expect +{insights.footfallIncrease}% footfall</p>
                             </div>
                             <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm border border-white/10">
                                 <p className="text-indigo-100 text-sm mb-1">Stockout Risk</p>
-                                <p className="text-2xl font-bold text-orange-300">High</p>
+                                <p className={`text-2xl font-bold ${insights.stockoutRisk === 'High' ? 'text-orange-300' : 'text-green-300'}`}>{insights.stockoutRisk}</p>
                                 <p className="text-xs text-indigo-200 mt-2">Organic Bananas critically low</p>
                             </div>
                         </div>
@@ -75,13 +107,14 @@ export default function AIIntelligencePage() {
 
                 {/* Anomaly Detection Chart */}
                 <div className="bg-white dark:bg-slate-950 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center justify-between mb-1">
                         <h3 className="font-bold text-slate-900 dark:text-white">Anomaly Detection</h3>
                         <Badge variant="destructive" className="animate-pulse">1 Active</Badge>
                     </div>
+                    <p className="text-xs text-slate-500 mb-4">Detects unusual patterns in sales speed or transaction volume.</p>
                     <div className="flex-1 w-full min-h-[200px]">
                         <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={ANOMALY_DATA}>
+                            <AreaChart data={anomalyData}>
                                 <defs>
                                     <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
                                         <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8} />
@@ -124,12 +157,13 @@ export default function AIIntelligencePage() {
                 </div>
 
                 <div className="bg-white dark:bg-slate-950 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
-                    <h3 className="font-bold text-slate-900 dark:text-white mb-4">Category Performance</h3>
+                    <h3 className="font-bold text-slate-900 dark:text-white mb-1">Category Performance</h3>
+                    <p className="text-xs text-slate-500 mb-4">Real-time aggregated sales quantity by category.</p>
                     <div className="h-[200px] w-full flex items-center justify-center">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie
-                                    data={CATEGORY_DATA}
+                                    data={categoryData}
                                     cx="50%"
                                     cy="50%"
                                     innerRadius={60}
@@ -137,10 +171,15 @@ export default function AIIntelligencePage() {
                                     paddingAngle={5}
                                     dataKey="value"
                                 >
-                                    {CATEGORY_DATA.map((entry, index) => (
+                                    {categoryData.map((entry: any, index: number) => (
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
                                 </Pie>
+                                <Tooltip
+                                    formatter={(value: number) => [`${value} items`, 'Quantity']}
+                                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                />
+                                <Legend verticalAlign="bottom" height={36} iconType="circle" />
                             </PieChart>
                         </ResponsiveContainer>
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">

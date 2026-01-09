@@ -1,17 +1,64 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+    DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { CheckCircle, ShoppingCart, Lock, Download, Mail } from "lucide-react";
 import { motion } from "framer-motion";
 
 import { useCart } from "@/providers/CartContext";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { toast } from "sonner";
 
 export default function OrderSuccessPage() {
     const { lastOrder } = useCart();
+    const [isEmailOpen, setIsEmailOpen] = useState(false);
+    const [email, setEmail] = useState("");
+    const [isSending, setIsSending] = useState(false);
+
+    const handleSendEmail = async () => {
+        if (!email) {
+            toast.error("Please enter a valid email address");
+            return;
+        }
+
+        setIsSending(true);
+        try {
+            const res = await fetch('http://localhost:3002/api/email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email,
+                    orderDetails: lastOrder
+                })
+            });
+
+            if (res.ok) {
+                toast.success(`Receipt sent to ${email}`);
+                setIsEmailOpen(false);
+                setEmail("");
+            } else {
+                toast.error("Failed to send email");
+            }
+        } catch (error) {
+            console.error("Email send error", error);
+            toast.error("Failed to send email");
+        } finally {
+            setIsSending(false);
+        }
+    };
 
     const handleDownloadInvoice = () => {
         if (!lastOrder) return;
@@ -140,10 +187,42 @@ export default function OrderSuccessPage() {
                         <Download size={16} />
                         Invoice
                     </Button>
-                    <Button variant="outline" className="flex-1 gap-2 bg-slate-50 border-slate-200 hover:bg-slate-100 dark:bg-slate-800 dark:border-slate-700 dark:hover:bg-slate-700">
-                        <Mail size={16} />
-                        Email
-                    </Button>
+                    <Dialog open={isEmailOpen} onOpenChange={setIsEmailOpen}>
+                        <DialogTrigger asChild>
+                            <Button variant="outline" className="flex-1 gap-2 bg-slate-50 border-slate-200 hover:bg-slate-100 dark:bg-slate-800 dark:border-slate-700 dark:hover:bg-slate-700">
+                                <Mail size={16} />
+                                Email
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                                <DialogTitle>Email Receipt</DialogTitle>
+                                <DialogDescription>
+                                    Enter your email address to receive a digital copy of your bill.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="grid gap-4 py-4">
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="email" className="text-right">
+                                        Email
+                                    </Label>
+                                    <Input
+                                        id="email"
+                                        type="email"
+                                        placeholder="you@example.com"
+                                        className="col-span-3"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <DialogFooter>
+                                <Button type="submit" onClick={handleSendEmail} disabled={isSending}>
+                                    {isSending ? "Sending..." : "Send Receipt"}
+                                </Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
                 </div>
                 <div className="mt-4 flex items-center justify-center gap-2 opacity-50">
                     <Lock size={12} />

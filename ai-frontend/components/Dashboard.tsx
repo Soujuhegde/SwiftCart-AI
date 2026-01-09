@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { io } from 'socket.io-client';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Loader2 } from 'lucide-react';
 
@@ -10,32 +11,25 @@ interface DataPoint {
     value: number;
 }
 
+const API_URL = 'http://localhost:5001';
+const socket = io(API_URL);
+
 const Dashboard = () => {
     const [data, setData] = useState<DataPoint[]>([]);
     const [loading, setLoading] = useState(true);
     const [apiData, setApiData] = useState<any>(null);
 
     useEffect(() => {
-        // Mock API call simulation
         const fetchData = async () => {
             try {
-                // Simulating an API call with axios
-                // In a real scenario, this would be: const response = await axios.get('/api/data');
-                await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate delay
+                const res = await axios.get(`${API_URL}/api/dashboard/stats`);
 
-                const mockChartData = [
-                    { name: 'Jan', value: 400 },
-                    { name: 'Feb', value: 300 },
-                    { name: 'Mar', value: 600 },
-                    { name: 'Apr', value: 800 },
-                    { name: 'May', value: 500 },
-                    { name: 'Jun', value: 700 },
-                ];
+                // Update chart data if backend provides it, otherwise keep mock for chart or process it
+                if (res.data.chartData) {
+                    setData(res.data.chartData);
+                }
 
-                const mockApiRes = { message: "Data fetched successfully via Axios (Mock)", status: 200 };
-
-                setData(mockChartData);
-                setApiData(mockApiRes);
+                setApiData(res.data);
             } catch (error) {
                 console.error("Error fetching data:", error);
             } finally {
@@ -44,6 +38,14 @@ const Dashboard = () => {
         };
 
         fetchData();
+
+        socket.on('dashboard_update', () => {
+            fetchData();
+        });
+
+        return () => {
+            socket.off('dashboard_update');
+        };
     }, []);
 
     return (

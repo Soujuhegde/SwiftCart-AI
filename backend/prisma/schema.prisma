@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String?
+  carts     Cart[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Product {
+  id          String     @id @default(cuid())
+  barcode     String     @unique
+  name        String
+  description String?
+  price       Float
+  imageUrl    String?
+  stock       Int        @default(0)
+  isCustom    Boolean    @default(false) // True for manually added products
+  source      String?    @default("manual") // "manual", "openfoodfacts", "upcitemdb", etc.
+  category    String?
+  cartItems   CartItem[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Cart {
+  id          String     @id @default(cuid())
+  userId      String?    // Nullable for guest users if needed, or link to a default user
+  status      CartStatus @default(ACTIVE)
+  items       CartItem[]
+  payment     Payment?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  user        User?      @relation(fields: [userId], references: [id])
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  cartId    String
+  productId String
+  quantity  Int      @default(1)
+  price     Float    // Store price at confirmation time to avoid fluctuations
+  cart      Cart     @relation(fields: [cartId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cartId, productId]) // Prevent duplicate rows for same product in one cart
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  cartId        String        @unique
+  amount        Float
+  method        PaymentMethod
+  status        PaymentStatus @default(PENDING)
+  transactionId String?
+  cart          Cart          @relation(fields: [cartId], references: [id])
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+enum CartStatus {
+  ACTIVE
+  COMPLETED
+  ABANDONED
+}
+
+enum PaymentMethod {
+  CASH
+  UPI
+  CARD
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}

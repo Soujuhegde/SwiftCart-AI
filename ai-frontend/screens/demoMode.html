@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>SwiftCart AI - Demo Mode</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-[#111418] dark:text-white font-display antialiased">
+    <div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+        <!-- Top Navigation -->
+        <header
+            class="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#dbe0e6] dark:border-slate-700 bg-white dark:bg-[#1a2632] px-10 py-3 sticky top-0 z-50">
+            <div class="flex items-center gap-4 text-[#111418] dark:text-white">
+                <div class="size-8 flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined text-3xl">shopping_cart_checkout</span>
+                </div>
+                <h2 class="text-[#111418] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">SwiftCart
+                    AI</h2>
+            </div>
+            <div class="flex flex-1 justify-end gap-8 items-center">
+                <div
+                    class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800">
+                    <span class="relative flex h-2 w-2">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    <span class="text-xs font-semibold text-green-700 dark:text-green-400">System Operational</span>
+                </div>
+                <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 ring-2 ring-white dark:ring-[#101922]"
+                    data-alt="Profile picture of the current user"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC5r_HL0ep4oLyhSqVESP_3wzYWDbIqNRNxxoL2vffPNr16Hu6VvyeKELdYw5rni5dktpNcsRBVw0MNNOJMWZ_9lZ8si_dOGfX9xaXAWYq6T4uvzY14ffYo3cE4afVLZ2hymtJgfOP8AiHT2jd410NA5VJEuDDDlesIaJRz30bTxi6fwOrbE2-2DFk1j9HEZNTFPokJiCuXTixEjWsjEvaX9RDgYGOC62m-75DCag3pQfJLY_VjiFIdJtfUoWK4z_hQIzKB1TSKTC6t");'>
+                </div>
+            </div>
+        </header>
+        <div class="layout-container flex h-full grow flex-col">
+            <div class="px-5 md:px-10 lg:px-40 flex flex-1 justify-center py-5">
+                <div class="layout-content-container flex flex-col max-w-[1024px] flex-1 gap-6">
+                    <!-- Breadcrumbs -->
+                    <div class="flex flex-wrap gap-2 px-4">
+                        <a class="text-[#617589] dark:text-slate-400 text-sm font-medium leading-normal hover:text-primary transition-colors"
+                            href="#">Home</a>
+                        <span class="text-[#617589] dark:text-slate-500 text-sm font-medium leading-normal">/</span>
+                        <span class="text-[#111418] dark:text-slate-200 text-sm font-medium leading-normal">Demo
+                            Mode</span>
+                    </div>
+                    <!-- Page Heading & Reset -->
+                    <div class="flex flex-wrap justify-between items-end gap-4 px-4">
+                        <div class="flex flex-col gap-2">
+                            <h1
+                                class="text-[#111418] dark:text-white text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em]">
+                                System Demonstration Control</h1>
+                            <p
+                                class="text-[#617589] dark:text-slate-400 text-base font-normal leading-normal max-w-2xl">
+                                Manage the live simulation flow for SwiftCart AI features. Use this dashboard to
+                                demonstrate the end-to-end customer journey without physical hardware.</p>
+                        </div>
+                        <button
+                            class="flex items-center gap-2 cursor-pointer justify-center overflow-hidden rounded-lg h-10 px-4 bg-white dark:bg-[#1a2632] border border-[#dbe0e6] dark:border-slate-700 text-[#111418] dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm font-bold shadow-sm">
+                            <span class="material-symbols-outlined text-[20px]">restart_alt</span>
+                            <span class="truncate">Reset Demo Data</span>
+                        </button>
+                    </div>
+                    <!-- Master Toggle & Status -->
+                    <div class="px-4">
+                        <div class="flex flex-col gap-4">
+                            <!-- Toggle Panel -->
+                            <div
+                                class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-xl border border-[#dbe0e6] dark:border-slate-700 bg-white dark:bg-[#1a2632] p-5 shadow-sm">
+                                <div class="flex items-start gap-4">
+                                    <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-primary">
+                                        <span class="material-symbols-outlined">tune</span>
+                                    </div>
+                                    <div class="flex flex-col gap-1">
+                                        <p class="text-[#111418] dark:text-white text-lg font-bold leading-tight">Mock
+                                            Environment</p>
+                                        <p
+                                            class="text-[#617589] dark:text-slate-400 text-sm font-normal leading-normal">
+                                            Toggle to enable simulated data streams. Real payment gateways will be
+                                            bypassed.</p>
+                                    </div>
+                                </div>
+                                <label
+                                    class="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full border-none bg-[#f0f2f4] dark:bg-slate-700 p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary transition-colors">
+                                    <div class="h-full w-[27px] rounded-full bg-white shadow-sm transition-all"></div>
+                                    <input checked="" class="invisible absolute" type="checkbox" />
+                                </label>
+                            </div>
+                            <!-- Alert Banner -->
+                            <div
+                                class="flex items-center gap-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-4 rounded-lg">
+                                <span
+                                    class="material-symbols-outlined text-amber-600 dark:text-amber-500">warning</span>
+                                <p class="text-sm text-amber-800 dark:text-amber-200 font-medium">
+                                    You are currently in Demo Mode. All transactions generated here are simulated and
+                                    will not affect production inventory.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Simulation Flow -->
+                    <div class="px-4 pt-4">
+                        <h2
+                            class="text-[#111418] dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] pb-4">
+                            Simulation Flow</h2>
+                        <!-- Flow Cards -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 relative">
+                            <!-- Connecting Line (Desktop) -->
+                            <div
+                                class="hidden lg:block absolute top-[2.5rem] left-0 w-full h-0.5 bg-slate-200 dark:bg-slate-700 -z-10 transform translate-y-1/2">
+                            </div>
+                            <!-- Step 1 -->
+                            <div
+                                class="group flex flex-col gap-4 rounded-xl border border-[#dbe0e6] dark:border-slate-700 bg-white dark:bg-[#1a2632] p-5 shadow-sm hover:shadow-md transition-shadow">
+                                <div class="flex items-center justify-between">
+                                    <div
+                                        class="flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 border-4 border-white dark:border-[#1a2632] z-10 font-bold text-slate-500">
+                                        1</div>
+                                    <span class="material-symbols-outlined text-slate-400">barcode_reader</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-[#111418] dark:text-white">Customer Scans</h3>
+                                    <p class="text-xs text-[#617589] dark:text-slate-400 mt-1">Inject mock product SKU
+                                        #8821 into the active cart session.</p>
+                                </div>
+                                <button
+                                    class="mt-auto w-full py-2 px-4 bg-primary hover:bg-blue-600 text-white text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition-colors">
+                                    <span class="material-symbols-outlined text-[18px]">play_arrow</span>
+                                    Simulate Scan
+                                </button>
+                            </div>
+                            <!-- Step 2 -->
+                            <div
+                                class="group flex flex-col gap-4 rounded-xl border border-[#dbe0e6] dark:border-slate-700 bg-white dark:bg-[#1a2632] p-5 shadow-sm hover:shadow-md transition-shadow">
+                                <div class="flex items-center justify-between">
+                                    <div
+                                        class="flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 border-4 border-white dark:border-[#1a2632] z-10 font-bold text-slate-500">
+                                        2</div>
+                                    <span class="material-symbols-outlined text-slate-400">credit_card</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-[#111418] dark:text-white">Customer Pays</h3>
+                                    <p class="text-xs text-[#617589] dark:text-slate-400 mt-1">Force a successful
+                                        transaction response from payment gateway.</p>
+                                </div>
+                                <button
+                                    class="mt-auto w-full py-2 px-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 text-[#111418] dark:text-white text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition-colors">
+                                    <span class="material-symbols-outlined text-[18px]">payments</span>
+                                    Trigger Pay
+                                </button>
+                            </div>
+                            <!-- Step 3 -->
+                            <div
+                                class="group flex flex-col gap-4 rounded-xl border border-[#dbe0e6] dark:border-slate-700 bg-white dark:bg-[#1a2632] p-5 shadow-sm hover:shadow-md transition-shadow">
+                                <div class="flex items-center justify-between">
+                                    <div
+                                        class="flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 border-4 border-white dark:border-[#1a2632] z-10 font-bold text-slate-500">
+                                        3</div>
+                                    <span class="material-symbols-outlined text-slate-400">monitoring</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-[#111418] dark:text-white">Dashboard Updates
+                                    </h3>
+                                    <p class="text-xs text-[#617589] dark:text-slate-400 mt-1">Fire webhook to update
+                                        retailer inventory and sales charts.</p>
+                                </div>
+                                <button
+                                    class="mt-auto w-full py-2 px-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 text-[#111418] dark:text-white text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition-colors">
+                                    <span class="material-symbols-outlined text-[18px]">sync</span>
+                                    Sync Data
+                                </button>
+                            </div>
+                            <!-- Step 4 -->
+                            <div
+                                class="group flex flex-col gap-4 rounded-xl border border-[#dbe0e6] dark:border-slate-700 bg-white dark:bg-[#1a2632] p-5 shadow-sm hover:shadow-md transition-shadow">
+                                <div class="flex items-center justify-between">
+                                    <div
+                                        class="flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 border-4 border-white dark:border-[#1a2632] z-10 font-bold text-slate-500">
+                                        4</div>
+                                    <span class="material-symbols-outlined text-slate-400">auto_awesome</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-[#111418] dark:text-white">AI Insight</h3>
+                                    <p class="text-xs text-[#617589] dark:text-slate-400 mt-1">Generate a sample anomaly
+                                        detection alert for this purchase.</p>
+                                </div>
+                                <button
+                                    class="mt-auto w-full py-2 px-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 text-[#111418] dark:text-white text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition-colors">
+                                    <span class="material-symbols-outlined text-[18px]">psychology</span>
+                                    Gen Insight
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Console Log -->
+                    <div class="px-4 pb-8">
+                        <div
+                            class="rounded-xl border border-[#dbe0e6] dark:border-slate-700 bg-white dark:bg-[#1a2632] overflow-hidden shadow-sm">
+                            <div
+                                class="bg-slate-50 dark:bg-[#15202b] px-4 py-3 border-b border-[#dbe0e6] dark:border-slate-700 flex justify-between items-center">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-sm text-slate-500">terminal</span>
+                                    <h3 class="font-bold text-sm text-[#111418] dark:text-white">Live Event Console</h3>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="flex h-2 w-2 rounded-full bg-green-500"></span>
+                                    <span class="text-xs font-mono text-slate-500">Listening for events...</span>
+                                </div>
+                            </div>
+                            <div
+                                class="p-4 bg-[#101922] font-mono text-xs md:text-sm h-56 overflow-y-auto custom-scrollbar">
+                                <div class="flex flex-col gap-2">
+                                    <div class="flex gap-3 text-slate-400">
+                                        <span class="opacity-50">[10:42:01]</span>
+                                        <span class="text-blue-400">INFO</span>
+                                        <span>Demo environment initialized successfully.</span>
+                                    </div>
+                                    <div class="flex gap-3 text-slate-400">
+                                        <span class="opacity-50">[10:42:05]</span>
+                                        <span class="text-blue-400">INFO</span>
+                                        <span>Waiting for client connection...</span>
+                                    </div>
+                                    <div class="flex gap-3 text-slate-400">
+                                        <span class="opacity-50">[10:44:12]</span>
+                                        <span class="text-green-400">SUCCESS</span>
+                                        <span>Client connected ID: #DEMO-8821</span>
+                                    </div>
+                                    <div
+                                        class="flex gap-3 text-slate-400 border-l-2 border-primary pl-2 bg-white/5 py-1">
+                                        <span class="opacity-50">[10:45:30]</span>
+                                        <span class="text-primary font-bold">ACTION</span>
+                                        <span class="text-white">User scanned item: Premium Cotton T-Shirt (SKU:
+                                            TS-990)</span>
+                                    </div>
+                                    <div class="flex gap-3 text-slate-400">
+                                        <span class="opacity-50">[10:45:31]</span>
+                                        <span class="text-blue-400">API</span>
+                                        <span>POST /api/v1/cart/add { sku: "TS-990", qty: 1 }</span>
+                                    </div>
+                                    <div class="flex gap-3 text-slate-400">
+                                        <span class="opacity-50">[10:45:31]</span>
+                                        <span class="text-green-400">200 OK</span>
+                                        <span>Cart updated. Total: $24.99</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

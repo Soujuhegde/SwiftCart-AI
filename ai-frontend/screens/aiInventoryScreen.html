@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>SwiftCart AI - Retail Intelligence</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Noto+Sans:wght@400;500;700&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Material Symbols -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                        "surface-dark": "#1a2632",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-[#111418] dark:text-white transition-colors duration-200">
+    <div class="relative flex min-h-screen flex-col overflow-x-hidden">
+        <!-- Top Navigation -->
+        <header
+            class="sticky top-0 z-50 flex items-center justify-between border-b border-[#f0f2f4] dark:border-[#2a3b4d] bg-white dark:bg-surface-dark px-6 py-3 shadow-sm">
+            <div class="flex items-center gap-8">
+                <div class="flex items-center gap-3 text-[#111418] dark:text-white">
+                    <div class="flex items-center justify-center size-10 rounded-lg bg-primary/10 text-primary">
+                        <span class="material-symbols-outlined text-3xl">storefront</span>
+                    </div>
+                    <h2 class="text-xl font-bold leading-tight tracking-[-0.015em]">SwiftCart AI</h2>
+                </div>
+                <!-- Search Bar -->
+                <label class="hidden md:flex flex-col min-w-64 max-w-96">
+                    <div
+                        class="flex w-full items-center rounded-lg bg-[#f0f2f4] dark:bg-background-dark h-10 px-3 focus-within:ring-2 focus-within:ring-primary/50 transition-all">
+                        <span class="material-symbols-outlined text-[#617589] dark:text-gray-400">search</span>
+                        <input
+                            class="w-full bg-transparent border-none text-sm text-[#111418] dark:text-white placeholder-[#617589] focus:ring-0 ml-2"
+                            placeholder="Search insights, inventory..." />
+                    </div>
+                </label>
+            </div>
+            <!-- Nav Links -->
+            <div class="hidden lg:flex items-center gap-8">
+                <a class="text-[#111418] dark:text-gray-200 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors"
+                    href="#">Dashboard</a>
+                <a class="text-[#617589] dark:text-gray-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors"
+                    href="#">Inventory</a>
+                <a class="text-[#617589] dark:text-gray-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors"
+                    href="#">Sales</a>
+                <a class="text-[#617589] dark:text-gray-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors"
+                    href="#">Staff</a>
+                <a class="text-[#617589] dark:text-gray-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors"
+                    href="#">Settings</a>
+            </div>
+            <!-- Right Actions -->
+            <div class="flex items-center gap-4">
+                <div class="flex gap-2">
+                    <button
+                        class="flex size-10 items-center justify-center rounded-lg hover:bg-[#f0f2f4] dark:hover:bg-background-dark text-[#111418] dark:text-white transition-colors">
+                        <span class="material-symbols-outlined">notifications</span>
+                    </button>
+                    <button
+                        class="flex size-10 items-center justify-center rounded-lg hover:bg-[#f0f2f4] dark:hover:bg-background-dark text-[#111418] dark:text-white transition-colors">
+                        <span class="material-symbols-outlined">help</span>
+                    </button>
+                </div>
+                <div class="size-10 rounded-full bg-cover bg-center border-2 border-white dark:border-surface-dark shadow-sm"
+                    data-alt="User profile avatar of a smiling retail manager"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuASPx-8hyfNqR-oA_N-wpT9EetxYvf7dxrGjhwYXD-R2MxsEfuL1_1MnlPW46W-atW90uGsS7FH7t0fsoAszI-Qzst8NqQCgdHBkf6mTaMQAjv0RPNddnkXVm-TlG-uWU6DZ-FKBLz14QcHfxEdYT10bCNj73ZAaHdQufKjT6N1wOjjt9j5V8meLhsDzK1gFJEgn7Z0HK6kYRzJMHJ_qJ6ny1GnvJqEZ13mbXoffB-E5d7msuKWWYlxsKVnrUGbSCsPDNr9Seohv76g");'>
+                </div>
+            </div>
+        </header>
+        <!-- Main Content -->
+        <main class="flex-1 px-6 py-8 md:px-12 lg:px-24 max-w-[1440px] mx-auto w-full">
+            <!-- Page Heading -->
+            <div class="mb-8 flex flex-wrap justify-between items-end gap-4">
+                <div>
+                    <h1
+                        class="text-[#111418] dark:text-white text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em] mb-2">
+                        Retail Intelligence Dashboard</h1>
+                    <p class="text-[#617589] dark:text-gray-400 text-base md:text-lg">Real-time analytics and AI-driven
+                        insights for your Seattle store.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button
+                        class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-surface-dark border border-[#dbe0e6] dark:border-gray-700 rounded-lg text-sm font-semibold text-[#111418] dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shadow-sm">
+                        <span class="material-symbols-outlined text-lg">calendar_today</span>
+                        Today
+                    </button>
+                    <button
+                        class="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors shadow-md">
+                        <span class="material-symbols-outlined text-lg">add</span>
+                        New Report
+                    </button>
+                </div>
+            </div>
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+                <!-- Stat 1 -->
+                <div
+                    class="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-surface-dark border border-[#dbe0e6] dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <p class="text-[#617589] dark:text-gray-400 text-sm font-medium">Daily Revenue</p>
+                        <span
+                            class="material-symbols-outlined text-[#137fec] bg-blue-50 dark:bg-blue-900/20 p-1 rounded">payments</span>
+                    </div>
+                    <p class="text-[#111418] dark:text-white text-2xl font-bold leading-tight">$4,250</p>
+                    <div class="flex items-center gap-1 text-[#078838] text-sm font-medium">
+                        <span class="material-symbols-outlined text-sm">trending_up</span>
+                        <span>+12% vs yesterday</span>
+                    </div>
+                </div>
+                <!-- Stat 2 -->
+                <div
+                    class="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-surface-dark border border-[#dbe0e6] dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <p class="text-[#617589] dark:text-gray-400 text-sm font-medium">Transactions</p>
+                        <span
+                            class="material-symbols-outlined text-[#137fec] bg-blue-50 dark:bg-blue-900/20 p-1 rounded">receipt_long</span>
+                    </div>
+                    <p class="text-[#111418] dark:text-white text-2xl font-bold leading-tight">142</p>
+                    <div class="flex items-center gap-1 text-[#078838] text-sm font-medium">
+                        <span class="material-symbols-outlined text-sm">trending_up</span>
+                        <span>+5% vs avg</span>
+                    </div>
+                </div>
+                <!-- Stat 3 -->
+                <div
+                    class="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-surface-dark border border-[#dbe0e6] dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <p class="text-[#617589] dark:text-gray-400 text-sm font-medium">Low Stock Items</p>
+                        <span
+                            class="material-symbols-outlined text-[#e73908] bg-red-50 dark:bg-red-900/20 p-1 rounded">inventory_2</span>
+                    </div>
+                    <p class="text-[#111418] dark:text-white text-2xl font-bold leading-tight">8</p>
+                    <div class="flex items-center gap-1 text-[#e73908] text-sm font-medium">
+                        <span class="material-symbols-outlined text-sm">priority_high</span>
+                        <span>Action needed</span>
+                    </div>
+                </div>
+                <!-- Stat 4 -->
+                <div
+                    class="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-surface-dark border border-[#dbe0e6] dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <p class="text-[#617589] dark:text-gray-400 text-sm font-medium">Foot Traffic</p>
+                        <span
+                            class="material-symbols-outlined text-[#137fec] bg-blue-50 dark:bg-blue-900/20 p-1 rounded">groups</span>
+                    </div>
+                    <p class="text-[#111418] dark:text-white text-2xl font-bold leading-tight">Medium</p>
+                    <div class="flex items-center gap-1 text-[#617589] dark:text-gray-500 text-sm font-medium">
+                        <span class="material-symbols-outlined text-sm">remove</span>
+                        <span>Stable</span>
+                    </div>
+                </div>
+            </div>
+            <!-- AI Insight Section -->
+            <div class="mb-6 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-2xl">auto_awesome</span>
+                <h2 class="text-[#111418] dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]">Azure
+                    OpenAI Insight</h2>
+            </div>
+            <!-- AI Card -->
+            <div
+                class="w-full @container rounded-xl bg-white dark:bg-surface-dark border border-[#dbe0e6] dark:border-gray-700 shadow-[0_2px_8px_rgba(0,0,0,0.05)] overflow-hidden">
+                <div class="flex flex-col md:flex-row">
+                    <!-- Card Image Area -->
+                    <div class="w-full md:w-1/3 min-h-[240px] md:min-h-full bg-cover bg-center relative group"
+                        data-alt="Abstract blue digital network visualization representing artificial intelligence data flow"
+                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAWAzxHohkxA-w8lXrOJYI62jO0mfb23xh30lzWua7v26COrF6SD2-l0sNnsHoTYuJ5xV_Jn1yjiM3RfwYS1VrO0UOdYgjqJ4Ts9svdWgy9Du51XcOsn91GS4YOfu5MUG2bZqh9mojOwjvQKUpGvXkW-iKiE3MuNkPYneQM6nrl1Nr7dws-CjS5HOKMSUqxnyggWRPLECXaLyqyV3ss3qEA5IYMiApF_keYn7TEndmGEGgbEtg-r-EYLGdEMtVBhQocfMUKl-CxP2BI");'>
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6 md:bg-gradient-to-r md:from-transparent md:to-transparent">
+                            <div
+                                class="bg-white/90 dark:bg-surface-dark/90 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-2 shadow-sm">
+                                <span class="material-symbols-outlined text-primary text-sm">bolt</span>
+                                <span
+                                    class="text-xs font-bold text-[#111418] dark:text-white uppercase tracking-wide">AI
+                                    Powered</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card Content Area -->
+                    <div class="flex-1 p-6 md:p-8 flex flex-col justify-center">
+                        <div class="flex items-start justify-between mb-4">
+                            <div
+                                class="bg-red-50 dark:bg-red-900/30 text-[#e73908] dark:text-red-400 text-xs font-bold px-2 py-1 rounded border border-red-100 dark:border-red-900/50 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm">warning</span>
+                                CRITICAL ALERT
+                            </div>
+                            <span class="text-[#617589] dark:text-gray-400 text-xs">Generated 2m ago</span>
+                        </div>
+                        <h3 class="text-[#111418] dark:text-white text-2xl font-bold leading-tight mb-2">AI Action
+                            Recommendations</h3>
+                        <p class="text-[#617589] dark:text-gray-300 text-base mb-6">
+                            Based on real-time sales velocity and current inventory levels from the last 24 hours.
+                        </p>
+                        <!-- Insight Box -->
+                        <div class="bg-[#f0f2f4] dark:bg-background-dark rounded-lg p-5 border-l-4 border-primary mb-6">
+                            <div class="flex gap-3">
+                                <span class="material-symbols-outlined text-primary mt-0.5">smart_toy</span>
+                                <div>
+                                    <p class="text-[#111418] dark:text-white text-base font-medium leading-relaxed">
+                                        "Whole Milk (1 Gallon) stock is projected to run out in <span
+                                            class="font-bold text-red-600 dark:text-red-400">2 days</span> based on
+                                        current purchase trends."
+                                    </p>
+                                    <p class="text-[#111418] dark:text-white text-base mt-2 leading-relaxed">
+                                        <span class="font-bold">Recommended Action:</span> Restock by tomorrow morning
+                                        (8:00 AM) to maintain availability for the weekend rush.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Actions -->
+                        <div class="flex flex-wrap items-center gap-4">
+                            <button
+                                class="flex items-center justify-center gap-2 h-12 px-6 bg-primary hover:bg-primary/90 text-white text-sm font-bold rounded-lg transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
+                                <span class="material-symbols-outlined">auto_awesome</span>
+                                Generate New AI Insight
+                            </button>
+                            <button
+                                class="flex items-center justify-center gap-2 h-12 px-6 bg-white dark:bg-surface-dark hover:bg-gray-50 dark:hover:bg-gray-800 text-[#111418] dark:text-white border border-[#dbe0e6] dark:border-gray-600 text-sm font-bold rounded-lg transition-all">
+                                <span class="material-symbols-outlined">inventory</span>
+                                View Inventory Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Secondary Content Grid (Optional but adds context) -->
+            <div class="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Recent Activity -->
+                <div class="bg-white dark:bg-surface-dark rounded-xl border border-[#dbe0e6] dark:border-gray-700 p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-[#111418] dark:text-white text-lg font-bold">Recent Store Activity</h3>
+                        <a class="text-primary text-sm font-medium hover:underline" href="#">View All</a>
+                    </div>
+                    <div class="flex flex-col gap-4">
+                        <div
+                            class="flex items-center gap-4 border-b border-[#f0f2f4] dark:border-gray-700 pb-4 last:border-0 last:pb-0">
+                            <div
+                                class="size-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-700 dark:text-green-400">
+                                <span class="material-symbols-outlined">shopping_cart</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-[#111418] dark:text-white">Large Transaction Detected
+                                </p>
+                                <p class="text-xs text-[#617589] dark:text-gray-400">Order #8492 - $245.00</p>
+                            </div>
+                            <span class="text-xs text-[#617589] dark:text-gray-400">10m ago</span>
+                        </div>
+                        <div
+                            class="flex items-center gap-4 border-b border-[#f0f2f4] dark:border-gray-700 pb-4 last:border-0 last:pb-0">
+                            <div
+                                class="size-10 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-700 dark:text-orange-400">
+                                <span class="material-symbols-outlined">person_add</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-[#111418] dark:text-white">Staff Check-in</p>
+                                <p class="text-xs text-[#617589] dark:text-gray-400">Sarah M. started shift</p>
+                            </div>
+                            <span class="text-xs text-[#617589] dark:text-gray-400">1h ago</span>
+                        </div>
+                        <div
+                            class="flex items-center gap-4 border-b border-[#f0f2f4] dark:border-gray-700 pb-4 last:border-0 last:pb-0">
+                            <div
+                                class="size-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-700 dark:text-blue-400">
+                                <span class="material-symbols-outlined">local_shipping</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-[#111418] dark:text-white">Delivery Received</p>
+                                <p class="text-xs text-[#617589] dark:text-gray-400">Beverages supplier</p>
+                            </div>
+                            <span class="text-xs text-[#617589] dark:text-gray-400">3h ago</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Mini Map / Context -->
+                <div
+                    class="bg-white dark:bg-surface-dark rounded-xl border border-[#dbe0e6] dark:border-gray-700 p-6 flex flex-col">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-[#111418] dark:text-white text-lg font-bold">Store Heatmap</h3>
+                        <div class="flex items-center gap-2">
+                            <span class="flex size-2 rounded-full bg-red-500 animate-pulse"></span>
+                            <span class="text-xs font-medium text-[#617589] dark:text-gray-400">Live</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 w-full bg-[#f0f2f4] dark:bg-gray-800 rounded-lg bg-cover bg-center min-h-[200px] relative overflow-hidden"
+                        data-alt="Store floor plan heatmap showing customer density in red and yellow zones"
+                        data-location="Seattle, WA"
+                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCmQQG9wQFpqbPtvEn2d9lE3h8RbfPz3Auqn4xdljFpBhDkLacHHM-TwEmHUOShV5n7nsVQfLmDSFtU2TLE8lhNnpxzXgxH8q_f76TzPTeRvG0xD6ekukhXRCmPQJ4caq_C4S2GmXTPms0XDhRf3YCBHQ1Gr4Pu5vmesEVmPMZhTnQYFAPYtUVHjGVMuBBxwgTnWCSumjW4bZXU3TfQF4ljM3twtCFAaalqyX2UcfXi386SV7bE1p_Pju6pPshcJxMziTKsHnPXwVme");'>
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+                            <button
+                                class="bg-white/20 backdrop-blur-md border border-white/30 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-white/30 transition-all">
+                                View Detailed Map
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

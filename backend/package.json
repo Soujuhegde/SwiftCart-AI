@@ -1,0 +1,35 @@
+{
+  "name": "swiftcart-backend",
+  "version": "1.0.0",
+  "description": "Backend for SwiftCart AI",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3002",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.2.0",
+    "@prisma/client": "^7.2.0",
+    "axios": "^1.13.2",
+    "next": "^15.5.9",
+    "nodemailer": "^7.0.12",
+    "pg": "^8.16.3",
+    "prisma": "^7.2.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/nodemailer": "^7.0.4",
+    "@types/pg": "^8.16.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "dotenv": "^17.2.3",
+    "eslint": "^8.0.0",
+    "eslint-config-next": "15.1.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.0.0"
+  }
+}

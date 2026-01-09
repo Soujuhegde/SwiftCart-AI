@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Customer Order Success - SwiftCart AI</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark min-h-screen flex flex-col items-center justify-center p-4">
+    <!-- Main Card Container -->
+    <div
+        class="w-full max-w-[480px] bg-white dark:bg-[#1c2630] rounded-xl shadow-lg border border-[#e5e7eb] dark:border-[#2a3744] overflow-hidden flex flex-col relative group/design-root">
+        <!-- Header -->
+        <header
+            class="flex items-center justify-center border-b border-solid border-b-[#f0f2f4] dark:border-b-[#2a3744] px-10 py-4 bg-white dark:bg-[#1c2630]">
+            <div class="flex items-center gap-2 text-[#111418] dark:text-white">
+                <span class="material-symbols-outlined text-primary"
+                    style="font-size: 24px;">shopping_cart_checkout</span>
+                <h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">SwiftCart AI</h2>
+            </div>
+        </header>
+        <!-- Success Hero Section -->
+        <div class="flex flex-col px-4 py-8 items-center text-center">
+            <div class="flex flex-col items-center gap-6">
+                <!-- Success Icon with Pulse Effect -->
+                <div class="relative flex items-center justify-center">
+                    <div class="absolute inset-0 bg-primary/20 rounded-full animate-ping"></div>
+                    <div class="relative bg-primary/10 rounded-full p-6 text-primary">
+                        <span class="material-symbols-outlined text-6xl">check_circle</span>
+                    </div>
+                </div>
+                <div class="flex max-w-[480px] flex-col items-center gap-2">
+                    <p class="text-[#111418] dark:text-white text-2xl font-bold leading-tight tracking-[-0.015em]">
+                        Payment Successful!</p>
+                    <p class="text-[#617589] dark:text-[#94a3b8] text-sm font-normal leading-normal max-w-[320px]">
+                        You're all set. You may now exit the store without any alarms.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <!-- Exit Pass / QR Code Section -->
+        <div class="px-6 pb-6 flex justify-center">
+            <div
+                class="bg-background-light dark:bg-background-dark p-4 rounded-lg border border-[#dbe0e6] dark:border-[#2a3744] flex flex-col items-center gap-3 w-full">
+                <p class="text-[#111418] dark:text-white text-xs font-bold uppercase tracking-wider">Exit Pass</p>
+                <div class="bg-white p-2 rounded">
+                    <!-- Placeholder for QR Code - abstract pattern -->
+                    <div class="w-32 h-32 bg-contain bg-center bg-no-repeat" data-alt="QR code for exit verification"
+                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCaL4k0z7LJZ_6fAb5GARk3UuBHWuf6Jkhg1GB1lrwycMKxgyHQgOJKOC7wagHjsF08MMS9fC5hqJeX90nF5dUPrkseLnDnPCgyqVTkatsJvJnikJ2jUw8rgvR5be1grCsaWvWsHEmznlVdOeq5yibVs1ZwzI2ulDWszeod_qjxL5SrqUPS7hjd8DZE3_02am76uI3pAT0RXu9dvLjPu7JQ7uNh08Wj7MkFk3Dwtf8yU_J8-_WAzhTwNHOk0HtCg2AWgN-slcZpBV01');">
+                    </div>
+                </div>
+                <p class="text-[#617589] dark:text-[#94a3b8] text-[10px]">Scan at the door if prompted</p>
+            </div>
+        </div>
+        <!-- Order Summary List -->
+        <div class="px-6 py-2">
+            <div class="grid grid-cols-2 gap-y-4 border-t border-solid border-t-[#dbe0e6] dark:border-t-[#2a3744] py-4">
+                <div class="flex flex-col gap-1 pr-2">
+                    <p class="text-[#617589] dark:text-[#94a3b8] text-sm font-normal leading-normal">Order ID</p>
+                    <p class="text-[#111418] dark:text-white text-sm font-bold leading-normal">#8902-XK</p>
+                </div>
+                <div class="flex flex-col gap-1 pl-2 text-right">
+                    <p class="text-[#617589] dark:text-[#94a3b8] text-sm font-normal leading-normal">Total Amount</p>
+                    <p class="text-[#111418] dark:text-white text-sm font-bold leading-normal">$42.50</p>
+                </div>
+                <div class="flex flex-col gap-1 col-span-2 pt-2">
+                    <p class="text-[#617589] dark:text-[#94a3b8] text-sm font-normal leading-normal">Payment Method</p>
+                    <div class="flex items-center gap-2">
+                        <span
+                            class="material-symbols-outlined text-[#111418] dark:text-white text-lg">credit_card</span>
+                        <p class="text-[#111418] dark:text-white text-sm font-medium leading-normal">Apple Pay ending in
+                            1234</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Action Buttons -->
+        <div class="flex flex-col gap-3 px-6 pb-8 pt-2">
+            <!-- Primary Action -->
+            <button
+                class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-primary hover:bg-blue-600 text-white text-sm font-bold leading-normal tracking-[0.015em] transition-colors">
+                <span class="truncate">Back to Home</span>
+            </button>
+            <!-- Secondary Actions Row -->
+            <div class="flex gap-3">
+                <button
+                    class="flex-1 flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#f0f2f4] dark:bg-[#2a3744] hover:bg-[#e1e4e8] dark:hover:bg-[#364452] text-[#111418] dark:text-white text-sm font-bold leading-normal tracking-[0.015em] transition-colors gap-2">
+                    <span class="material-symbols-outlined text-[18px]">download</span>
+                    <span class="truncate">Invoice</span>
+                </button>
+                <button
+                    class="flex-1 flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#f0f2f4] dark:bg-[#2a3744] hover:bg-[#e1e4e8] dark:hover:bg-[#364452] text-[#111418] dark:text-white text-sm font-bold leading-normal tracking-[0.015em] transition-colors gap-2">
+                    <span class="material-symbols-outlined text-[18px]">mail</span>
+                    <span class="truncate">Email</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- Footer Branding -->
+    <div class="mt-8 flex items-center justify-center gap-2 opacity-50">
+        <span class="material-symbols-outlined text-[#617589] dark:text-[#94a3b8] text-sm">lock</span>
+        <p class="text-[#617589] dark:text-[#94a3b8] text-xs">Secured by SwiftCart AI</p>
+    </div>
+</body>
+
+</html>

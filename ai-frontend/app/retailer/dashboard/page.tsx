@@ -1,0 +1,214 @@
+
+"use client";
+
+import React from "react";
+import { useDemo } from "@/providers/DemoProvider";
+import { MetricCard } from "@/components/MetricCard";
+import { Button } from "@/components/ui/button";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import { RetailAssistant } from "@/components/RetailAssistant";
+import { Download, FileText, ShoppingBag, CreditCard, IndianRupee } from "lucide-react";
+import { toast } from "sonner";
+
+// Mock data for the chart
+const HOURLY_DATA = [
+    { hour: '9a', sales: 12 },
+    { hour: '10a', sales: 18 },
+    { hour: '11a', sales: 25 },
+    { hour: '12p', sales: 42 },
+    { hour: '1p', sales: 38 },
+    { hour: '2p', sales: 30 },
+    { hour: '3p', sales: 22 },
+    { hour: '4p', sales: 28 },
+    { hour: '5p', sales: 35 },
+    { hour: '6p', sales: 45 },
+    { hour: '7p', sales: 32 },
+    { hour: '8p', sales: 15 },
+];
+
+export default function DashboardPage() {
+    const { salesStats, inventory } = useDemo();
+    const [chartData, setChartData] = React.useState(HOURLY_DATA);
+    const [mounted, setMounted] = React.useState(false);
+
+    // Simulate Real-time Updates
+    React.useEffect(() => {
+        setMounted(true);
+        const interval = setInterval(() => {
+            setChartData(prevData => {
+                const newData = [...prevData];
+                // Randomly update the current hour's data or add a tiny increment to simulate live sales
+                const currentHourIndex = new Date().getHours() - 9; // Assuming 9 AM start
+                if (currentHourIndex >= 0 && currentHourIndex < newData.length) {
+                    newData[currentHourIndex] = {
+                        ...newData[currentHourIndex],
+                        sales: newData[currentHourIndex].sales + Math.floor(Math.random() * 3) // Add 0-2 sales occasionally
+                    };
+                }
+                return newData;
+            });
+        }, 5000); // Update every 5 seconds
+
+        return () => clearInterval(interval);
+    }, []);
+
+    const [isGenerating, setIsGenerating] = React.useState(false);
+
+    const handleExport = () => {
+        const csvContent = [
+            ["ID", "Name", "Stock", "Price", "Category"].join(","),
+            ...inventory.map(item => [item.id, item.name, item.stock, item.price, item.category].join(","))
+        ].join("\n");
+
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `store_analytics_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        toast.success("Sales report downloaded successfully");
+    };
+
+    const handleGenerateReport = () => {
+        setIsGenerating(true);
+        toast.info("Generating report...", {
+            description: " compiling sales data and inventory stats."
+        });
+
+        setTimeout(() => {
+            setIsGenerating(false);
+            toast.success("Report generated successfully", {
+                description: "The daily performance report has been sent to your email."
+            });
+        }, 2000);
+    };
+
+    return (
+        <div className="p-8 space-y-6 relative min-h-screen">
+            <RetailAssistant />
+
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <h2 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Today's Performance</h2>
+                    {mounted ? (
+                        <p className="text-slate-500 mt-1">Real-time store analytics as of {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                    ) : (
+                        <p className="text-slate-500 mt-1">Real-time store analytics...</p>
+                    )}
+                </div>
+            </div>
+            <div className="flex gap-3">
+                <Button variant="outline" className="gap-2" onClick={handleExport}>
+                    <Download size={18} />
+                    Export
+                </Button>
+                <Button className="gap-2 bg-blue-600 hover:bg-blue-700" onClick={handleGenerateReport} disabled={isGenerating}>
+                    <FileText size={18} />
+                    {isGenerating ? "Generating..." : "Generate Report"}
+                </Button>
+            </div>
+
+            {/* Metrics Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <MetricCard
+                    title="Total Revenue"
+                    value={`₹${salesStats.revenue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`}
+                    change="5.2%"
+                    trend="up"
+                    icon={<IndianRupee size={20} />}
+                    iconBgInfo="green"
+                />
+                <MetricCard
+                    title="Transactions"
+                    value={salesStats.transactions.toString()}
+                    change="1.2%"
+                    trend="up"
+                    icon={<CreditCard size={20} />}
+                    iconBgInfo="blue"
+                />
+                <MetricCard
+                    title="Avg. Basket Size"
+                    value={`₹${(salesStats.revenue / Math.max(1, salesStats.transactions)).toFixed(2)}`}
+                    change="-0.5%"
+                    trend="down"
+                    icon={<ShoppingBag size={20} />}
+                    iconBgInfo="orange"
+                />
+            </div>
+
+            {/* Charts & Alerts Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Main Chart */}
+                <div className="lg:col-span-2 bg-white dark:bg-slate-950 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div className="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 className="text-lg font-bold text-slate-900 dark:text-white">Live Sales Activity</h3>
+                            <div className="flex items-center gap-2">
+                                <span className="relative flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                </span>
+                                <p className="text-sm text-slate-500">Updating in real-time</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="h-[300px] w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={chartData}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                                <XAxis dataKey="hour" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} dy={10} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
+                                <Tooltip
+                                    cursor={{ fill: 'transparent' }}
+                                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                />
+                                <Bar dataKey="sales" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={40} isAnimationActive={false} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+
+                {/* Inventory Alerts */}
+                <div className="bg-white dark:bg-slate-950 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Inventory Snapshots</h3>
+                    <div className="flex-1 flex flex-col gap-4">
+                        {/* Low Stock Items logic */}
+                        {inventory.filter(i => i.stock < 20).map(item => (
+                            <div key={item.id} className="flex items-start gap-4 p-4 rounded-lg bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30">
+                                <div className="bg-red-100 dark:bg-red-900/40 p-2 rounded text-red-600">
+                                    <ShoppingBag size={20} />
+                                </div>
+                                <div>
+                                    <p className="font-bold text-slate-900 dark:text-white">Low Stock: {item.name}</p>
+                                    <p className="text-sm text-slate-500 mt-0.5">{item.stock} items remaining.</p>
+                                </div>
+                            </div>
+                        ))}
+                        {inventory.every(i => i.stock >= 20) && (
+                            <div className="flex items-center justify-center h-40 text-slate-400">
+                                <p>All stock levels normal.</p>
+                            </div>
+                        )}
+
+                        <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
+                            <div className="flex justify-between items-center">
+                                <div>
+                                    <p className="text-sm text-slate-500">Total Products</p>
+                                    <p className="text-xl font-bold text-slate-900 dark:text-white">{inventory.length}</p>
+                                </div>
+                                <div>
+                                    <p className="text-sm text-slate-500 text-right">Low Stock</p>
+                                    <p className="text-xl font-bold text-slate-900 dark:text-white text-right">{inventory.filter(i => i.stock < 20).length}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div >
+    );
+}

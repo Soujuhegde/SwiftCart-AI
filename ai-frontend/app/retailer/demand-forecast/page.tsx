@@ -26,7 +26,8 @@ export default function DemandForecastPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await fetch('http://localhost:3002/api/ai/forecast');
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+                const res = await fetch(`${apiUrl}/api/ai/forecast`);
                 if (res.ok) {
                     const json = await res.json();
                     setForecastData(json);

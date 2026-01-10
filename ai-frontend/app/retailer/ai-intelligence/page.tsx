@@ -35,7 +35,8 @@ export default function AIIntelligencePage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await fetch('http://localhost:3002/api/ai/intelligence');
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+                const res = await fetch(`${apiUrl}/api/ai/intelligence`);
                 if (res.ok) {
                     const json = await res.json();
                     setData(json);
@@ -81,7 +82,7 @@ export default function AIIntelligencePage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Real-time Insights Card */}
-                <div className="col-span-1 lg:col-span-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl p-8 text-white relative overflow-hidden shadow-lg">
+                <div className="col-span-1 lg:col-span-2 bg-linear-to-br from-indigo-500 to-purple-600 rounded-xl p-8 text-white relative overflow-hidden shadow-lg">
                     <div className="absolute top-0 right-0 p-32 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
                     <div className="relative z-10">
                         <div className="flex items-center gap-3 mb-6">
@@ -176,7 +177,7 @@ export default function AIIntelligencePage() {
                                     ))}
                                 </Pie>
                                 <Tooltip
-                                    formatter={(value: number) => [`${value} items`, 'Quantity']}
+                                    formatter={(value: number | undefined) => [`${value || 0} items`, 'Quantity']}
                                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                                 />
                                 <Legend verticalAlign="bottom" height={36} iconType="circle" />

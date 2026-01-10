@@ -36,7 +36,8 @@ export default function OrderSuccessPage() {
 
         setIsSending(true);
         try {
-            const res = await fetch('http://localhost:3002/api/email', {
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+            const res = await fetch(`${apiUrl}/api/email`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

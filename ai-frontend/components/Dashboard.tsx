@@ -11,7 +11,7 @@ interface DataPoint {
     value: number;
 }
 
-const API_URL = 'http://localhost:5001';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
 const socket = io(API_URL);
 
 const Dashboard = () => {

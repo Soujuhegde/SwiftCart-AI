@@ -27,29 +27,35 @@ export default function ScanPage() {
     const [manualBarcode, setManualBarcode] = React.useState("");
     const [hasCameraPermission, setHasCameraPermission] = React.useState<boolean | null>(null);
     const [cameraStatus, setCameraStatus] = React.useState("Initializing...");
+    const [scanStats, setScanStats] = React.useState({ count: 0, lastValue: "", lastError: "" });
+    const [showDebug, setShowDebug] = React.useState(false);
 
     const inputRef = React.useRef<HTMLInputElement>(null);
     const videoRef = React.useRef<HTMLVideoElement>(null);
     const requestRef = React.useRef<number | undefined>(undefined);
     const processingRef = React.useRef(false);
 
-    // Focus input when shown
+    // Buffer for hardware scanner input
+    const scannerBuffer = React.useRef("");
+    const lastKeyTime = React.useRef(0);
+
+    // Focus input when shown and keep it focused
     React.useEffect(() => {
         if (showManualInput && inputRef.current) {
             inputRef.current.focus();
+
+            // Re-focus helper if focus is lost (e.g. accidental click outside)
+            const handleBlur = () => {
+                if (showManualInput) {
+                    setTimeout(() => inputRef.current?.focus(), 100);
+                }
+            };
+
+            const currentInput = inputRef.current;
+            currentInput.addEventListener('blur', handleBlur);
+            return () => currentInput.removeEventListener('blur', handleBlur);
         }
     }, [showManualInput]);
-
-    const handleManualSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (manualBarcode.trim()) {
-            await onScanSuccess(manualBarcode.trim());
-            setManualBarcode("");
-            setShowManualInput(false);
-        }
-    };
-
-    // Simulate scan function removed. Using real camera/manual input only.
 
     // Memoize the success handler to keep it stable
     const onScanSuccess = React.useCallback(async (rawText: string) => {
@@ -61,51 +67,104 @@ export default function ScanPage() {
 
         // Lock processing
         processingRef.current = true;
-        // Optional: Update UI scan state if needed, but don't trigger re-mount
-        setIsScanning(false);
 
         // Vibrate if supported
         if (navigator.vibrate) navigator.vibrate(200);
 
         try {
             // Show feedback
-            toast.loading("Processing...", { id: "scan-toast" });
+            toast.loading("Finding product...", { id: "scan-toast" });
 
             // Call API
             const data = await scanProduct(decodedText);
 
             if (data.success) {
                 toast.success(`Added ${data.product.name}`, { id: "scan-toast" });
-                // We use the function form of refreshCart if available, or just call it.
-                // Assuming refreshCart is stable from context
+                setScanStats(prev => ({ ...prev, count: prev.count + 1 }));
                 await refreshCart();
             } else {
-                toast.error("Failed to add product", { id: "scan-toast" });
+                toast.error(data.error || "Failed to add product", { id: "scan-toast" });
             }
 
         } catch (error: any) {
             if (error.response && error.response.status === 404) {
-                console.log("Product not found");
-                toast.error("Product not found in database or global registry.", {
+                toast.error(`Product "${decodedText}" not found`, {
                     id: "scan-toast",
                     action: {
-                        label: "Try Manual",
+                        label: "Manual Add",
                         onClick: () => setShowManualInput(true)
                     }
                 });
             } else {
                 console.error("Scan failed:", error);
-                toast.error(error.response?.data?.error || "Scan failed", { id: "scan-toast" });
+                const errorMsg = error.response?.data?.details || error.response?.data?.error || "Connection error";
+                toast.error(errorMsg, { id: "scan-toast" });
+                setScanStats(prev => ({ ...prev, lastError: errorMsg }));
             }
         } finally {
-            // Delay before allowing next scan
+            // Smaller delay for faster scanning - reduced to 400ms for "instant" feel
             setTimeout(() => {
                 processingRef.current = false;
-                setIsScanning(true);
-            }, 2000);
-        }
-    }, [refreshCart, scanProduct]); // Dependencies for the callback
+            }, 400);
 
+            // Sync with React state for debug view
+            setScanStats(prev => ({ ...prev, lastValue: decodedText }));
+        }
+    }, [refreshCart, setShowManualInput]); // scanProduct is imported, no need for dependency if it's external config
+
+    const [isProcessingManual, setIsProcessingManual] = React.useState(false);
+
+    const handleManualSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const code = manualBarcode.trim();
+        if (!code || isProcessingManual) return;
+
+        setIsProcessingManual(true);
+        try {
+            await onScanSuccess(code);
+            // If onScanSuccess succeeds (it doesn't throw, just shows toasts), we clear
+            setManualBarcode("");
+            setShowManualInput(false);
+        } catch (error) {
+            console.error("Manual submit error:", error);
+            toast.error("Failed to process manual entry");
+        } finally {
+            setIsProcessingManual(false);
+        }
+    };
+
+    // Global keyboard listener for hardware scanners
+    React.useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            // Ignore events if user is typing in the manual input field or any other input
+            if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+                return;
+            }
+
+            const now = Date.now();
+            // Hardware scanners usually type very fast (< 50ms between keys)
+            // If it's been a while, clear the buffer
+            if (now - lastKeyTime.current > 100) {
+                scannerBuffer.current = "";
+            }
+            lastKeyTime.current = now;
+
+            // Handle Enter (common scanner suffix)
+            if (e.key === 'Enter') {
+                if (scannerBuffer.current.length >= 8) {
+                    console.log("Hardware scanner detected:", scannerBuffer.current);
+                    onScanSuccess(scannerBuffer.current);
+                    scannerBuffer.current = "";
+                }
+            } else if (e.key.length === 1) {
+                // Add character to buffer
+                scannerBuffer.current += e.key;
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [onScanSuccess]);
     // Keep a ref to the latest callback to avoid restarting scanner when dependencies change
     const onScanSuccessRef = React.useRef(onScanSuccess);
     React.useEffect(() => {
@@ -119,166 +178,115 @@ export default function ScanPage() {
         console.log(msg);
     };
 
-    // Use a ref to track the scanner instance across renders
+    // Use refs to track scanner state accurately across renders
     const html5QrCodeRef = React.useRef<Html5Qrcode | null>(null);
-    // Lock to prevent race conditions between start and stop
-    const scannerLock = React.useRef(false);
+    const isStartingRef = React.useRef(false);
+    const isScanningRef = React.useRef(false);
 
     React.useEffect(() => {
         let isMounted = true;
-        let isInitializing = false;
 
         const safeStop = async () => {
             if (!html5QrCodeRef.current) return;
-            try {
-                // We always try to clear first as it's less prone to state errors than stop()
-                // But Html5Qrcode recommends stop() then clear()
-                if ((html5QrCodeRef.current as any).isScanning) {
+
+            if (isScanningRef.current) {
+                try {
+                    console.log("Stopping scanner...");
                     await html5QrCodeRef.current.stop();
-                }
-                html5QrCodeRef.current.clear();
-            } catch (e: any) {
-                // Ignore "not running" errors which are common
-                const msg = e?.message || e?.toString() || "";
-                if (!msg.includes("not running") && !msg.includes("not being used")) {
+                    console.log("Scanner stopped.");
+                } catch (e: any) {
                     console.warn("Scanner stop error:", e);
+                } finally {
+                    isScanningRef.current = false;
                 }
+            }
+
+            try {
+                html5QrCodeRef.current.clear();
+            } catch (e) {
+                // ignore clear errors
             }
         };
 
         const initScanner = async () => {
-            if (isInitializing) return;
-            if (scannerLock.current) {
-                // already doing something, wait? or just abort
-                return;
-            }
+            if (isStartingRef.current || isScanningRef.current) return;
 
-            scannerLock.current = true;
-            isInitializing = true;
-
-            if (typeof window !== "undefined" && !window.isSecureContext) {
-                setCameraStatus("Error: Not Secure Context (HTTPS required)");
-                scannerLock.current = false;
-                isInitializing = false;
-                return;
-            }
-
-            // If manual input is showing, we pause/stop camera if it was running
             if (showManualInput) {
                 await safeStop();
-                scannerLock.current = false;
-                isInitializing = false;
                 return;
             }
 
-            // wait slightly for DOM to be ready
-            await new Promise(r => setTimeout(r, 500));
-            if (!isMounted) {
-                scannerLock.current = false;
-                isInitializing = false;
-                return;
-            }
-
-            const element = document.getElementById("reader");
-            if (!element) {
-                scannerLock.current = false;
-                isInitializing = false;
-                return;
-            }
-
-            // Clean up previous instance if it exists
-            await safeStop();
+            isStartingRef.current = true;
+            setCameraStatus("Initializing...");
 
             try {
-                const html5QrCode = new Html5Qrcode("reader", {
-                    formatsToSupport: [
-                        Html5QrcodeSupportedFormats.EAN_13,
-                        Html5QrcodeSupportedFormats.EAN_8,
-                        Html5QrcodeSupportedFormats.UPC_A,
-                        Html5QrcodeSupportedFormats.UPC_E,
-                        Html5QrcodeSupportedFormats.CODE_128,
-                        Html5QrcodeSupportedFormats.CODE_39,
-                        Html5QrcodeSupportedFormats.QR_CODE
-                    ],
-                    verbose: false
-                });
+                // Wait for DOM
+                await new Promise(r => setTimeout(r, 400));
+                if (!isMounted || showManualInput) throw new Error("Cancelled");
 
-                html5QrCodeRef.current = html5QrCode;
+                const element = document.getElementById("reader");
+                if (!element) throw new Error("Reader element not found");
 
-                const devices = await Html5Qrcode.getCameras().catch(e => {
-                    throw e;
-                });
-
-                if (!devices || !devices.length) {
-                    throw new Error("No cameras found");
+                if (!html5QrCodeRef.current) {
+                    html5QrCodeRef.current = new Html5Qrcode("reader", {
+                        formatsToSupport: [
+                            Html5QrcodeSupportedFormats.EAN_13,
+                            Html5QrcodeSupportedFormats.EAN_8,
+                            Html5QrcodeSupportedFormats.UPC_A,
+                            Html5QrcodeSupportedFormats.UPC_E,
+                            Html5QrcodeSupportedFormats.CODE_128,
+                            Html5QrcodeSupportedFormats.QR_CODE
+                        ],
+                        verbose: false
+                    });
                 }
 
-                const config = {
-                    fps: 10,
-                    aspectRatio: 1.0,
-                    qrbox: { width: 250, height: 250 }
-                };
+                const devices = await Html5Qrcode.getCameras();
+                if (!devices || devices.length === 0) throw new Error("No cameras found");
 
-                setCameraStatus("Starting Camera...");
+                const backCamera = devices.find(d =>
+                    d.label.toLowerCase().includes('back') ||
+                    d.label.toLowerCase().includes('environment')
+                );
+                // Increased FPS to 20 and qrbox to 300x300 for higher sensitivity
+                const config = { fps: 20, aspectRatio: 1.0, qrbox: { width: 300, height: 300 } };
 
-                // Try to find a back camera
-                const backCamera = devices.find(d => d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('environment'));
-                const cameraIdOrConfig = backCamera ? { deviceId: backCamera.id } : { facingMode: "environment" };
-
-                if (!isMounted) throw new Error("Unmounted during start");
-
-                await html5QrCode.start(
-                    cameraIdOrConfig,
+                await html5QrCodeRef.current.start(
+                    backCamera ? { deviceId: backCamera.id } : { facingMode: "environment" },
                     config,
                     (decodedText) => {
                         if (isMounted && onScanSuccessRef.current) {
                             onScanSuccessRef.current(decodedText);
                         }
                     },
-                    (errorMessage) => {
-                        // ignore errors to reduce noise
-                    }
+                    () => { }
                 );
 
                 if (isMounted) {
+                    isScanningRef.current = true;
                     setHasCameraPermission(true);
                     setCameraStatus("Active");
+                } else {
+                    await safeStop();
                 }
             } catch (err: any) {
-                console.error("Scanner Error:", err);
-                const msg = err?.message || "Unknown error";
-                // Don't show error if we just replaced it/interrupted
-                if (msg.includes("already under transition")) {
-                    // ignore, we will retry or it's fine
-                } else if (isMounted) {
-                    setHasCameraPermission(false);
-                    setCameraStatus("Error: " + msg);
+                if (err.message !== "Cancelled") {
+                    console.error("Scanner start error:", err);
+                    if (isMounted) {
+                        setHasCameraPermission(false);
+                        setCameraStatus(`Error: ${err.message}`);
+                    }
                 }
             } finally {
-                scannerLock.current = false;
-                isInitializing = false;
+                isStartingRef.current = false;
             }
         };
 
-        // Start initialization
         initScanner();
 
-        // Cleanup
         return () => {
             isMounted = false;
-            // Cleanup on unmount
-            // We can't await here, so we fire and forget, but the lock should help
-            if (html5QrCodeRef.current) {
-                const instance = html5QrCodeRef.current;
-                // Mark as busy so new effects wait
-                scannerLock.current = true;
-                // Attempt stop
-                instance.stop().then(() => instance.clear()).catch(e => {
-                    // ignore common stop errors on unmount
-                }).finally(() => {
-                    scannerLock.current = false;
-                });
-            }
+            safeStop();
         };
     }, [showManualInput]);
 
@@ -362,7 +370,13 @@ export default function ScanPage() {
                                 />
                                 <div className="flex gap-2">
                                     <Button type="button" variant="outline" className="flex-1 bg-transparent border-slate-600 hover:bg-slate-800 text-white" onClick={() => setShowManualInput(false)}>Cancel</Button>
-                                    <Button type="submit" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white">Add Item</Button>
+                                    <Button
+                                        type="submit"
+                                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                                        disabled={isProcessingManual}
+                                    >
+                                        {isProcessingManual ? "Adding..." : "Add Item"}
+                                    </Button>
                                 </div>
                             </form>
                         </div>
@@ -371,7 +385,6 @@ export default function ScanPage() {
 
                 {/* Action Buttons */}
                 <div className="flex gap-3">
-                    {/* Simulation Button Removed as per user request to rely on real scanner */}
                     <Button
                         variant={showManualInput ? "default" : "outline"}
                         size="icon"
@@ -380,7 +393,58 @@ export default function ScanPage() {
                     >
                         <Keyboard className={`h-5 w-5 ${showManualInput ? 'text-white' : 'text-slate-500'}`} />
                     </Button>
+
+                    <Button
+                        variant={showDebug ? "default" : "outline"}
+                        size="icon"
+                        className={`h-12 w-16 ${showDebug ? 'bg-orange-600 border-orange-600 text-white' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'}`}
+                        onClick={() => setShowDebug(!showDebug)}
+                    >
+                        <HelpCircle className={`h-5 w-5 ${showDebug ? 'text-white' : 'text-slate-500'}`} />
+                    </Button>
                 </div>
+
+                {/* Debug Panel */}
+                <AnimatePresence>
+                    {showDebug && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="overflow-hidden"
+                        >
+                            <div className="p-4 bg-slate-900 border border-slate-700 rounded-xl text-[10px] font-mono text-slate-300 space-y-1 mt-2">
+                                <div className="flex justify-between border-b border-slate-800 pb-1 mb-1">
+                                    <span className="text-orange-400 font-bold uppercase">Scanner Diagnostics</span>
+                                    <span className={isScanningRef.current ? "text-green-500" : "text-red-500"}>
+                                        ● {isScanningRef.current ? "RUNNING" : "STOPPED"}
+                                    </span>
+                                </div>
+                                <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                                    <span>Total Scans:</span>
+                                    <span className="text-white text-right font-bold">{scanStats.count}</span>
+
+                                    <span>Last Data:</span>
+                                    <span className="text-white text-right truncate pl-4">{scanStats.lastValue || 'None'}</span>
+
+                                    <span>Status:</span>
+                                    <span className="text-white text-right">{cameraStatus}</span>
+
+                                    <span>Initializing:</span>
+                                    <span className="text-white text-right">{isStartingRef.current ? 'YES' : 'NO'}</span>
+
+                                    <span>Ref Lock:</span>
+                                    <span className="text-white text-right">{processingRef.current ? 'LOCKED' : 'IDLE'}</span>
+                                </div>
+                                {scanStats.lastError && (
+                                    <div className="mt-2 pt-1 border-t border-slate-800 text-red-400 break-words">
+                                        Error: {scanStats.lastError}
+                                    </div>
+                                )}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
 
                 {/* Cart Section */}

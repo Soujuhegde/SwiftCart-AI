@@ -1,21 +1,20 @@
 generator client {
   provider   = "prisma-client-js"
   output     = "../src/generated/client"
-  engineType = "binary"
+  engineType = "library"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
-  id        String    @id @default(cuid())
-  email     String    @unique
+  id        String   @id @default(cuid())
+  email     String   @unique
   name      String?
   carts     Cart[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Product {
@@ -35,14 +34,14 @@ model Product {
 }
 
 model Cart {
-  id          String     @id @default(cuid())
-  userId      String?    // Nullable for guest users if needed, or link to a default user
-  status      CartStatus @default(ACTIVE)
-  items       CartItem[]
-  payment     Payment?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  user        User?      @relation(fields: [userId], references: [id])
+  id        String     @id @default(cuid())
+  userId    String? // Nullable for guest users if needed, or link to a default user
+  status    CartStatus @default(ACTIVE)
+  items     CartItem[]
+  payment   Payment?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  user      User?      @relation(fields: [userId], references: [id])
 }
 
 model CartItem {
@@ -50,7 +49,7 @@ model CartItem {
   cartId    String
   productId String
   quantity  Int      @default(1)
-  price     Float    // Store price at confirmation time to avoid fluctuations
+  price     Float // Store price at confirmation time to avoid fluctuations
   cart      Cart     @relation(fields: [cartId], references: [id])
   product   Product  @relation(fields: [productId], references: [id])
   createdAt DateTime @default(now())

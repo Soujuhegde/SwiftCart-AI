@@ -1,83 +1,101 @@
 "use client";
 
-import { CheckCircle2, ShieldCheck, Zap } from 'lucide-react';
+import { TrendingUp, ArrowRight, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { AreaChart, Area, ResponsiveContainer, XAxis, Tooltip } from 'recharts';
 import Link from 'next/link';
+import ClientOnly from './ClientOnly';
+import { SectionReveal, StaggerGrid, HoverCard } from './ui/motion/primitives';
+import CountUp from 'react-countup';
+
+const CHART_DATA = [
+    { v: 10 }, { v: 15 }, { v: 12 }, { v: 25 }, { v: 35 }, { v: 50 }, { v: 65 }, { v: 80 }
+];
 
 const ImpactSection = () => {
     return (
-        <section className="py-24 px-6 bg-white border-t border-gray-100 overflow-hidden">
-            <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-20">
+        <section className="py-32 px-6 bg-[#0B1120] relative overflow-hidden text-white selection:bg-indigo-500/30">
+            {/* Background Texture */}
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5"></div>
 
-                {/* Left Side: Stats */}
-                <motion.div
-                    initial={{ opacity: 0, x: -50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                    className="lg:w-1/2"
-                >
-                    <div className="flex items-center gap-2 text-green-600 font-bold text-xs tracking-widest uppercase mb-6 bg-green-50 w-fit px-3 py-1 rounded-full border border-green-100">
-                        <CheckCircle2 size={14} /> Responsible & Compliant
+            <SectionReveal className="max-w-7xl mx-auto text-center mb-16 relative z-10">
+                <div className="inline-block px-3 py-1 bg-indigo-500/10 text-indigo-400 rounded-full text-xs font-bold uppercase tracking-wide mb-6 border border-indigo-500/20">PILOT INSIGHTS</div>
+                <h2 className="text-5xl lg:text-7xl font-black mb-6 tracking-tighter">
+                    Built for <br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Busy Stores.</span>
+                </h2>
+                <p className="text-xl text-slate-400 max-w-2xl mx-auto">
+                    Efficiency targets for high-volume retail.
+                </p>
+            </SectionReveal>
+
+            <StaggerGrid className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+                {/* Metric 1 */}
+                <HoverCard glowColor="blue" className="bg-slate-900/50 border border-white/5 rounded-3xl p-8 backdrop-blur-sm">
+                    <div className="text-sm font-bold text-slate-400 mb-2 uppercase tracking-wide">Avg. Checkout</div>
+                    <div className="text-5xl font-black text-white mb-4">
+                        <CountUp end={12} suffix="s" duration={2.5} enableScrollSpy scrollSpyOnce />
                     </div>
-                    <h2 className="text-4xl font-extrabold text-gray-900 mb-6 tracking-tight">Innovation with Purpose.</h2>
-                    <p className="text-lg text-gray-500 mb-10 leading-relaxed font-medium">
-                        SwiftCart AI is designed to solve real challenges. By optimizing inventory we reduce the 13 billion tons of annual food waste. By automating queues, we give time back to people.
-                    </p>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                        <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100">
-                            <span className="font-bold text-3xl text-gray-900 block mb-1">30%</span>
-                            <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Food Waste Reduction</span>
-                        </div>
-                        <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100">
-                            <span className="font-bold text-3xl text-gray-900 block mb-1">&lt;100ms</span>
-                            <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Decision Latency</span>
-                        </div>
-                        <div className="p-6 bg-indigo-50 rounded-2xl border border-indigo-100 col-span-1 sm:col-span-2 flex items-center justify-between">
-                            <div>
-                                <span className="font-bold text-2xl text-indigo-900 flex items-center gap-2">24/7 <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span></span>
-                                <span className="text-sm font-semibold text-indigo-600 uppercase tracking-wide">Autonomous Operation</span>
-                            </div>
-                            <Zap className="text-indigo-300" size={32} />
-                        </div>
+                    <p className="text-slate-500 font-medium text-xs mb-4">(Pilot Results)</p>
+                    <div className="h-16 w-full opacity-50 min-w-[100px]">
+                        <ClientOnly className="w-full h-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={CHART_DATA}>
+                                    <defs>
+                                        <linearGradient id="chartColor" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#60a5fa" stopOpacity={0.8} />
+                                            <stop offset="95%" stopColor="#60a5fa" stopOpacity={0} />
+                                        </linearGradient>
+                                    </defs>
+                                    <Area
+                                        type="monotone"
+                                        dataKey="v"
+                                        stroke="#60a5fa"
+                                        fillOpacity={1}
+                                        fill="url(#chartColor)"
+                                        isAnimationActive={true}
+                                        animationDuration={2000}
+                                    />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        </ClientOnly>
                     </div>
+                </HoverCard>
 
-                    <div className="text-xs text-gray-400 font-medium flex items-center gap-2 border-t border-gray-100 pt-6">
-                        <ShieldCheck size={16} className="text-gray-400" />
-                        Responsible AI: Explainable · Auditable · Human Override
+                {/* Metric 2 */}
+                <HoverCard glowColor="violet" className="bg-slate-900/50 border border-white/5 rounded-3xl p-8 backdrop-blur-sm">
+                    <div className="text-sm font-bold text-slate-400 mb-2 uppercase tracking-wide">Queues Removed</div>
+                    <div className="text-5xl font-black text-white mb-4">
+                        <CountUp end={100} suffix="%" duration={3} enableScrollSpy scrollSpyOnce />
                     </div>
-                </motion.div>
+                    <p className="text-slate-500 font-medium">(Target)</p>
+                </HoverCard>
 
-                {/* Right Side: CTA Card */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.9, rotate: 3 }}
-                    whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8, type: "spring" }}
-                    className="lg:w-1/2 w-full"
-                >
-                    <div className="bg-[#0f172a] rounded-[32px] p-12 text-center relative overflow-hidden shadow-2xl shadow-blue-900/20 group hover:scale-[1.02] transition-transform duration-500">
-                        {/* Background Glow Effect */}
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-blue-600/30 transition-colors duration-500"></div>
-                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-600/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 group-hover:bg-purple-600/20 transition-colors duration-500"></div>
-
-                        <h3 className="text-3xl font-bold text-white mb-4 relative z-10 leading-tight">See retail think for itself.</h3>
-                        <p className="text-blue-200/80 mb-8 max-w-sm mx-auto relative z-10 text-sm font-medium">
-                            Join the autonomous retail revolution.
-                        </p>
-
-                        <Link href="/demo" className="bg-azure-blue text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-600 transition-all shadow-lg shadow-blue-500/30 relative z-10 w-full sm:w-auto inline-block">
-                            Launch Live Agent Demo
-                        </Link>
-
-                        <div className="mt-10 text-[10px] text-gray-500 font-mono relative z-10 uppercase tracking-widest border-t border-white/10 pt-6">
-                            Microsoft Imagine Cup • AI for Good • Retail Innovation
-                        </div>
+                {/* Metric 3 */}
+                <HoverCard glowColor="indigo" className="bg-slate-900/50 border border-white/5 rounded-3xl p-8 backdrop-blur-sm">
+                    <div className="text-sm font-bold text-slate-400 mb-2 uppercase tracking-wide">Basket Size</div>
+                    <div className="text-5xl font-black text-white mb-4 text-blue-400">
+                        <CountUp end={15} prefix="+" suffix="%" duration={2.5} enableScrollSpy scrollSpyOnce />
                     </div>
-                </motion.div>
+                    <p className="text-slate-500 font-medium">Increased impulse buys. <span className="text-xs opacity-60 block mt-1">(Pilot Results)</span></p>
+                </HoverCard>
+            </StaggerGrid>
 
-            </div>
+            {/* Giant CTA */}
+            <SectionReveal className="max-w-4xl mx-auto mt-24 text-center">
+                <div className="p-1 rounded-full bg-gradient-to-r from-blue-500 via-indigo-500 to-violet-500 inline-block hover:shadow-[0_0_40px_rgba(79,70,229,0.5)] transition-shadow duration-500">
+                    <Link href="/retailer/dashboard">
+                        <button className="px-12 py-5 rounded-full bg-[#0B1120] text-white font-bold text-xl hover:bg-slate-900 transition-all flex items-center gap-3">
+                            Deploy SwiftCart <ArrowRight />
+                        </button>
+                    </Link>
+                </div>
+                <div className="mt-8 flex justify-center gap-8 text-slate-500 text-sm font-bold opacity-60">
+                    <span className="flex items-center gap-2"><ShieldCheck size={16} /> SOC2 Ready</span>
+                    <span className="flex items-center gap-2"><ShieldCheck size={16} /> 99.9% Uptime</span>
+                </div>
+            </SectionReveal>
+
         </section>
     );
 };

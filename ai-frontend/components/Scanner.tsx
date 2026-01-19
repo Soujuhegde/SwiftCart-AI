@@ -171,7 +171,7 @@ const Scanner: React.FC<ScannerProps> = ({ onScan, active }) => {
 
                 <div className="mt-12 flex flex-col items-center gap-3 pointer-events-auto">
                     <div className="flex items-center gap-2 bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 shadow-lg">
-                        <div className={`w-2 h-2 rounded-full ${cameraStatus === 'Active' ? 'bg-green-500 animate-pulse' : 'bg-yellow-500'}`}></div>
+                        <div className={`w-2 h-2 rounded-full ${cameraStatus === 'Active' ? 'bg-blue-500 animate-pulse' : 'bg-yellow-500'}`}></div>
                         <span className="text-white text-xs font-bold tracking-tight uppercase">{cameraStatus}</span>
                         {cameraStatus === 'Error' && (
                             <button onClick={initScanner} className="ml-2 bg-white/10 hover:bg-white/20 p-1 rounded-full text-white">

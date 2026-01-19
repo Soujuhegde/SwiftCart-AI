@@ -1,94 +1,107 @@
 "use client";
 
-import { Scan, Server, BrainCircuit, Zap } from 'lucide-react';
+import { Map, ShieldCheck, BarChart3, Lock, Settings2, Zap, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { StaggerGrid, RevealItem, HoverCard, SectionReveal } from './ui/motion/primitives';
 
 const WorkflowSection = () => {
-    const steps = [
-        {
-            id: 1,
-            title: "Sense",
-            icon: <Scan size={24} className="text-blue-600" />,
-            color: "bg-blue-50",
-            desc: "Detect real-world signals",
-        },
-        {
-            id: 2,
-            title: "Analyze",
-            icon: <Server size={24} className="text-purple-600" />,
-            color: "bg-purple-50",
-            desc: "Normalize & enrich data",
-        },
-        {
-            id: 3,
-            title: "Decide",
-            icon: <BrainCircuit size={24} className="text-indigo-600" />,
-            color: "bg-indigo-50",
-            desc: "Predict + choose best action",
-        },
-        {
-            id: 4,
-            title: "Act",
-            icon: <Zap size={24} className="text-orange-600" />,
-            color: "bg-orange-50",
-            desc: "Execute via ERP / Systems",
-        },
-    ];
-
     return (
-        <section id="agentic-loop" className="py-24 px-6 bg-white relative">
-            <div className="max-w-7xl mx-auto text-center relative z-10">
-                <motion.h2
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                    className="text-3xl font-extrabold text-gray-900 mb-2 relative inline-block"
-                >
-                    The Agentic Workflow
-                    <div className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
-                </motion.h2>
-                <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                    className="text-gray-500 mt-6 mb-16 max-w-2xl mx-auto font-medium"
-                >
-                    A closed-loop AI system that <span className="text-gray-900">thinks, decides, and acts</span> on its own.
-                </motion.p>
+        <section className="py-32 px-6 bg-slate-50 relative overflow-hidden">
+            <div className="absolute inset-0 bg-[#F8FAFC]">
+                <div className="absolute inset-0 opacity-[0.4]" style={{ backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)', backgroundSize: '32px 32px' }}></div>
+            </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    {steps.map((step, index) => (
-                        <div key={step.id} className="relative group">
-                            {/* Connector Line */}
-                            {index !== steps.length - 1 && (
-                                <motion.div
-                                    initial={{ scaleX: 0 }}
-                                    whileInView={{ scaleX: 1 }}
-                                    viewport={{ once: true }}
-                                    transition={{ duration: 0.8, delay: 0.5 + (index * 0.2) }}
-                                    className="hidden md:block absolute top-8 left-[60%] w-[80%] h-[2px] bg-gray-100 z-0 origin-left"
-                                ></motion.div>
-                            )}
-
-                            <motion.div
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.5, delay: index * 0.2 }}
-                                className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative z-10 flex flex-col items-center"
-                            >
-                                <div className={`w-16 h-16 rounded-2xl ${step.color} flex items-center justify-center mb-6 shadow-inner`}>
-                                    {step.icon}
-                                </div>
-                                <h3 className="text-lg font-bold text-gray-900 mb-2">{step.title}</h3>
-                                <p className="text-sm text-gray-500 font-medium">{step.desc}</p>
-
-                            </motion.div>
-                        </div>
-                    ))}
+            <div className="max-w-7xl mx-auto relative z-10">
+                <div className="mb-16 md:flex justify-between items-end">
+                    <div className="max-w-2xl">
+                        <div className="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold uppercase tracking-wide mb-4">FOR RETAILERS</div>
+                        <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+                            Control Center for <br />
+                            Queue-less Billing.
+                        </h2>
+                    </div>
+                    <p className="text-lg text-slate-500 font-medium max-w-md mt-6 md:mt-0">
+                        Manage verification, exceptions, and store rules from one place.
+                    </p>
                 </div>
+
+                {/* Asymmetric Bento Grid */}
+                <StaggerGrid className="grid grid-cols-1 md:grid-cols-6 md:grid-rows-2 gap-6 h-auto md:h-[600px]">
+
+                    {/* Card 1: Live Sessions (Large, 3x2) */}
+                    <HoverCard
+                        glowColor="blue"
+                        className="md:col-span-3 md:row-span-2 bg-white rounded-[2rem] p-8 shadow-xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden flex flex-col justify-between"
+                    >
+                        <div className="relative z-10">
+                            <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-6">
+                                <Activity size={24} />
+                            </div>
+                            <h3 className="text-2xl font-bold text-slate-900 mb-2">Live Sessions</h3>
+                            <p className="text-slate-500 font-medium">Real-time tracking of every active shopper.</p>
+                        </div>
+                        {/* Abstract Map Visual */}
+                        <div className="mt-8 bg-slate-50 rounded-xl flex-1 border border-slate-100 relative overflow-hidden p-6">
+                            <div className="absolute top-1/2 left-1/2 w-3 h-3 bg-blue-500 rounded-full animate-ping"></div>
+                            <div className="absolute top-1/2 left-1/2 w-3 h-3 bg-blue-600 rounded-full border-2 border-white shadow-md"></div>
+
+                            <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-indigo-500 rounded-full animate-pulse delay-75"></div>
+                            <div className="absolute bottom-1/3 left-1/3 w-2 h-2 bg-indigo-500 rounded-full animate-pulse delay-150"></div>
+
+                            <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'linear-gradient(to right, #cbd5e1 1px, transparent 1px), linear-gradient(to bottom, #cbd5e1 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
+                        </div>
+                    </HoverCard>
+
+                    {/* Card 2: Exit Verification (2x1) */}
+                    <HoverCard
+                        glowColor="violet"
+                        className="md:col-span-2 md:row-span-1 bg-slate-900 rounded-[2rem] p-8 shadow-xl border border-slate-800 relative overflow-hidden text-white"
+                    >
+                        <div className="flex justify-between items-start mb-6">
+                            <div className="p-3 bg-white/10 rounded-xl"><ShieldCheck size={24} className="text-indigo-400" /></div>
+                            <span className="text-xs font-bold bg-indigo-500/20 text-indigo-400 px-2 py-1 rounded-full">Active</span>
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-1">Exit Verification</h3>
+                        <p className="text-slate-400 text-sm font-medium">Random checks & risk scoring.</p>
+                    </HoverCard>
+
+                    {/* Card 3: Reports (1x1) */}
+                    <HoverCard
+                        className="md:col-span-1 md:row-span-1 bg-white rounded-[2rem] p-6 shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col justify-center items-center text-center"
+                    >
+                        <div className="w-16 h-16 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mb-4">
+                            <BarChart3 size={28} />
+                        </div>
+                        <div className="text-2xl font-black text-slate-900">Reports</div>
+                        <div className="text-xs font-bold text-slate-400 uppercase">Throughput</div>
+                    </HoverCard>
+
+                    {/* Card 4: Rules & Roles (1x1) */}
+                    <HoverCard
+                        className="md:col-span-1 md:row-span-1 bg-white rounded-[2rem] p-6 shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col justify-center items-center text-center"
+                    >
+                        <div className="flex -space-x-2 mb-4">
+                            <div className="w-8 h-8 rounded-full bg-slate-200 border-2 border-white"></div>
+                            <div className="w-8 h-8 rounded-full bg-slate-300 border-2 border-white"></div>
+                            <div className="w-8 h-8 rounded-full bg-slate-400 border-2 border-white"></div>
+                        </div>
+                        <div className="text-sm font-bold text-slate-900">Rules & Roles</div>
+                        <div className="text-xs font-medium text-slate-400">Staff Control</div>
+                    </HoverCard>
+
+                    {/* Card 5: Refunds & Voids (2x1) */}
+                    <HoverCard
+                        glowColor="indigo"
+                        className="md:col-span-2 md:row-span-1 bg-indigo-600 rounded-[2rem] p-8 shadow-xl shadow-indigo-500/30 border border-indigo-500 relative overflow-hidden text-white"
+                    >
+                        <div className="flex items-center gap-4 mb-4">
+                            <Zap size={24} className="text-indigo-200" />
+                            <h3 className="text-xl font-bold">Refunds & Voids</h3>
+                        </div>
+                        <p className="text-indigo-100 text-sm font-medium">Full transaction management.</p>
+                    </HoverCard>
+
+                </StaggerGrid>
             </div>
         </section>
     );

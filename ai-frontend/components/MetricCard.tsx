@@ -8,7 +8,7 @@ interface MetricCardProps {
     change: string;
     trend: "up" | "down" | "neutral";
     icon: React.ReactNode;
-    iconBgInfo?: "blue" | "green" | "orange" | "purple";
+    iconBgInfo?: "blue" | "indigo" | "orange" | "purple";
 }
 
 export function MetricCard({ title, value, change, trend, icon, iconBgInfo = "blue" }: MetricCardProps) {
@@ -21,8 +21,9 @@ export function MetricCard({ title, value, change, trend, icon, iconBgInfo = "bl
                 <div className={cn(
                     "p-2 rounded-lg",
                     iconBgInfo === "blue" && "bg-blue-100 text-blue-600 dark:bg-blue-900/30",
-                    iconBgInfo === "green" && "bg-green-100 text-green-600 dark:bg-green-900/30",
+                    iconBgInfo === "indigo" && "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30",
                     iconBgInfo === "orange" && "bg-orange-100 text-orange-600 dark:bg-orange-900/30",
+                    iconBgInfo === "purple" && "bg-purple-100 text-purple-600 dark:bg-purple-900/30",
                 )}>
                     {icon}
                 </div>
@@ -31,7 +32,7 @@ export function MetricCard({ title, value, change, trend, icon, iconBgInfo = "bl
                 <p className="text-3xl font-bold text-slate-900 dark:text-white">{value}</p>
                 <span className={cn(
                     "inline-flex items-center text-sm font-medium px-2 py-0.5 rounded-full",
-                    isUp ? "bg-green-50 text-green-600 dark:bg-green-900/20" : "bg-red-50 text-red-600 dark:bg-red-900/20"
+                    isUp ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-900/20" : "bg-red-50 text-red-600 dark:bg-red-900/20"
                 )}>
                     {isUp ? "+" : ""}{change}
                 </span>

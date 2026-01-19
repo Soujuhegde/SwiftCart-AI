@@ -176,7 +176,7 @@ export default function AIIntelligencePage() {
                                     ))}
                                 </Pie>
                                 <Tooltip
-                                    formatter={(value: number) => [`${value} items`, 'Quantity']}
+                                    formatter={(value: number, name: string) => [`${value} items`, 'Quantity']}
                                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                                 />
                                 <Legend verticalAlign="bottom" height={36} iconType="circle" />

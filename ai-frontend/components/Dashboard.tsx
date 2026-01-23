@@ -17,7 +17,7 @@ const socket = io(API_URL);
 const Dashboard = () => {
     const [data, setData] = useState<DataPoint[]>([]);
     const [loading, setLoading] = useState(true);
-    const [apiData, setApiData] = useState<any>(null);
+    const [apiData, setApiData] = useState<unknown>(null);
 
     useEffect(() => {
         const fetchData = async () => {

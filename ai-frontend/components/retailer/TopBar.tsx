@@ -3,6 +3,7 @@
 import { Bell, Search, Menu, ChevronDown, Store } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import Link from 'next/link';
 
 const TopBar = () => {
     return (
@@ -49,7 +50,7 @@ const TopBar = () => {
 
                 <div className="h-8 w-[1px] bg-gray-200 mx-1 hidden md:block"></div>
 
-                <div className="flex items-center gap-3 pl-2">
+                <Link href="/retailer/profile" className="flex items-center gap-3 pl-2 hover:bg-slate-50 p-1 rounded-lg transition-colors">
                     <div className="text-right hidden md:block">
                         <span className="block text-sm font-bold text-gray-900 leading-none">Sarah Jenkins</span>
                         <span className="block text-xs text-gray-500 mt-0.5">Store Manager</span>
@@ -58,7 +59,7 @@ const TopBar = () => {
                         <AvatarImage src="https://github.com/shadcn.png" />
                         <AvatarFallback>SJ</AvatarFallback>
                     </Avatar>
-                </div>
+                </Link>
             </div>
         </header>
     );

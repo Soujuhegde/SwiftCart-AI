@@ -1,0 +1,38 @@
+[
+  {
+    "id": "PAY-1769008823378",
+    "cartId": "cart-1768727210403",
+    "amount": 205.2,
+    "method": "CARD",
+    "status": "SUCCESS",
+    "transactionId": "TXN-1769008823378",
+    "createdAt": "2026-01-21T15:20:23.378Z"
+  },
+  {
+    "id": "PAY-1769102582277",
+    "cartId": "cart-1768727210403",
+    "amount": 410.4,
+    "method": "CARD",
+    "status": "SUCCESS",
+    "transactionId": "TXN-1769102582277",
+    "createdAt": "2026-01-22T17:23:02.277Z"
+  },
+  {
+    "id": "PAY-1769103064930",
+    "cartId": "cart-1768727210403",
+    "amount": 410.4,
+    "method": "CARD",
+    "status": "SUCCESS",
+    "transactionId": "TXN-1769103064930",
+    "createdAt": "2026-01-22T17:31:04.930Z"
+  },
+  {
+    "id": "PAY-1769148788882",
+    "cartId": "cart-1768727210403",
+    "amount": 64.8,
+    "method": "CARD",
+    "status": "SUCCESS",
+    "transactionId": "TXN-1769148788882",
+    "createdAt": "2026-01-23T06:13:08.882Z"
+  }
+]

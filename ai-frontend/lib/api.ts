@@ -34,7 +34,7 @@ export interface Cart {
     userId: string;
     status: 'ACTIVE' | 'COMPLETED' | 'ABANDONED';
     items: CartItem[];
-    payment?: any;
+    payment?: Record<string, unknown>;
     totalAmount?: number; // Computed on frontend usually, or backend
 }
 
@@ -43,7 +43,7 @@ export const scanProduct = async (barcode: string, userId?: string) => {
     return response.data;
 };
 
-export const manualAddProduct = async (data: any, userId?: string) => {
+export const manualAddProduct = async (data: Partial<Product>, userId?: string) => {
     const response = await api.post('/manual-add', { ...data, userId });
     return response.data;
 };

@@ -21,7 +21,7 @@ declare global {
 }
 
 export default function ScanPage() {
-    const { cart, refreshCart, removeFromCart, updateQuantity, cartTotal, itemCount } = useCart();
+    const { cart, refreshCart, removeFromCart, updateQuantity, cartTotal, itemCount, userId } = useCart();
     const [isScanning, setIsScanning] = React.useState(true);
     const [showManualInput, setShowManualInput] = React.useState(false);
     const [manualBarcode, setManualBarcode] = React.useState("");
@@ -76,7 +76,7 @@ export default function ScanPage() {
             toast.loading("Finding product...", { id: "scan-toast" });
 
             // Call API
-            const data = await scanProduct(decodedText);
+            const data = await scanProduct(decodedText, userId);
 
             if (data.success) {
                 toast.success(`Added ${data.product.name}`, { id: "scan-toast" });
@@ -110,7 +110,7 @@ export default function ScanPage() {
             // Sync with React state for debug view
             setScanStats(prev => ({ ...prev, lastValue: decodedText }));
         }
-    }, [refreshCart, setShowManualInput]); // scanProduct is imported, no need for dependency if it's external config
+    }, [refreshCart, setShowManualInput, userId]); // scanProduct is imported, no need for dependency if it's external config
 
     const [isProcessingManual, setIsProcessingManual] = React.useState(false);
 
@@ -248,8 +248,30 @@ export default function ScanPage() {
                     d.label.toLowerCase().includes('back') ||
                     d.label.toLowerCase().includes('environment')
                 );
-                // Increased FPS to 20 and qrbox to 300x300 for higher sensitivity
-                const config = { fps: 20, aspectRatio: 1.0, qrbox: { width: 300, height: 300 } };
+
+                // Compatibility mode: Simple constraints to ensure camera actually starts
+                const videoConstraints = {
+                    ...(backCamera ? { deviceId: backCamera.id } : { facingMode: "environment" }),
+                    width: { min: 640, ideal: 1280 },
+                    height: { min: 480, ideal: 720 }
+                    // Removed 'advanced' constraints as they cause failure on unsupported devices
+                } as MediaTrackConstraints;
+
+                const config = {
+                    fps: 20, // Slightly improved FPS for smoother feedback
+                    // Dynamic box, 80% width for flexibility
+                    qrbox: (viewfinderWidth: number, viewfinderHeight: number) => {
+                        return {
+                            width: Math.floor(viewfinderWidth * 0.8),
+                            height: Math.floor(viewfinderHeight * 0.5)
+                        };
+                    },
+                    aspectRatio: 1.0,
+                    experimentalFeatures: {
+                        useBarCodeDetectorIfSupported: false
+                    },
+                    videoConstraints: videoConstraints
+                };
 
                 await html5QrCodeRef.current.start(
                     backCamera ? { deviceId: backCamera.id } : { facingMode: "environment" },
@@ -302,8 +324,13 @@ export default function ScanPage() {
             {/* Header */}
             <header className="flex items-center justify-between px-5 py-4 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 sticky top-0 z-20">
                 <Link href="/" className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
-                        <ShoppingCart size={18} />
+                    <div className="relative w-8 h-8 flex-shrink-0">
+                        <Image
+                            src="/logo.png"
+                            alt="Logo"
+                            fill
+                            className="object-contain"
+                        />
                     </div>
                     <div>
                         <h1 className="text-sm font-bold text-slate-900 dark:text-white leading-tight">SwiftCart AI</h1>

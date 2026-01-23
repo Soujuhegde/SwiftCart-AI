@@ -1,0 +1,127 @@
+﻿
+> ai-frontend@0.1.0 build
+> next build
+
+node.exe : ΓÜá 
+Warning: Next.js 
+inferred your 
+workspace root, but 
+it may not be 
+correct.
+At line:1 char:1
++ & "C:\Program Files
+\nodejs/node.exe" "C:
+\Users\Sadguru\AppDat
+a\Roamin ...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (ΓÜá War   
+ ning: Ne...not b    
+e correct.:Strin    
+g) [], RemoteExc    
+eption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+ We detected 
+multiple lockfiles 
+and selected the 
+directory of C:\Users
+\Sadguru\package-lock
+.json as the root 
+directory.
+ To silence this 
+warning, set 
+`turbopack.root` in 
+your Next.js config, 
+or consider removing 
+one of the lockfiles 
+if it's not needed.
+   See https://nextjs
+.org/docs/app/api-ref
+erence/config/next-co
+nfig-js/turbopack#roo
+t-directory for more 
+information.
+ Detected additional 
+lockfiles: 
+   * C:\Users\Sadguru
+\OneDrive\Desktop\Swi
+ftCart AI\ai-frontend
+\package-lock.json
+
+Γû▓ Next.js 16.1.1 (Turbopack)
+- Environments: .env
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 12.5s
+  Running TypeScript ...
+Failed to compile.
+
+./components/Navbar.t
+sx:29:21
+Type error: An 
+object literal 
+cannot have multiple 
+properties with the 
+same name.
+
+[0m [90m 27 |[39m 
+                    
+width[33m:[39m 
+isScrolled 
+[33m?[39m 
+[32m"auto"[39m 
+[33m:[39m [32m"100
+%"[39m[33m,[39m
+ [90m 28 |[39m     
+                borde
+rRadius[33m:[39m 
+isScrolled 
+[33m?[39m 
+[32m"9999px"[39m 
+[33m:[39m [32m"0px
+"[39m[33m,[39m
+[31m[1m>[22m[39m
+[90m 29 |[39m       
+              
+y[33m:[39m 
+isScrolled 
+[33m?[39m 
+[35m10[39m 
+[33m:[39m [35m0[3
+9m[33m,[39m
+ [90m    |[39m     
+                
+[31m[1m^[22m[39m
+ [90m 30 |[39m     
+            }}
+ [90m 31 |[39m     
+            transitio
+n[33m=[39m{{ 
+duration[33m:[39m 
+[35m0.5[39m[33m,[3
+9m type[33m:[39m [
+32m"spring"[39m[33m
+,[39m 
+stiffness[33m:[39m 
+[35m100[39m[33m,[
+39m 
+damping[33m:[39m 
+[35m20[39m }}
+ [90m 32 |[39m     
+            className
+[33m=[39m{[32m`poi
+nter-events-auto 
+backdrop-blur-md 
+transition-all 
+duration-300 
+ease-in-out[39m[0m
+Next.js build worker 
+exited with code: 1 
+and signal: null

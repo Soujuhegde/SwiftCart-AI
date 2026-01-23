@@ -5,7 +5,7 @@ import { useRef, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 // --- Configuration ---
-const DEFAULT_EASE = [0.16, 1, 0.3, 1]; // Tildei-style soft out
+const DEFAULT_EASE = [0.16, 1, 0.3, 1] as [number, number, number, number]; // Tildei-style soft out
 const DURATION = 0.8;
 
 // --- Variants ---

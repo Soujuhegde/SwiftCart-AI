@@ -35,8 +35,8 @@ export default function TrustedBrands() {
                 {/* First Set */}
                 <div className="flex w-max">
                     {BRANDS.map((brand, i) => (
-                        <div key={`a-${i}`} className="flex items-center px-12 opacity-50 grayscale hover:grayscale-0 hover:opacity-80 transition-all duration-300 cursor-default">
-                            <span className={`text-2xl text-slate-800 whitespace-nowrap ${brand.style}`}>
+                        <div key={`a-${i}`} className="flex items-center px-6 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-default">
+                            <span className={`text-lg text-slate-600 whitespace-nowrap ${brand.style}`}>
                                 {brand.name}
                             </span>
                         </div>
@@ -45,8 +45,8 @@ export default function TrustedBrands() {
                 {/* Second Set (Duplicate for smooth loop) */}
                 <div className="flex w-max">
                     {BRANDS.map((brand, i) => (
-                        <div key={`b-${i}`} className="flex items-center px-12 opacity-50 grayscale hover:grayscale-0 hover:opacity-80 transition-all duration-300 cursor-default">
-                            <span className={`text-2xl text-slate-800 whitespace-nowrap ${brand.style}`}>
+                        <div key={`b-${i}`} className="flex items-center px-6 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-default">
+                            <span className={`text-lg text-slate-600 whitespace-nowrap ${brand.style}`}>
                                 {brand.name}
                             </span>
                         </div>

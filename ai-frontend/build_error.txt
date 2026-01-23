@@ -1,0 +1,437 @@
+﻿
+> ai-frontend@0.1.0 build
+> next build
+
+node.exe : ΓÜá 
+Warning: Next.js 
+inferred your 
+workspace root, but 
+it may not be 
+correct.
+At line:1 char:1
++ & "C:\Program Files
+\nodejs/node.exe" "C:
+\Users\Sadguru\AppDat
+a\Roamin ...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (ΓÜá War   
+ ning: Ne...not b    
+e correct.:Strin    
+g) [], RemoteExc    
+eption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+ We detected 
+multiple lockfiles 
+and selected the 
+directory of C:\Users
+\Sadguru\package-lock
+.json as the root 
+directory.
+ To silence this 
+warning, set 
+`turbopack.root` in 
+your Next.js config, 
+or consider removing 
+one of the lockfiles 
+if it's not needed.
+   See https://nextjs
+.org/docs/app/api-ref
+erence/config/next-co
+nfig-js/turbopack#roo
+t-directory for more 
+information.
+ Detected additional 
+lockfiles: 
+   * C:\Users\Sadguru
+\OneDrive\Desktop\Swi
+ftCart AI\ai-frontend
+\package-lock.json
+
+Γû▓ Next.js 16.1.1 (Turbopack)
+- Environments: .env
+
+  Creating an optimized production build ...
+
+> Build error 
+occurred
+Error: Turbopack 
+build failed with 3 
+errors:
+./OneDrive/Desktop/Sw
+iftCart AI/ai-fronten
+d/providers/CartConte
+xt.tsx:1:17
+Ecmascript file had 
+an error
+[0m[31m[1m>[22m[
+39m[90m 1 |[39m 
+[36mimport[39m [33
+mReact[39m[33m,[39
+m { createContext[33
+m,[39m useContext[3
+3m,[39m 
+useState[33m,[39m 
+useEffect[33m,[39m 
+useCallback } 
+[36mfrom[39m [32m'
+react'[39m[33m;[39
+m
+ [90m   |[39m      
+           [31m[1m^
+[22m[39m[31m[1m^
+[22m[39m[31m[1m^[
+22m[39m[31m[1m^[2
+2m[39m[31m[1m^[22
+m[39m[31m[1m^[22m
+[39m[31m[1m^[22m
+[39m[31m[1m^[22m[
+39m[31m[1m^[22m[3
+9m[31m[1m^[22m[39
+m[31m[1m^[22m[39m
+[31m[1m^[22m[39m
+[31m[1m^[22m[39m
+ [90m 2 |[39m 
+[36mimport[39m { 
+getCart[33m,[39m [
+33mCart[39m[33m,[3
+9m [33mCartItem[39m
+[33m,[39m updateCar
+tItem[33m,[39m dele
+teCartItem[33m,[39m
+ processPayment } 
+[36mfrom[39m [32m'
+@/lib/api'[39m[33m;
+[39m
+ [90m 3 |[39m 
+[36mimport[39m { 
+toast } 
+[36mfrom[39m [32m'
+sonner'[39m[33m;[3
+9m
+ [90m 4 |[39m[0m
+
+You're importing a 
+component that needs 
+`createContext`. 
+This React Hook only 
+works in a Client 
+Component. To fix, 
+mark the file (or 
+its parent) with the 
+`"use client"` 
+directive.
+
+ Learn more: https://
+nextjs.org/docs/app/a
+pi-reference/directiv
+es/use-client
+
+
+
+Import traces:
+  Server Component:
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/providers/CartC
+ontext.tsx
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/app/layout.tsx
+
+  Client Component 
+Browser:
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/providers/CartC
+ontext.tsx [Client 
+Component Browser]
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/app/customer/pa
+yment/page.tsx 
+[Client Component 
+Browser]
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/app/customer/pa
+yment/page.tsx 
+[Server Component]
+
+  Client Component 
+SSR:
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/providers/CartC
+ontext.tsx [Client 
+Component SSR]
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/app/customer/pa
+yment/page.tsx 
+[Client Component 
+SSR]
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/app/customer/pa
+yment/page.tsx 
+[Server Component]
+
+
+./OneDrive/Desktop/Sw
+iftCart AI/ai-fronten
+d/providers/CartConte
+xt.tsx:1:54
+Ecmascript file had 
+an error
+[0m[31m[1m>[22m[
+39m[90m 1 |[39m 
+[36mimport[39m [33
+mReact[39m[33m,[39
+m { createContext[33
+m,[39m useContext[3
+3m,[39m 
+useState[33m,[39m 
+useEffect[33m,[39m 
+useCallback } 
+[36mfrom[39m [32m'
+react'[39m[33m;[39
+m
+ [90m   |[39m      
+                     
+                     
+      [31m[1m^[22m
+[39m[31m[1m^[22m
+[39m[31m[1m^[22m[
+39m[31m[1m^[22m[3
+9m[31m[1m^[22m[39
+m[31m[1m^[22m[39m
+[31m[1m^[22m[39m
+[31m[1m^[22m[39m[
+31m[1m^[22m[39m
+ [90m 2 |[39m 
+[36mimport[39m { 
+getCart[33m,[39m [
+33mCart[39m[33m,[3
+9m [33mCartItem[39m
+[33m,[39m updateCar
+tItem[33m,[39m dele
+teCartItem[33m,[39m
+ processPayment } 
+[36mfrom[39m [32m'
+@/lib/api'[39m[33m;
+[39m
+ [90m 3 |[39m 
+[36mimport[39m { 
+toast } 
+[36mfrom[39m [32m'
+sonner'[39m[33m;[3
+9m
+ [90m 4 |[39m[0m
+
+You're importing a 
+component that needs 
+`useEffect`. This 
+React Hook only 
+works in a Client 
+Component. To fix, 
+mark the file (or 
+its parent) with the 
+`"use client"` 
+directive.
+
+ Learn more: https://
+nextjs.org/docs/app/a
+pi-reference/directiv
+es/use-client
+
+
+
+Import traces:
+  Server Component:
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/providers/CartC
+ontext.tsx
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/app/layout.tsx
+
+  Client Component 
+Browser:
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/providers/CartC
+ontext.tsx [Client 
+Component Browser]
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/app/customer/pa
+yment/page.tsx 
+[Client Component 
+Browser]
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/app/customer/pa
+yment/page.tsx 
+[Server Component]
+
+  Client Component 
+SSR:
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/providers/CartC
+ontext.tsx [Client 
+Component SSR]
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/app/customer/pa
+yment/page.tsx 
+[Client Component 
+SSR]
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/app/customer/pa
+yment/page.tsx 
+[Server Component]
+
+
+./OneDrive/Desktop/Sw
+iftCart AI/ai-fronten
+d/providers/CartConte
+xt.tsx:1:44
+Ecmascript file had 
+an error
+[0m[31m[1m>[22m[
+39m[90m 1 |[39m 
+[36mimport[39m [33
+mReact[39m[33m,[39
+m { createContext[33
+m,[39m useContext[3
+3m,[39m 
+useState[33m,[39m 
+useEffect[33m,[39m 
+useCallback } 
+[36mfrom[39m [32m'
+react'[39m[33m;[39
+m
+ [90m   |[39m      
+                     
+                 [31
+m[1m^[22m[39m[31m
+[1m^[22m[39m[31m
+[1m^[22m[39m[31m[
+1m^[22m[39m[31m[1
+m^[22m[39m[31m[1m
+^[22m[39m[31m[1m^
+[22m[39m[31m[1m^
+[22m[39m
+ [90m 2 |[39m 
+[36mimport[39m { 
+getCart[33m,[39m [
+33mCart[39m[33m,[3
+9m [33mCartItem[39m
+[33m,[39m updateCar
+tItem[33m,[39m dele
+teCartItem[33m,[39m
+ processPayment } 
+[36mfrom[39m [32m'
+@/lib/api'[39m[33m;
+[39m
+ [90m 3 |[39m 
+[36mimport[39m { 
+toast } 
+[36mfrom[39m [32m'
+sonner'[39m[33m;[3
+9m
+ [90m 4 |[39m[0m
+
+You're importing a 
+component that needs 
+`useState`. This 
+React Hook only 
+works in a Client 
+Component. To fix, 
+mark the file (or 
+its parent) with the 
+`"use client"` 
+directive.
+
+ Learn more: https://
+nextjs.org/docs/app/a
+pi-reference/directiv
+es/use-client
+
+
+
+Import traces:
+  Server Component:
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/providers/CartC
+ontext.tsx
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/app/layout.tsx
+
+  Client Component 
+Browser:
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/providers/CartC
+ontext.tsx [Client 
+Component Browser]
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/app/customer/pa
+yment/page.tsx 
+[Client Component 
+Browser]
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/app/customer/pa
+yment/page.tsx 
+[Server Component]
+
+  Client Component 
+SSR:
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/providers/CartC
+ontext.tsx [Client 
+Component SSR]
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/app/customer/pa
+yment/page.tsx 
+[Client Component 
+SSR]
+    ./OneDrive/Deskto
+p/SwiftCart AI/ai-fro
+ntend/app/customer/pa
+yment/page.tsx 
+[Server Component]
+
+
+    at <unknown> (./O
+neDrive/Desktop/Swift
+Cart AI/ai-frontend/p
+roviders/CartContext.
+tsx:1:17)
+    at <unknown> (./O
+neDrive/Desktop/Swift
+Cart AI/ai-frontend/p
+roviders/CartContext.
+tsx:1:54)
+    at <unknown> (./O
+neDrive/Desktop/Swift
+Cart AI/ai-frontend/p
+roviders/CartContext.
+tsx:1:44)

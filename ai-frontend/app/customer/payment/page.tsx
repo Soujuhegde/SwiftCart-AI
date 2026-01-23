@@ -5,8 +5,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/providers/CartContext";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, CreditCard, Wallet, CheckCircle, ArrowRight, Lock } from "lucide-react";
+import { ShoppingCart, CreditCard, Wallet, CheckCircle, ArrowRight, Lock, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
+
+
+import { CartItem } from "@/lib/api";
 
 export default function PaymentPage() {
     const { cartTotal, cart, checkout } = useCart();
@@ -37,40 +41,36 @@ export default function PaymentPage() {
     };
 
     return (
-        <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900">
-            <header className="flex-none flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-slate-800 bg-white/95 dark:bg-slate-800/95 backdrop-blur z-10 sticky top-0">
-                <Link href="/" className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-blue-600/10 flex items-center justify-center text-blue-600">
-                        <ShoppingCart size={18} />
-                    </div>
-                    <div>
-                        <h2 className="text-xs font-bold uppercase text-slate-500">SwiftCart AI</h2>
-                        <h1 className="text-lg font-bold leading-tight text-slate-900 dark:text-white">Checkout</h1>
-                    </div>
+        <div className="flex flex-col h-full bg-slate-50 min-h-screen font-sans">
+            <header className="flex-none flex items-center justify-between px-6 py-5 bg-white border-b border-slate-100 shadow-sm z-10 sticky top-0">
+                <Link href="/customer/scan" className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors">
+                    <ChevronLeft size={20} />
+                    <span className="font-bold text-sm">Back</span>
                 </Link>
-                <Link href="/customer/scan" className="text-sm font-semibold text-slate-500 hover:text-red-500 transition-colors px-3 py-1.5 rounded-lg hover:bg-slate-50">
-                    Cancel
-                </Link>
+                <div className="flex flex-col items-center">
+                    <h1 className="text-lg font-black text-slate-900 tracking-tight">Checkout</h1>
+                </div>
+                <div className="w-10"></div> {/* Spacer for centering */}
             </header>
 
-            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            <div className="flex-1 overflow-y-auto p-6 space-y-8 pb-32">
                 {/* Order Summary */}
                 <section>
-                    <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-base font-bold text-slate-900 dark:text-white">Order Summary</h3>
-                        <Link href="/customer/scan" className="text-xs font-semibold text-blue-600 hover:underline">Edit</Link>
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-base font-extrabold text-slate-900">Order Summary</h3>
+                        <Link href="/customer/scan" className="text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 px-3 py-1 rounded-full transition-colors">Edit Cart</Link>
                     </div>
                     <div className="flex flex-col gap-3">
-                        {cart?.items?.map((item: any) => (
-                            <div key={item.id} className="flex items-center gap-4 p-3 rounded-xl bg-white dark:bg-slate-800 border border-transparent hover:border-slate-200 transition-all shadow-sm">
-                                <div className="relative w-12 h-12 shrink-0 overflow-hidden rounded-lg bg-slate-100">
-                                    <img src={item.product?.imageUrl || '/placeholder.png'} alt={item.product?.name} className="w-full h-full object-cover" />
+                        {cart?.items?.map((item: CartItem) => (
+                            <div key={item.id} className="flex items-center gap-4 p-3 rounded-2xl bg-white border border-slate-100 shadow-sm">
+                                <div className="relative w-14 h-14 shrink-0 overflow-hidden rounded-xl bg-slate-50 border border-slate-100">
+                                    <img src={item.product?.imageUrl || '/placeholder.png'} alt={item.product?.name} className="w-full h-full object-cover mix-blend-multiply" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium truncate text-slate-900 dark:text-white">{item.product?.name}</p>
-                                    <p className="text-xs text-slate-500">Qty: {item.quantity}</p>
+                                    <p className="text-sm font-bold truncate text-slate-900">{item.product?.name}</p>
+                                    <p className="text-xs text-slate-500 font-medium mt-0.5">Qty: {item.quantity}</p>
                                 </div>
-                                <p className="text-sm font-bold text-slate-900 dark:text-white">₹{(item.price * item.quantity).toFixed(2)}</p>
+                                <p className="text-sm font-bold text-slate-900">₹{(item.price * item.quantity).toFixed(2)}</p>
                             </div>
                         ))}
                     </div>
@@ -78,96 +78,112 @@ export default function PaymentPage() {
 
                 {/* Payment Method */}
                 <section>
-                    <h3 className="text-base font-bold text-slate-900 dark:text-white mb-3">Payment Method</h3>
-                    <div className="grid grid-cols-2 gap-3 mb-4">
+                    <h3 className="text-base font-extrabold text-slate-900 mb-4">Payment Method</h3>
+                    <div className="grid grid-cols-2 gap-4 mb-6">
                         <label className="cursor-pointer relative group" onClick={() => setMethod("card")}>
-                            <div className={`flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all h-20 ${method === "card" ? "border-blue-600 bg-blue-50/50" : "border-slate-100 bg-white dark:bg-slate-800 dark:border-slate-700"}`}>
-                                <CreditCard className={`mb-1 ${method === "card" ? "text-blue-600" : "text-slate-400"}`} />
-                                <span className={`text-xs font-semibold ${method === "card" ? "text-blue-600" : "text-slate-400"}`}>Card</span>
-                            </div>
+                            <motion.div
+                                className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all h-24 ${method === "card" ? "border-blue-600 bg-blue-50/50" : "border-white bg-white shadow-sm hover:border-slate-200"}`}
+                                whileTap={{ scale: 0.98 }}
+                            >
+                                <CreditCard className={`mb-2 ${method === "card" ? "text-blue-600" : "text-slate-400"}`} size={28} />
+                                <span className={`text-sm font-bold ${method === "card" ? "text-blue-900" : "text-slate-500"}`}>Card</span>
+                            </motion.div>
                             {method === "card" && (
-                                <div className="absolute top-2 right-2 text-blue-600">
-                                    <CheckCircle size={16} className="fill-current" />
+                                <div className="absolute top-3 right-3 text-blue-600">
+                                    <CheckCircle size={18} className="fill-current" />
                                 </div>
                             )}
                         </label>
                         <label className="cursor-pointer relative group" onClick={() => setMethod("wallet")}>
-                            <div className={`flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all h-20 ${method === "wallet" ? "border-blue-600 bg-blue-50/50" : "border-slate-100 bg-white dark:bg-slate-800 dark:border-slate-700"}`}>
-                                <Wallet className={`mb-1 ${method === "wallet" ? "text-blue-600" : "text-slate-400"}`} />
-                                <span className={`text-xs font-semibold ${method === "wallet" ? "text-blue-600" : "text-slate-400"}`}>Wallet</span>
-                            </div>
+                            <motion.div
+                                className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all h-24 ${method === "wallet" ? "border-blue-600 bg-blue-50/50" : "border-white bg-white shadow-sm hover:border-slate-200"}`}
+                                whileTap={{ scale: 0.98 }}
+                            >
+                                <Wallet className={`mb-2 ${method === "wallet" ? "text-blue-600" : "text-slate-400"}`} size={28} />
+                                <span className={`text-sm font-bold ${method === "wallet" ? "text-blue-900" : "text-slate-500"}`}>Wallet</span>
+                            </motion.div>
                             {method === "wallet" && (
-                                <div className="absolute top-2 right-2 text-blue-600">
-                                    <CheckCircle size={16} className="fill-current" />
+                                <div className="absolute top-3 right-3 text-blue-600">
+                                    <CheckCircle size={18} className="fill-current" />
                                 </div>
                             )}
                         </label>
                     </div>
 
                     {method === "card" && (
-                        <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            className="flex flex-col gap-4 bg-white p-6 rounded-3xl border border-slate-100 shadow-sm"
+                        >
                             <div className="relative">
-                                <label className="text-xs font-medium text-slate-500 ml-1 mb-1 block">Card Number</label>
+                                <label className="text-xs font-bold uppercase tracking-wider text-slate-400 ml-1 mb-2 block">Card Number</label>
                                 <div className="relative">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-                                        <CreditCard size={18} />
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                                        <CreditCard size={20} />
                                     </span>
-                                    <input className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition-all" placeholder="0000 0000 0000 0000" defaultValue="4242 4242 4242 4242" />
-                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-70">
-                                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAH01yJCUn7kYFZJlYOunxeth2PNCvrCP53ul7pQsLJHIo4NJxoBE8yU-m8tP_p9t4mjCIXicokLwv3iS4Zp2R5U1F3pYUpZtSJjAoBK4RSMr4HEfVQpqEAGUGsRdSKpiBqkkH81mF1W-o3dzSBSfVcJmHpopGSzePNQkzugKHf2ReI2auV43ysRMdu96q2U9ZCtcP1Jp2hx9tKbRvygFq8Mr3fqkGEW-QtyAo_Qdclwyv0_e8LL2DWgImpflEyBbDZHtS9WZJ9vzcM" alt="Mastercard" className="h-5" />
+                                    <input className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-base font-bold text-slate-900 transition-all placeholder:font-normal" placeholder="0000 0000 0000 0000" defaultValue="4242 4242 4242 4242" />
+                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-70 grayscale">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-6" />
                                     </div>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="text-xs font-medium text-slate-500 ml-1 mb-1 block">Expiry</label>
-                                    <input className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium" placeholder="MM/YY" defaultValue="12/25" />
+                                    <label className="text-xs font-bold uppercase tracking-wider text-slate-400 ml-1 mb-2 block">Expiry</label>
+                                    <input className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-base font-bold text-slate-900 text-center" placeholder="MM/YY" defaultValue="12/25" />
                                 </div>
                                 <div>
-                                    <label className="text-xs font-medium text-slate-500 ml-1 mb-1 block">CVC</label>
-                                    <input className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium" placeholder="123" defaultValue="123" />
+                                    <label className="text-xs font-bold uppercase tracking-wider text-slate-400 ml-1 mb-2 block">CVC</label>
+                                    <input className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-base font-bold text-slate-900 text-center" placeholder="123" defaultValue="123" />
                                 </div>
                             </div>
-                        </div>
+                        </motion.div>
                     )}
                 </section>
 
                 {/* Cost breakdown */}
-                <section className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-100 dark:border-slate-700/50">
-                    <div className="flex flex-col gap-2">
-                        <div className="flex justify-between items-center text-sm text-slate-500">
+                <section className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
+                    <div className="flex flex-col gap-3">
+                        <div className="flex justify-between items-center text-sm font-medium text-slate-500">
                             <span>Subtotal</span>
-                            <span className="font-medium">₹{cartTotal.toFixed(2)}</span>
+                            <span>₹{cartTotal.toFixed(2)}</span>
                         </div>
-                        <div className="flex justify-between items-center text-sm text-slate-500">
+                        <div className="flex justify-between items-center text-sm font-medium text-slate-500">
                             <span>Tax (8%)</span>
-                            <span className="font-medium">₹{tax.toFixed(2)}</span>
+                            <span>₹{tax.toFixed(2)}</span>
                         </div>
-                        <div className="h-px w-full bg-slate-200 dark:bg-slate-700 my-1"></div>
+                        <div className="h-px w-full bg-slate-100 my-2"></div>
                         <div className="flex justify-between items-center text-lg">
-                            <span className="font-bold text-slate-900 dark:text-white">Total</span>
-                            <span className="font-extrabold text-slate-900 dark:text-white">₹{total.toFixed(2)}</span>
+                            <span className="font-bold text-slate-900">Total</span>
+                            <span className="font-black text-xl text-slate-900 tracking-tight">₹{total.toFixed(2)}</span>
                         </div>
                     </div>
                 </section>
             </div>
 
-            <footer className="flex-none p-6 border-t border-slate-100 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur z-10 flex flex-col gap-4">
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg h-14 rounded-xl shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 group" onClick={handlePayment} disabled={isProcessing || !cart || !cart.items || cart.items.length === 0}>
+            <footer className="absolute bottom-0 w-full p-4 pb-8 border-t border-slate-100 bg-white shadow-[0_-10px_40px_rgba(0,0,0,0.05)] z-20 rounded-t-[2rem] flex flex-col items-center justify-center">
+                <Button className="w-64 h-11 text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 rounded-full flex items-center justify-between px-6 group transition-all hover:scale-[1.05] active:scale-[0.95]" onClick={handlePayment} disabled={isProcessing || !cart || !cart.items || cart.items.length === 0}>
                     {isProcessing ? (
-                        <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
+                        <div className="w-full flex items-center justify-center gap-3">
+                            <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+                            <span>Processing...</span>
+                        </div>
                     ) : (
                         <>
                             <span>Pay ₹{total.toFixed(2)}</span>
-                            <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+                            <div className="flex items-center gap-2">
+                                <Lock size={14} className="text-blue-200" />
+                                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                            </div>
                         </>
                     )}
                 </Button>
-                <div className="flex items-center justify-center gap-1.5 text-xs text-slate-400">
-                    <Lock size={12} />
-                    <p>Secured by <strong>SwiftCart AI</strong></p>
+                <div className="flex items-center justify-center gap-1.5 text-[10px] text-slate-400 mt-4 uppercase tracking-widest font-bold">
+                    <Lock size={10} />
+                    <p>Secured by SwiftCart AI</p>
                 </div>
             </footer>
-        </div>
+        </div >
     );
 }

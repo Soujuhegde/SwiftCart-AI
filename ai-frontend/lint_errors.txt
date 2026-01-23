@@ -1,0 +1,163 @@
+﻿
+> ai-frontend@0.1.0 lint
+> eslint
+
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\app\customer\payment\page.tsx
+    8:10  warning  'ShoppingCart' is defined but never used                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+   75:37  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  135:41  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\app\customer\success\page.tsx
+  17:60  warning  'ArrowRight' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\app\demo\page.tsx
+  3:17  warning  'useState' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\app\page.tsx
+  6:8  warning  'AzureSection' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\app\retailer\ai-intelligence\page.tsx
+  6:27  warning  'XAxis' is defined but never used          @typescript-eslint/no-unused-vars
+  6:34  warning  'YAxis' is defined but never used          @typescript-eslint/no-unused-vars
+  6:71  warning  'CartesianGrid' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\app\retailer\demand-forecast\page.tsx
+   4:86  warning  'Legend' is defined but never used        @typescript-eslint/no-unused-vars
+  24:54  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\app\retailer\inventory\page.tsx
+  36:9  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\app\retailer\profile\page.tsx
+   6:10  warning  'User' is defined but never used                                 @typescript-eslint/no-unused-vars
+  68:95  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\components\ClientOnly.tsx
+  9:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\components\ClientOnly.tsx:9:9
+   7 |
+   8 |     useEffect(() => {
+>  9 |         setHasMounted(true);
+     |         ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  10 |     }, []);
+  11 |
+  12 |     if (!hasMounted) {  react-hooks/set-state-in-effect
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\components\CommandCenterStrip.tsx
+  3:20  warning  'ShieldCheck' is defined but never used  @typescript-eslint/no-unused-vars
+  3:55  warning  'AlertCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\components\Dashboard.tsx
+  20:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\components\HeroSection.tsx
+   4:10  warning  'ArrowRight' is defined but never used     @typescript-eslint/no-unused-vars
+   4:22  warning  'Zap' is defined but never used            @typescript-eslint/no-unused-vars
+   4:37  warning  'ShieldCheck' is defined but never used    @typescript-eslint/no-unused-vars
+   8:8   warning  'ClientOnly' is defined but never used     @typescript-eslint/no-unused-vars
+  10:10  warning  'SectionReveal' is defined but never used  @typescript-eslint/no-unused-vars
+  10:25  warning  'LivePulse' is defined but never used      @typescript-eslint/no-unused-vars
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\components\HowItWorksSection.tsx
+  3:16  warning  'ShoppingBag' is defined but never used  @typescript-eslint/no-unused-vars
+  3:57  warning  'Smartphone' is defined but never used   @typescript-eslint/no-unused-vars
+  3:69  warning  'ArrowRight' is defined but never used   @typescript-eslint/no-unused-vars
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\components\MetricCard.tsx
+  2:10  warning  'ArrowUp' is defined but never used    @typescript-eslint/no-unused-vars
+  2:19  warning  'ArrowDown' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\components\RetailAssistant.tsx
+   4:21  warning  'User' is defined but never used                @typescript-eslint/no-unused-vars
+  10:10  warning  'cn' is defined but never used                  @typescript-eslint/no-unused-vars
+  21:36  warning  'cartTotal' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  65:18  warning  'error' is defined but never used               @typescript-eslint/no-unused-vars
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\components\RetailFormatsSection.tsx
+  3:10  warning  'motion' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\components\Scanner.tsx
+    5:10  warning  'Button' is defined but never used                                                                              @typescript-eslint/no-unused-vars
+    6:21  warning  'Camera' is defined but never used                                                                              @typescript-eslint/no-unused-vars
+    7:10  warning  'toast' is defined but never used                                                                               @typescript-eslint/no-unused-vars
+   16:12  warning  'permissionDenied' is assigned a value but never used                                                           @typescript-eslint/no-unused-vars
+   83:66  warning  'e' is defined but never used                                                                                   @typescript-eslint/no-unused-vars
+  119:18  warning  'errorMessage' is defined but never used                                                                        @typescript-eslint/no-unused-vars
+  129:23  error    Unexpected any. Specify a different type                                                                        @typescript-eslint/no-explicit-any
+  153:8   warning  React Hook useEffect has a missing dependency: 'initScanner'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\components\ShopperSection.tsx
+   3:10  warning  'Smartphone' is defined but never used                                                                                                                                                                                                                                                   @typescript-eslint/no-unused-vars
+  69:49  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\components\WorkflowSection.tsx
+  3:10  warning  'Map' is defined but never used            @typescript-eslint/no-unused-vars
+  3:39  warning  'Lock' is defined but never used           @typescript-eslint/no-unused-vars
+  3:45  warning  'Settings2' is defined but never used      @typescript-eslint/no-unused-vars
+  4:10  warning  'motion' is defined but never used         @typescript-eslint/no-unused-vars
+  5:23  warning  'RevealItem' is defined but never used     @typescript-eslint/no-unused-vars
+  5:46  warning  'SectionReveal' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\components\retailer\ActivityTimeline.tsx
+   3:24  warning  'ShoppingCart' is defined but never used                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+   3:38  warning  'UserPlus' is defined but never used                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+  54:41  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\components\retailer\DashboardKPIs.tsx
+  3:24  warning  'ShoppingCart' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\components\retailer\DeviceHealthWidget.tsx
+  3:10  warning  'CheckCircle2' is defined but never used  @typescript-eslint/no-unused-vars
+  3:35  warning  'Server' is defined but never used        @typescript-eslint/no-unused-vars
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\components\retailer\ExceptionsPanel.tsx
+   3:10  warning  'AlertTriangle' is defined but never used                                                                                                                                                                                                                                                @typescript-eslint/no-unused-vars
+   3:38  warning  'CreditCard' is defined but never used                                                                                                                                                                                                                                                   @typescript-eslint/no-unused-vars
+   3:50  warning  'ChevronRight' is defined but never used                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+   3:64  warning  'XOctagon' is defined but never used                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+   3:74  warning  'CheckCircle' is defined but never used                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+  51:60  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\components\retailer\LiveActivityTable.tsx
+  3:38  warning  'AlertCircle' is defined but never used   @typescript-eslint/no-unused-vars
+  3:51  warning  'CheckCircle2' is defined but never used  @typescript-eslint/no-unused-vars
+  5:10  warning  'Badge' is defined but never used         @typescript-eslint/no-unused-vars
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\components\retailer\Sidebar.tsx
+  11:5  warning  'FileText' is defined but never used  @typescript-eslint/no-unused-vars
+  12:5  warning  'Users' is defined but never used     @typescript-eslint/no-unused-vars
+  13:5  warning  'Settings' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\components\ui\motion\primitives.tsx
+  3:18  warning  'useInView' is defined but never used  @typescript-eslint/no-unused-vars
+  3:29  warning  'Variant' is defined but never used    @typescript-eslint/no-unused-vars
+  4:10  warning  'useRef' is defined but never used     @typescript-eslint/no-unused-vars
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\lib\api.ts
+  37:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  46:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\providers\CartContext.tsx
+   14:16  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   23:48  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   46:26  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   53:18  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+   62:43  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   75:18  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+   85:18  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+  118:62  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  119:62  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Sadguru\OneDrive\Desktop\SwiftCart AI\ai-frontend\providers\DemoProvider.tsx
+  84:47  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+Γ£û 83 problems (14 errors, 69 warnings)
+

@@ -1,8 +1,16 @@
-'use client';
+"use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { getCart, Cart, updateCartItem, deleteCartItem, processPayment } from '@/lib/api';
+import { getCart, Cart, CartItem, updateCartItem, deleteCartItem, processPayment } from '@/lib/api';
 import { toast } from 'sonner';
+
+interface Order {
+    id?: string;
+    items: CartItem[];
+    total: number;
+    date: string;
+    [key: string]: unknown;
+}
 
 interface CartContextType {
     cart: Cart | null;
@@ -11,16 +19,17 @@ interface CartContextType {
     updateQuantity: (itemId: string, delta: number) => Promise<void>;
     removeFromCart: (itemId: string) => Promise<void>;
     checkout: (amount: number, method: string) => Promise<boolean>;
-    lastOrder: any | null;
+    lastOrder: Order | null;
     cartTotal: number;
     itemCount: number;
+    userId: string;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     const [cart, setCart] = useState<Cart | null>(null);
-    const [lastOrder, setLastOrder] = useState<any | null>(null);
+    const [lastOrder, setLastOrder] = useState<Order | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
     // In a real app, userId would come from AuthContext. 
@@ -43,7 +52,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
                         status: 'ACTIVE',
                         items: data.items,
                         totalAmount: data.total || 0
-                    } as any);
+                    } as Cart);
                 } else {
                     setCart(data);
                 }
@@ -59,7 +68,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     }, [userId]);
 
     const updateQuantity = async (itemId: string, delta: number) => {
-        const item = cart?.items.find((i: any) => i.id === itemId);
+        const item = cart?.items.find((i: CartItem) => i.id === itemId);
         if (!item) return;
         const newQty = item.quantity + delta;
 
@@ -115,11 +124,11 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     }, [refreshCart]);
 
     // Computed values
-    const cartTotal = cart?.items.reduce((sum: number, item: any) => sum + (Number(item.price) * item.quantity), 0) || 0;
-    const itemCount = cart?.items.reduce((sum: number, item: any) => sum + item.quantity, 0) || 0;
+    const cartTotal = cart?.items.reduce((sum: number, item: CartItem) => sum + (Number(item.price) * item.quantity), 0) || 0;
+    const itemCount = cart?.items.reduce((sum: number, item: CartItem) => sum + item.quantity, 0) || 0;
 
     return (
-        <CartContext.Provider value={{ cart, isLoading, refreshCart, updateQuantity, removeFromCart, checkout, lastOrder, cartTotal, itemCount }}>
+        <CartContext.Provider value={{ cart, isLoading, refreshCart, updateQuantity, removeFromCart, checkout, lastOrder, cartTotal, itemCount, userId }}>
             {children}
         </CartContext.Provider>
     );

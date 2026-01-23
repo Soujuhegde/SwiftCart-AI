@@ -94,12 +94,17 @@ const Scanner: React.FC<ScannerProps> = ({ onScan, active }) => {
             );
 
             const config = {
-                fps: 25,
+                fps: 30, // Increased FPS
                 qrbox: (viewfinderWidth: number, viewfinderHeight: number) => {
                     const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
-                    const size = Math.floor(minEdge * 0.85);
+                    // Larger scanning area
+                    const size = Math.floor(minEdge * 0.90);
                     return { width: size, height: size };
-                }
+                },
+                experimentalFeatures: {
+                    useBarCodeDetectorIfSupported: true
+                },
+                aspectRatio: 1.0
             };
 
             console.log(`[Scanner] Starting with config:`, config);
@@ -126,10 +131,10 @@ const Scanner: React.FC<ScannerProps> = ({ onScan, active }) => {
                 setPermissionDenied(false);
             }
 
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("[Scanner] Init error:", err);
             if (isMounted.current) {
-                const msg = err?.message || String(err);
+                const msg = (err as Error)?.message || String(err);
                 if (/permission|allowed/i.test(msg)) {
                     setCameraStatus("Permission Denied");
                     setPermissionDenied(true);
@@ -154,52 +159,7 @@ const Scanner: React.FC<ScannerProps> = ({ onScan, active }) => {
 
     return (
         <div className="absolute inset-0 w-full h-full bg-slate-950 flex flex-col items-center justify-center overflow-hidden">
-            <div id={readerId} className="w-full h-full"></div>
-
-            {/* Overlay UI */}
-            <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center z-10">
-                {/* Viewfinder helper */}
-                <div className="w-64 h-64 border-2 border-white/30 rounded-3xl relative">
-                    <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-blue-500 rounded-tl-xl"></div>
-                    <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-blue-500 rounded-tr-xl"></div>
-                    <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-blue-500 rounded-bl-xl"></div>
-                    <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-blue-500 rounded-br-xl"></div>
-
-                    {/* Scanning Laser Line Animation */}
-                    <div className="absolute top-0 left-4 right-4 h-0.5 bg-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.8)] animate-[scan_2s_ease-in-out_infinite]"></div>
-                </div>
-
-                <div className="mt-12 flex flex-col items-center gap-3 pointer-events-auto">
-                    <div className="flex items-center gap-2 bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 shadow-lg">
-                        <div className={`w-2 h-2 rounded-full ${cameraStatus === 'Active' ? 'bg-blue-500 animate-pulse' : 'bg-yellow-500'}`}></div>
-                        <span className="text-white text-xs font-bold tracking-tight uppercase">{cameraStatus}</span>
-                        {cameraStatus === 'Error' && (
-                            <button onClick={initScanner} className="ml-2 bg-white/10 hover:bg-white/20 p-1 rounded-full text-white">
-                                <RefreshCw size={14} />
-                            </button>
-                        )}
-                    </div>
-
-                    {lastDetected && (
-                        <div className="bg-blue-600/90 text-white text-[10px] px-3 py-1 rounded-full font-medium">
-                            Last code: {lastDetected}
-                        </div>
-                    )}
-
-                    {errorMsg && (
-                        <div className="bg-red-500/90 text-white text-[10px] p-2 rounded-lg max-w-[200px] text-center border border-red-400">
-                            {errorMsg}
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            <style jsx>{`
-                @keyframes scan {
-                    0%, 100% { top: 5%; opacity: 0.3; }
-                    50% { top: 95%; opacity: 1; }
-                }
-            `}</style>
+            <div id={readerId} className="w-full h-full object-cover"></div>
         </div>
     );
 };

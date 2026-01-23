@@ -6,7 +6,7 @@ import { SectionReveal, StaggerGrid, RevealItem } from './ui/motion/primitives';
 
 const ShopperSection = () => {
     return (
-        <section className="py-32 bg-white overflow-hidden relative">
+        <section id="shoppers" className="py-32 bg-white overflow-hidden relative">
             <div className="max-w-7xl mx-auto px-6">
                 <div className="flex flex-col lg:flex-row items-center gap-24">
 
@@ -15,18 +15,18 @@ const ShopperSection = () => {
                         <SectionReveal>
                             <div className="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-bold uppercase tracking-wide mb-6">FOR SHOPPERS</div>
                             <h2 className="text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tighter mb-8">
-                                A Checkout <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-violet-600">That Disappears.</span>
+                                No Lines. <br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-violet-600">No Anxiety.</span>
                             </h2>
-                            <p className="text-lg text-slate-500 mb-8 font-medium">Give your customers the autonomy they want.</p>
+                            <p className="text-lg text-slate-500 mb-8 font-medium">Customers leave in seconds — no queues, no friction, no confusion.</p>
                         </SectionReveal>
 
                         <StaggerGrid className="space-y-6 mb-10">
                             {[
-                                "Web App (No download needed)",
-                                "Real-time cart with taxes/offers",
-                                "Pay via UPI / Apple Pay",
-                                "Shareable digital receipt"
+                                "No awkward waiting times",
+                                "No cashier pressure",
+                                "Live cart totals (Sticker shock proof)",
+                                "Instant digital exit pass"
                             ].map((item, i) => (
                                 <RevealItem key={i} className="flex items-center gap-3 text-lg text-slate-600 font-medium">
                                     <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
@@ -38,9 +38,11 @@ const ShopperSection = () => {
                         </StaggerGrid>
 
                         <SectionReveal delay={0.3}>
-                            <button className="px-8 py-4 rounded-full bg-slate-900 text-white font-bold text-lg hover:bg-slate-800 transition-all flex items-center gap-2 hover:scale-105 active:scale-95 duration-200">
-                                Try the Simulator <ArrowRight size={18} />
-                            </button>
+                            <a href="/demo">
+                                <button className="px-8 py-4 rounded-full bg-slate-900 text-white font-bold text-lg hover:bg-slate-800 transition-all flex items-center gap-2 hover:scale-105 active:scale-95 duration-200 shadow-xl shadow-slate-900/20">
+                                    Try the Simulator <ArrowRight size={18} />
+                                </button>
+                            </a>
                         </SectionReveal>
                     </div>
 

@@ -1,0 +1,6 @@
+next.config.ts(18,9): error TS1005: ',' expected.
+next.config.ts(19,5): error TS1128: Declaration or statement expected.
+next.config.ts(19,6): error TS1128: Declaration or statement expected.
+next.config.ts(22,5): error TS1109: Expression expected.
+next.config.ts(22,6): error TS1128: Declaration or statement expected.
+next.config.ts(23,1): error TS1128: Declaration or statement expected.

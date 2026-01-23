@@ -14,13 +14,21 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CheckCircle, ShoppingCart, Lock, Download, Mail } from "lucide-react";
+import { CheckCircle2, ShoppingCart, Lock, Download, Mail, Store } from "lucide-react";
 import { motion } from "framer-motion";
 
 import { useCart } from "@/providers/CartContext";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { toast } from "sonner";
+
+
+interface OrderItem {
+    name?: string;
+    product?: { name: string };
+    quantity: number;
+    price: number;
+}
 
 export default function OrderSuccessPage() {
     const { lastOrder } = useCart();
@@ -36,8 +44,7 @@ export default function OrderSuccessPage() {
 
         setIsSending(true);
         try {
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
-            const res = await fetch(`${apiUrl}/api/email`, {
+            const res = await fetch('http://localhost:3002/api/email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -75,7 +82,7 @@ export default function OrderSuccessPage() {
         doc.text(`Transaction ID: #${Math.floor(Math.random() * 1000000)}`, 14, 35);
 
         // Items Table
-        const tableBody = lastOrder.items.map((item: any) => [
+        const tableBody = lastOrder.items.map((item: OrderItem) => [
             item.product?.name || item.name || 'Unknown',
             item.quantity.toString(),
             `Rs. ${item.price.toFixed(2)}`,
@@ -96,106 +103,127 @@ export default function OrderSuccessPage() {
         });
 
         // Footer
-        const finalY = (doc as any).lastAutoTable.finalY || 150;
+        const finalY = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY || 150;
         doc.text("Thank you for shopping with SwiftCart AI!", 105, finalY + 20, { align: "center" });
 
         doc.save("swiftcart-receipt.pdf");
     };
 
     return (
-        <div className="flex flex-col h-full bg-white dark:bg-slate-900">
-            <header className="flex items-center justify-center border-b border-slate-100 dark:border-slate-800 px-10 py-4 bg-white dark:bg-slate-900">
-                <div className="flex items-center gap-2 text-slate-900 dark:text-white">
-                    <ShoppingCart className="text-blue-600" />
-                    <h2 className="text-lg font-bold leading-tight tracking-tight">SwiftCart AI</h2>
+        <div className="flex flex-col h-full bg-slate-50 min-h-screen font-sans">
+            <header className="flex items-center justify-center border-b border-slate-100 px-10 py-6 bg-white sticky top-0 z-10">
+                <div className="flex items-center gap-3 text-slate-900">
+                    <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-600/20">
+                        <ShoppingCart size={20} />
+                    </div>
+                    <h2 className="text-lg font-black leading-tight tracking-tight">SwiftCart AI</h2>
                 </div>
             </header>
 
-            <main className="flex-1 flex flex-col p-6 overflow-y-auto w-full max-w-md mx-auto">
-                <div className="flex-1 flex flex-col items-center pt-6 text-center">
-                    <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ type: "spring", stiffness: 200, damping: 20 }}
-                        className="flex flex-col items-center gap-6"
-                    >
-                        <div className="relative flex items-center justify-center">
-                            <div className="absolute inset-0 bg-blue-600/20 rounded-full animate-ping"></div>
-                            <div className="relative bg-blue-600/10 rounded-full p-6 text-blue-600">
-                                <CheckCircle size={64} />
-                            </div>
+            <main className="flex-1 flex flex-col p-6 overflow-y-auto w-full max-w-md mx-auto items-center">
+                <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                    className="flex flex-col items-center gap-6 mt-8"
+                >
+                    <div className="relative flex items-center justify-center">
+                        <div className="absolute inset-0 bg-green-500/20 rounded-full animate-ping duration-1000"></div>
+                        <div className="relative bg-gradient-to-br from-green-500 to-emerald-600 rounded-full p-6 text-white shadow-2xl shadow-green-500/30">
+                            <CheckCircle2 size={64} strokeWidth={2.5} />
                         </div>
-                        <div className="flex flex-col items-center gap-2">
-                            <h1 className="text-slate-900 dark:text-white text-2xl font-bold leading-tight">Payment Successful!</h1>
-                            <p className="text-slate-500 text-sm max-w-xs">
-                                You're all set. You may now exit the store without any alarms.
-                            </p>
-                        </div>
-                    </motion.div>
+                    </div>
+                    <div className="flex flex-col items-center gap-2 text-center">
+                        <h1 className="text-slate-900 text-3xl font-black tracking-tight leading-tight">Payment Successful!</h1>
+                        <p className="text-slate-500 font-medium text-base max-w-xs">
+                            You&apos;re all set. You may now exit the store without any alarms.
+                        </p>
+                    </div>
+                </motion.div>
 
-                    {/* Receipt Preview Section */}
-                    {lastOrder && (
-                        <motion.div
-                            initial={{ y: 20, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            transition={{ delay: 0.2 }}
-                            className="w-full mt-8 text-left"
-                        >
-                            <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-3">Purchased Items</h3>
-                            <div className="bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 divide-y divide-slate-100 dark:divide-slate-700">
-                                {lastOrder.items.map((item: any, idx: number) => (
-                                    <div key={idx} className="flex justify-between p-3 text-sm">
-                                        <div className="flex gap-3">
-                                            <span className="font-medium text-slate-900 dark:text-white">{item.product?.name || item.name || 'Item'}</span>
-                                            <span className="text-slate-500">x{item.quantity}</span>
-                                        </div>
-                                        <span className="font-semibold text-slate-900 dark:text-white">₹{(item.price * item.quantity).toFixed(2)}</span>
-                                    </div>
-                                ))}
-                                <div className="p-3 flex justify-between font-bold text-base text-slate-900 dark:text-white">
-                                    <span>Total</span>
-                                    <span>₹{lastOrder.total.toFixed(2)}</span>
-                                </div>
-                            </div>
-                        </motion.div>
-                    )}
-
+                {/* Receipt Preview Section */}
+                {lastOrder && (
                     <motion.div
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.3 }}
-                        className="w-full mt-6"
+                        transition={{ delay: 0.2 }}
+                        className="w-full mt-10"
                     >
-                        <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700 flex flex-col items-center gap-3 w-full">
-                            <p className="text-slate-900 dark:text-white text-xs font-bold uppercase tracking-wider">Exit Pass</p>
-                            <div className="bg-white p-2 rounded-lg shadow-sm">
-                                <div className="w-32 h-32 bg-[url('https://lh3.googleusercontent.com/aida-public/AB6AXuCaL4k0z7LJZ_6fAb5GARk3UuBHWuf6Jkhg1GB1lrwycMKxgyHQgOJKOC7wagHjsF08MMS9fC5hqJeX90nF5dUPrkseLnDnPCgyqVTkatsJvJnikJ2jUw8rgvR5be1grCsaWvWsHEmznlVdOeq5yibVs1ZwzI2ulDWszeod_qjxL5SrqUPS7hjd8DZE3_02am76uI3pAT0RXu9dvLjPu7JQ7uNh08Wj7MkFk3Dwtf8yU_J8-_WAzhTwNHOk0HtCg2AWgN-slcZpBV01')] bg-contain bg-center bg-no-repeat"></div>
+                        <div className="bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
+                            <div className="bg-slate-50 border-b border-slate-100 p-4 flex justify-between items-center">
+                                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                                    <Store size={14} className="text-slate-400" /> Receipt
+                                </h3>
+                                <div className="text-xs font-mono text-slate-400">#{Math.floor(Math.random() * 100000)}</div>
                             </div>
-                            <p className="text-slate-400 text-[10px]">scan at the door if prompted</p>
+                            <div className="divide-y divide-slate-100">
+                                {lastOrder.items.map((item: OrderItem, idx: number) => (
+                                    <div key={idx} className="flex justify-between p-4 text-sm bg-white hover:bg-slate-50 transition-colors">
+                                        <div className="flex gap-3">
+                                            <span className="font-bold text-slate-900">{item.product?.name || item.name || 'Item'}</span>
+                                            <span className="text-slate-400 text-xs py-0.5 px-1.5 bg-slate-100 rounded-md font-bold">x{item.quantity}</span>
+                                        </div>
+                                        <span className="font-bold text-slate-900">₹{(item.price * item.quantity).toFixed(2)}</span>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-between items-center text-lg">
+                                <span className="text-slate-500 font-medium">Total Paid</span>
+                                <span className="font-black text-slate-900">₹{lastOrder.total.toFixed(2)}</span>
+                            </div>
                         </div>
                     </motion.div>
-                </div>
+                )}
+
+                <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="w-full mt-6"
+                >
+                    <div className="bg-slate-900 p-5 rounded-2xl shadow-xl flex flex-col items-center gap-3 w-full relative overflow-hidden group">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
+                        <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl"></div>
+
+                        <p className="text-white/60 text-[10px] font-bold uppercase tracking-[0.2em] relative z-10">Digital Exit Pass</p>
+                        <div className="bg-white p-3 rounded-xl shadow-inner relative z-10">
+                            {/* Dynamic QR Code for the exit gate */}
+                            <img
+                                src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
+                                    JSON.stringify({
+                                        type: 'EXIT_PASS',
+                                        orderId: lastOrder?.id || 'GUEST',
+                                        total: lastOrder?.total
+                                    })
+                                )}&color=000000&bgcolor=ffffff`}
+                                alt="Exit QR Code"
+                                className="w-32 h-32 object-contain"
+                            />
+                        </div>
+                        <p className="text-blue-200 text-[10px] font-medium animate-pulse relative z-10">Show this at the exit gate</p>
+                    </div>
+                </motion.div>
             </main>
 
-            <div className="p-6 pb-8 space-y-6 bg-white dark:bg-slate-900">
+            <div className="p-6 pb-10 space-y-4 bg-white border-t border-slate-100 rounded-t-[2rem] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] z-20">
                 <Link href="/customer/scan">
-                    <Button className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-lg shadow-blue-500/20">
-                        Back to Home
+                    <Button className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white font-bold text-base shadow-lg shadow-blue-600/20 rounded-xl">
+                        Start New Order
                     </Button>
                 </Link>
-                <div className="flex gap-3 mt-5">
-                    <Button variant="outline" className="flex-1 gap-2 bg-slate-50 border-slate-200 hover:bg-slate-100 dark:bg-slate-800 dark:border-slate-700 dark:hover:bg-slate-700" onClick={handleDownloadInvoice} disabled={!lastOrder}>
+                <div className="flex gap-3 mt-3">
+                    <Button variant="outline" className="flex-1 gap-2 h-12 rounded-xl border-slate-200 hover:bg-slate-50 font-bold text-slate-600" onClick={handleDownloadInvoice} disabled={!lastOrder}>
                         <Download size={16} />
                         Invoice
                     </Button>
                     <Dialog open={isEmailOpen} onOpenChange={setIsEmailOpen}>
                         <DialogTrigger asChild>
-                            <Button variant="outline" className="flex-1 gap-2 bg-slate-50 border-slate-200 hover:bg-slate-100 dark:bg-slate-800 dark:border-slate-700 dark:hover:bg-slate-700">
+                            <Button variant="outline" className="flex-1 gap-2 h-12 rounded-xl border-slate-200 hover:bg-slate-50 font-bold text-slate-600">
                                 <Mail size={16} />
                                 Email
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
+                        <DialogContent className="sm:max-w-[425px] rounded-2xl">
                             <DialogHeader>
                                 <DialogTitle>Email Receipt</DialogTitle>
                                 <DialogDescription>
@@ -211,23 +239,23 @@ export default function OrderSuccessPage() {
                                         id="email"
                                         type="email"
                                         placeholder="you@example.com"
-                                        className="col-span-3"
+                                        className="col-span-3 rounded-xl"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                     />
                                 </div>
                             </div>
                             <DialogFooter>
-                                <Button type="submit" onClick={handleSendEmail} disabled={isSending}>
+                                <Button type="submit" onClick={handleSendEmail} disabled={isSending} className="rounded-xl w-full">
                                     {isSending ? "Sending..." : "Send Receipt"}
                                 </Button>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
                 </div>
-                <div className="mt-4 flex items-center justify-center gap-2 opacity-50">
-                    <Lock size={12} />
-                    <p className="text-xs">Secured by SwiftCart AI</p>
+                <div className="flex items-center justify-center gap-1.5 text-[10px] text-slate-400 uppercase tracking-widest font-bold pt-2">
+                    <Lock size={10} />
+                    <p>Secured by SwiftCart AI</p>
                 </div>
             </div>
         </div>

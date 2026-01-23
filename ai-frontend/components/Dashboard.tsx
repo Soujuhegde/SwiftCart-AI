@@ -11,13 +11,13 @@ interface DataPoint {
     value: number;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+const API_URL = 'http://localhost:5001';
 const socket = io(API_URL);
 
 const Dashboard = () => {
     const [data, setData] = useState<DataPoint[]>([]);
     const [loading, setLoading] = useState(true);
-    const [apiData, setApiData] = useState<any>(null);
+    const [apiData, setApiData] = useState<unknown>(null);
 
     useEffect(() => {
         const fetchData = async () => {

@@ -1,0 +1,46 @@
+
+> swiftcart-backend@1.0.0 build
+> next build
+
+   ▲ Next.js 15.5.9
+   - Environments: .env
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 1836ms
+   Skipping linting
+   Checking validity of types ...
+   Collecting page data ...
+⚠️ No SMTP credentials found. Email will be simulated (check server console).
+Initializing Prisma Client...
+Creating new PrismaClient instance...
+Failed to create PrismaClient instance: Error [PrismaClientConstructorValidationError]: Using engine type "client" requires either "adapter" or "accelerateUrl" to be provided to PrismaClient constructor.
+Read more at https://pris.ly/d/client-constructor
+    at <unknown> (C:\Programming\projects\Microsofthack\SwiftCart-AI\backend\.next\server\chunks\378.js:66:2162)
+    at new b (C:\Programming\projects\Microsofthack\SwiftCart-AI\backend\.next\server\chunks\378.js:66:2288)
+    at <unknown> (C:\Programming\projects\Microsofthack\SwiftCart-AI\backend\.next\server\chunks\378.js:73:2443545)
+    at 6798 (C:\Programming\projects\Microsofthack\SwiftCart-AI\backend\.next\server\chunks\378.js:73:2443742)
+    at c (C:\Programming\projects\Microsofthack\SwiftCart-AI\backend\.next\server\webpack-runtime.js:1:127)
+    at 115 (C:\Programming\projects\Microsofthack\SwiftCart-AI\backend\.next\server\app\api\ai\intelligence\route.js:1:417)
+    at c (C:\Programming\projects\Microsofthack\SwiftCart-AI\backend\.next\server\webpack-runtime.js:1:127)
+    at <unknown> (C:\Programming\projects\Microsofthack\SwiftCart-AI\backend\.next\server\app\api\ai\intelligence\route.js:1:7692)
+    at c.X (C:\Programming\projects\Microsofthack\SwiftCart-AI\backend\.next\server\webpack-runtime.js:1:2110)
+    at <unknown> (C:\Programming\projects\Microsofthack\SwiftCart-AI\backend\.next\server\app\api\ai\intelligence\route.js:1:7670)
+Error [PrismaClientConstructorValidationError]: Using engine type "client" requires either "adapter" or "accelerateUrl" to be provided to PrismaClient constructor.
+Read more at https://pris.ly/d/client-constructor
+    at <unknown> (C:\Programming\projects\Microsofthack\SwiftCart-AI\backend\.next\server\chunks\378.js:66:2162)
+    at new b (C:\Programming\projects\Microsofthack\SwiftCart-AI\backend\.next\server\chunks\378.js:66:2288)
+    at <unknown> (C:\Programming\projects\Microsofthack\SwiftCart-AI\backend\.next\server\chunks\378.js:73:2443545)
+    at 6798 (C:\Programming\projects\Microsofthack\SwiftCart-AI\backend\.next\server\chunks\378.js:73:2443742)
+    at c (C:\Programming\projects\Microsofthack\SwiftCart-AI\backend\.next\server\webpack-runtime.js:1:127)
+    at 115 (C:\Programming\projects\Microsofthack\SwiftCart-AI\backend\.next\server\app\api\ai\intelligence\route.js:1:417)
+    at c (C:\Programming\projects\Microsofthack\SwiftCart-AI\backend\.next\server\webpack-runtime.js:1:127)
+    at <unknown> (C:\Programming\projects\Microsofthack\SwiftCart-AI\backend\.next\server\app\api\ai\intelligence\route.js:1:7692)
+    at c.X (C:\Programming\projects\Microsofthack\SwiftCart-AI\backend\.next\server\webpack-runtime.js:1:2110)
+    at <unknown> (C:\Programming\projects\Microsofthack\SwiftCart-AI\backend\.next\server\app\api\ai\intelligence\route.js:1:7670)
+Initializing Prisma Client...
+Creating new PrismaClient instance...
+
+> Build error occurred
+[Error: Failed to collect page data for /api/ai/intelligence] {
+  type: 'Error'
+}

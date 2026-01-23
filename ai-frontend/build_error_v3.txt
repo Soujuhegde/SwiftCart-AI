@@ -1,0 +1,119 @@
+﻿
+> ai-frontend@0.1.0 build
+> next build
+
+node.exe : ΓÜá 
+Warning: Next.js 
+inferred your 
+workspace root, but 
+it may not be 
+correct.
+At line:1 char:1
++ & "C:\Program Files
+\nodejs/node.exe" "C:
+\Users\Sadguru\AppDat
+a\Roamin ...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (ΓÜá War   
+ ning: Ne...not b    
+e correct.:Strin    
+g) [], RemoteExc    
+eption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+ We detected 
+multiple lockfiles 
+and selected the 
+directory of C:\Users
+\Sadguru\package-lock
+.json as the root 
+directory.
+ To silence this 
+warning, set 
+`turbopack.root` in 
+your Next.js config, 
+or consider removing 
+one of the lockfiles 
+if it's not needed.
+   See https://nextjs
+.org/docs/app/api-ref
+erence/config/next-co
+nfig-js/turbopack#roo
+t-directory for more 
+information.
+ Detected additional 
+lockfiles: 
+   * C:\Users\Sadguru
+\OneDrive\Desktop\Swi
+ftCart AI\ai-frontend
+\package-lock.json
+
+Γû▓ Next.js 16.1.1 (Turbopack)
+- Environments: .env
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 13.8s
+  Running TypeScript ...
+Failed to compile.
+
+./components/ui/motio
+n/primitives.tsx:53:6
+2
+Type error: Type 
+'number[]' is not 
+assignable to type 
+'Easing | Easing[] | 
+undefined'.
+  Type 'number[]' is 
+not assignable to 
+type 'EasingFunction 
+| Easing[]'.
+    Type 'number[]' 
+is not assignable to 
+type 'Easing[]'.
+      Type 'number' 
+is not assignable to 
+type 'Easing'.
+
+[0m [90m 51 |[39m 
+                    
+y[33m:[39m [35m0[
+39m[33m,[39m
+ [90m 52 |[39m     
+                
+filter[33m:[39m [3
+2m"blur(0px)"[39m[3
+3m,[39m
+[31m[1m>[22m[39m
+[90m 53 |[39m       
+              transit
+ion[33m:[39m { 
+duration[33m:[39m 
+[33mDURATION[39m[33
+m,[39m 
+delay[33m,[39m 
+ease[33m:[39m [33m
+DEFAULT_EASE[39m }
+ [90m    |[39m     
+                     
+                     
+               
+[31m[1m^[22m[39m
+ [90m 54 |[39m     
+            }
+ [90m 55 |[39m     
+        }}
+ [90m 56 |[39m     
+        className[33
+m=[39m{className}[0
+m
+Next.js build worker 
+exited with code: 1 
+and signal: null

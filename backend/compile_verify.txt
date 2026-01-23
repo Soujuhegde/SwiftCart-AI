@@ -1,0 +1,1 @@
+scripts/add_catch_black_salt.ts(2,10): error TS2305: Module '"@prisma/client"' has no exported member 'PrismaClient'.

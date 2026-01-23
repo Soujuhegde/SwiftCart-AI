@@ -1,0 +1,73 @@
+
+> swiftcart-backend@1.0.0 build
+> next build
+
+   ▲ Next.js 15.5.9
+   - Environments: .env
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 2.2s
+   Skipping linting
+   Checking validity of types ...
+   Collecting page data ...
+⚠️ No SMTP credentials found. Email will be simulated (check server console).
+Initializing Prisma Client...
+Creating new PrismaClient instance with Adapter...
+PrismaClient instance created successfully.
+Prisma Client Initialization logic reached
+Initializing Prisma Client...
+Creating new PrismaClient instance with Adapter...
+PrismaClient instance created successfully.
+Prisma Client Initialization logic reached
+Initializing Prisma Client...
+Creating new PrismaClient instance with Adapter...
+PrismaClient instance created successfully.
+Prisma Client Initialization logic reached
+Initializing Prisma Client...
+Creating new PrismaClient instance with Adapter...
+PrismaClient instance created successfully.
+Prisma Client Initialization logic reached
+   Generating static pages (0/14) ...
+   Generating static pages (3/14) 
+⚠️ No SMTP credentials found. Email will be simulated (check server console).
+   Generating static pages (6/14) 
+Initializing Prisma Client...
+Creating new PrismaClient instance with Adapter...
+PrismaClient instance created successfully.
+Prisma Client Initialization logic reached
+   Generating static pages (10/14) 
+ ✓ Generating static pages (14/14)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                  Size  First Load JS
+┌ ƒ /api/ai/forecast                        157 B         101 kB
+├ ƒ /api/ai/intelligence                    157 B         101 kB
+├ ƒ /api/cart                               157 B         101 kB
+├ ƒ /api/dashboard/stats                    157 B         101 kB
+├ ƒ /api/email                              157 B         101 kB
+├ ƒ /api/health                             157 B         101 kB
+├ ƒ /api/manual-add                         157 B         101 kB
+├ ƒ /api/payment                            157 B         101 kB
+├ ƒ /api/products                           157 B         101 kB
+├ ƒ /api/products/[id]                      157 B         101 kB
+├ ƒ /api/products/manual                    157 B         101 kB
+├ ƒ /api/reset-cart                         157 B         101 kB
+├ ƒ /api/scan                               157 B         101 kB
+├ ƒ /api/update-product                     157 B         101 kB
+└ ƒ /api/user                               157 B         101 kB
++ First Load JS shared by all              101 kB
+  ├ chunks/4bd1b696-c023c6e3521b1417.js   54.2 kB
+  ├ chunks/58-da22815550f8ba0f.js         44.9 kB
+  └ other shared chunks (total)           1.84 kB
+
+Route (pages)                                Size  First Load JS
+─ ○ /404                                  2.29 kB        99.1 kB
++ First Load JS shared by all             96.9 kB
+  ├ chunks/framework-d7de93249215fb06.js  59.7 kB
+  ├ chunks/main-e31fbb0e72cdc6aa.js       34.9 kB
+  └ other shared chunks (total)           2.23 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

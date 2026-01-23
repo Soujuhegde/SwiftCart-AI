@@ -1,82 +1,61 @@
-"use client";
+'use client';
 
-import { CheckCircle2, ShieldCheck, Zap } from 'lucide-react';
+import React from 'react';
+import CountUp from 'react-countup';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
 
 const ImpactSection = () => {
     return (
-        <section className="py-24 px-6 bg-white border-t border-gray-100 overflow-hidden">
-            <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-20">
-
-                {/* Left Side: Stats */}
+        <section id="retailer-benefits" className="py-20 bg-gray-50 dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <motion.div
-                    initial={{ opacity: 0, x: -50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
-                    className="lg:w-1/2"
-                >
-                    <div className="flex items-center gap-2 text-green-600 font-bold text-xs tracking-widest uppercase mb-6 bg-green-50 w-fit px-3 py-1 rounded-full border border-green-100">
-                        <CheckCircle2 size={14} /> Responsible & Compliant
-                    </div>
-                    <h2 className="text-4xl font-extrabold text-gray-900 mb-6 tracking-tight">Innovation with Purpose.</h2>
-                    <p className="text-lg text-gray-500 mb-10 leading-relaxed font-medium">
-                        SwiftCart AI is designed to solve real challenges. By optimizing inventory we reduce the 13 billion tons of annual food waste. By automating queues, we give time back to people.
-                    </p>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                        <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100">
-                            <span className="font-bold text-3xl text-gray-900 block mb-1">30%</span>
-                            <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Food Waste Reduction</span>
-                        </div>
-                        <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100">
-                            <span className="font-bold text-3xl text-gray-900 block mb-1">&lt;100ms</span>
-                            <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Decision Latency</span>
-                        </div>
-                        <div className="p-6 bg-indigo-50 rounded-2xl border border-indigo-100 col-span-1 sm:col-span-2 flex items-center justify-between">
-                            <div>
-                                <span className="font-bold text-2xl text-indigo-900 flex items-center gap-2">24/7 <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span></span>
-                                <span className="text-sm font-semibold text-indigo-600 uppercase tracking-wide">Autonomous Operation</span>
-                            </div>
-                            <Zap className="text-indigo-300" size={32} />
-                        </div>
-                    </div>
-
-                    <div className="text-xs text-gray-400 font-medium flex items-center gap-2 border-t border-gray-100 pt-6">
-                        <ShieldCheck size={16} className="text-gray-400" />
-                        Responsible AI: Explainable · Auditable · Human Override
-                    </div>
-                </motion.div>
-
-                {/* Right Side: CTA Card */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.9, rotate: 3 }}
-                    whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.8, type: "spring" }}
-                    className="lg:w-1/2 w-full"
+                    className="mb-12"
                 >
-                    <div className="bg-[#0f172a] rounded-[32px] p-12 text-center relative overflow-hidden shadow-2xl shadow-blue-900/20 group hover:scale-[1.02] transition-transform duration-500">
-                        {/* Background Glow Effect */}
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-blue-600/30 transition-colors duration-500"></div>
-                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-600/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 group-hover:bg-purple-600/20 transition-colors duration-500"></div>
-
-                        <h3 className="text-3xl font-bold text-white mb-4 relative z-10 leading-tight">See retail think for itself.</h3>
-                        <p className="text-blue-200/80 mb-8 max-w-sm mx-auto relative z-10 text-sm font-medium">
-                            Join the autonomous retail revolution.
-                        </p>
-
-                        <Link href="/demo" className="bg-azure-blue text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-600 transition-all shadow-lg shadow-blue-500/30 relative z-10 w-full sm:w-auto inline-block">
-                            Launch Live Agent Demo
-                        </Link>
-
-                        <div className="mt-10 text-[10px] text-gray-500 font-mono relative z-10 uppercase tracking-widest border-t border-white/10 pt-6">
-                            Microsoft Imagine Cup • AI for Good • Retail Innovation
-                        </div>
-                    </div>
+                    <h2 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 mb-4">
+                        Measurable Impact
+                    </h2>
+                    <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-lg">
+                        See how SwiftCart AI is transforming retail efficiency and customer satisfaction.
+                    </p>
                 </motion.div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    {[
+                        { label: 'Revenue Growth', value: 35, suffix: '%', context: 'Across 50+ stores' },
+                        { label: 'Wait Time Reduction', value: 80, suffix: '%', context: 'During peak hours' },
+                        { label: 'Customer Satisfaction', value: 4.8, suffix: '/5', decimals: 1, context: 'Based on 10k+ ratings' },
+                        { label: 'Active Retailers', value: 500, suffix: '+', context: 'Pan-India deployment' }
+                    ].map((stat, index) => (
+                        <motion.div
+                            key={index}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.4, delay: index * 0.1 }}
+                            viewport={{ once: true }}
+                            className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group"
+                        >
+                            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-blue-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            <div className="text-4xl font-extrabold text-slate-900 mb-2">
+                                <CountUp
+                                    end={stat.value}
+                                    duration={2.5}
+                                    decimals={stat.decimals || 0}
+                                    suffix={stat.suffix}
+                                />
+                            </div>
+                            <div className="text-slate-600 font-bold mb-2">
+                                {stat.label}
+                            </div>
+                            <div className="text-xs font-medium text-slate-400 uppercase tracking-wide">
+                                {stat.context}
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
             </div>
         </section>
     );

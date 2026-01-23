@@ -26,7 +26,7 @@ const ProductImage = ({ src, alt }: { src?: string; alt: string }) => {
 
     if (hasError || !src) {
         return (
-            <div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-400">
+            <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400">
                 <Package size={20} />
             </div>
         );
@@ -87,39 +87,39 @@ export default function InventoryPage() {
     };
 
     return (
-        <div className="p-8 space-y-6 relative">
+        <div className="p-8 space-y-6 relative max-w-[1600px] mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h2 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Inventory Management</h2>
-                    <p className="text-slate-500 mt-1">Manage stock levels and product details.</p>
+                    <h2 className="text-3xl font-black text-slate-900 tracking-tight">Inventory Management</h2>
+                    <p className="text-slate-500 font-medium mt-1">Manage stock levels and product details.</p>
                 </div>
                 <Button
-                    className="bg-blue-600 hover:bg-blue-700 gap-2"
+                    className="bg-blue-600 hover:bg-blue-700 gap-2 h-11 rounded-xl shadow-lg shadow-blue-600/20 font-bold"
                     onClick={() => setIsAddModalOpen(true)}
                 >
-                    <Plus size={18} />
+                    <Plus size={18} strokeWidth={3} />
                     Add Product
                 </Button>
             </div>
 
-            <div className="bg-white dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 {/* Toolbar */}
-                <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row gap-3 justify-between">
+                <div className="p-4 border-b border-slate-200 flex flex-col sm:flex-row gap-3 justify-between bg-slate-50/50">
                     <div className="relative w-full sm:w-96">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                         <Input
                             placeholder="Search products by name or SKU..."
-                            className="pl-10"
+                            className="pl-10 bg-white border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500/20 rounded-xl"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
                     <div className="flex gap-2">
-                        <Button variant="outline" className="gap-2">
+                        <Button variant="outline" className="gap-2 bg-white border-slate-200 text-slate-600 hover:text-blue-600 hover:border-blue-300 rounded-xl shadow-sm">
                             <Filter size={18} />
                             Filters
                         </Button>
-                        <Button variant="outline" className="gap-2">
+                        <Button variant="outline" className="gap-2 bg-white border-slate-200 text-slate-600 hover:text-blue-600 hover:border-blue-300 rounded-xl shadow-sm">
                             <Upload size={18} />
                             Import
                         </Button>
@@ -127,154 +127,171 @@ export default function InventoryPage() {
                 </div>
 
                 {/* Table */}
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="w-[100px]">Image</TableHead>
-                            <TableHead>Product Name</TableHead>
-                            <TableHead>SKU</TableHead>
-                            <TableHead>Category</TableHead>
-                            <TableHead>Price</TableHead>
-                            <TableHead>Stock Level</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {filteredInventory.map((item) => (
-                            <TableRow key={item.id}>
-                                <TableCell>
-                                    <div className="w-12 h-12 rounded-lg bg-slate-100 overflow-hidden">
-                                        <ProductImage src={item.image} alt={item.name} />
-                                    </div>
-                                </TableCell>
-                                <TableCell className="font-medium text-slate-900 dark:text-white">{item.name}</TableCell>
-                                <TableCell className="text-slate-500">{item.sku}</TableCell>
-                                <TableCell>{item.category}</TableCell>
-                                <TableCell>₹{item.price.toFixed(2)}</TableCell>
-                                <TableCell>
-                                    <div className="flex items-center gap-2">
-                                        <span>{item.stock}</span>
-                                        {item.stock < 10 && (
-                                            <AlertTriangle size={14} className="text-red-500" />
-                                        )}
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    {item.stock > 20 ? (
-                                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">In Stock</Badge>
-                                    ) : item.stock > 0 ? (
-                                        <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">Low Stock</Badge>
-                                    ) : (
-                                        <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">Out of Stock</Badge>
-                                    )}
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" size="icon">
-                                                <MoreHorizontal size={18} className="text-slate-400" />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                            <DropdownMenuItem onClick={() => toast.info("Edit feature coming soon")}>
-                                                <Edit className="mr-2 h-4 w-4" />
-                                                Edit Product
-                                            </DropdownMenuItem>
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem
-                                                className="text-red-600 focus:text-red-600"
-                                                onClick={() => {
-                                                    deleteProduct(item.id);
-                                                    toast.success("Product deleted successfully");
-                                                }}
-                                            >
-                                                <Trash className="mr-2 h-4 w-4" />
-                                                Delete Product
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </TableCell>
+                <div className="overflow-x-auto">
+                    <Table>
+                        <TableHeader>
+                            <TableRow className="bg-slate-50/50 hover:bg-slate-50/50">
+                                <TableHead className="w-[100px] font-bold text-slate-500 uppercase tracking-wider text-xs">Image</TableHead>
+                                <TableHead className="font-bold text-slate-500 uppercase tracking-wider text-xs">Product Name</TableHead>
+                                <TableHead className="font-bold text-slate-500 uppercase tracking-wider text-xs">SKU</TableHead>
+                                <TableHead className="font-bold text-slate-500 uppercase tracking-wider text-xs">Category</TableHead>
+                                <TableHead className="font-bold text-slate-500 uppercase tracking-wider text-xs">Price</TableHead>
+                                <TableHead className="font-bold text-slate-500 uppercase tracking-wider text-xs">Stock Level</TableHead>
+                                <TableHead className="font-bold text-slate-500 uppercase tracking-wider text-xs">Status</TableHead>
+                                <TableHead className="text-right font-bold text-slate-500 uppercase tracking-wider text-xs">Actions</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {filteredInventory.map((item) => (
+                                <TableRow key={item.id} className="hover:bg-slate-50/50 border-b border-slate-100 last:border-0">
+                                    <TableCell className="py-3">
+                                        <div className="w-12 h-12 rounded-lg bg-slate-100 overflow-hidden border border-slate-200">
+                                            <ProductImage src={item.image} alt={item.name} />
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="font-bold text-slate-900">{item.name}</TableCell>
+                                    <TableCell className="text-slate-500 font-mono text-xs">{item.sku}</TableCell>
+                                    <TableCell>
+                                        <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600">
+                                            {item.category}
+                                        </span>
+                                    </TableCell>
+                                    <TableCell className="font-medium text-slate-900">₹{item.price.toFixed(2)}</TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-bold text-slate-700">{item.stock}</span>
+                                            {item.stock < 10 && (
+                                                <AlertTriangle size={14} className="text-amber-500" />
+                                            )}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        {item.stock > 20 ? (
+                                            <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 font-bold">In Stock</Badge>
+                                        ) : item.stock > 0 ? (
+                                            <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 font-bold">Low Stock</Badge>
+                                        ) : (
+                                            <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200 font-bold">Out of Stock</Badge>
+                                        )}
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" size="icon" className="hover:bg-slate-200 rounded-lg">
+                                                    <MoreHorizontal size={18} className="text-slate-400" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end" className="w-[160px] rounded-xl border-slate-100 shadow-xl">
+                                                <DropdownMenuLabel className="text-xs text-slate-500">Actions</DropdownMenuLabel>
+                                                <DropdownMenuItem onClick={() => toast.info("Edit feature coming soon")} className="font-medium">
+                                                    <Edit className="mr-2 h-4 w-4" />
+                                                    Edit Product
+                                                </DropdownMenuItem>
+                                                <DropdownMenuSeparator />
+                                                <DropdownMenuItem
+                                                    className="text-red-600 focus:text-red-600 focus:bg-red-50 font-medium"
+                                                    onClick={() => {
+                                                        deleteProduct(item.id);
+                                                        toast.success("Product deleted successfully");
+                                                    }}
+                                                >
+                                                    <Trash className="mr-2 h-4 w-4" />
+                                                    Delete Product
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
             </div>
 
             {/* Add Product Modal */}
             {isAddModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-white dark:bg-slate-950 p-6 rounded-xl w-full max-w-md shadow-2xl border border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in-95 duration-200">
-                        <div className="flex justify-between items-center mb-6">
-                            <h3 className="text-xl font-bold text-slate-900 dark:text-white">Add New Product</h3>
-                            <Button variant="ghost" size="icon" onClick={() => setIsAddModalOpen(false)} className="rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+                    <div className="bg-white p-8 rounded-3xl w-full max-w-lg shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200">
+                        <div className="flex justify-between items-center mb-8">
+                            <div>
+                                <h3 className="text-2xl font-black text-slate-900 tracking-tight">Add New Product</h3>
+                                <p className="text-slate-500 text-sm">Enter the product details below.</p>
+                            </div>
+                            <Button variant="ghost" size="icon" onClick={() => setIsAddModalOpen(false)} className="rounded-full bg-slate-50 hover:bg-slate-100 text-slate-500">
                                 <X size={20} />
                             </Button>
                         </div>
-                        <div className="space-y-4">
+                        <div className="space-y-5">
                             <div>
-                                <label className="text-sm font-medium mb-1.5 block text-slate-700 dark:text-slate-300">Product Name</label>
+                                <label className="text-sm font-bold mb-2 block text-slate-700">Product Name</label>
                                 <Input
                                     value={newProduct.name}
                                     onChange={e => setNewProduct({ ...newProduct, name: e.target.value })}
                                     placeholder="e.g. Organic Apples"
+                                    className="h-11 rounded-xl bg-slate-50 border-slate-200 focus:bg-white"
                                 />
                             </div>
-                            <div>
-                                <label className="text-sm font-medium mb-1.5 block text-slate-700 dark:text-slate-300">Category</label>
-                                <Input
-                                    value={newProduct.category}
-                                    onChange={e => setNewProduct({ ...newProduct, category: e.target.value })}
-                                    placeholder="e.g. Produce"
-                                />
+                            <div className="grid grid-cols-2 gap-5">
+                                <div>
+                                    <label className="text-sm font-bold mb-2 block text-slate-700">Category</label>
+                                    <Input
+                                        value={newProduct.category}
+                                        onChange={e => setNewProduct({ ...newProduct, category: e.target.value })}
+                                        placeholder="e.g. Produce"
+                                        className="h-11 rounded-xl bg-slate-50 border-slate-200 focus:bg-white"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-sm font-bold mb-2 block text-slate-700">Barcode / SKU</label>
+                                    <div className="relative">
+                                        <Input
+                                            value={newProduct.sku}
+                                            onChange={e => setNewProduct({ ...newProduct, sku: e.target.value })}
+                                            placeholder="Scan..."
+                                            className="h-11 pr-10 rounded-xl bg-slate-50 border-slate-200 focus:bg-white"
+                                        />
+                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                                            <ScanBarcode size={18} />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+
                             <div>
-                                <label className="text-sm font-medium mb-1.5 block text-slate-700 dark:text-slate-300">Product Image URL</label>
+                                <label className="text-sm font-bold mb-2 block text-slate-700">Product Image URL</label>
                                 <Input
                                     value={newProduct.image}
                                     onChange={e => setNewProduct({ ...newProduct, image: e.target.value })}
-                                    placeholder="e.g. https://example.com/apple.jpg"
+                                    placeholder="https://"
+                                    className="h-11 rounded-xl bg-slate-50 border-slate-200 focus:bg-white"
                                 />
                             </div>
-                            <div>
-                                <label className="text-sm font-medium mb-1.5 block text-slate-700 dark:text-slate-300">Barcode / SKU</label>
-                                <div className="relative">
-                                    <Input
-                                        value={newProduct.sku}
-                                        onChange={e => setNewProduct({ ...newProduct, sku: e.target.value })}
-                                        placeholder="Scan or enter barcode..."
-                                        className="pr-10"
-                                    />
-                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-                                        <ScanBarcode size={18} />
-                                    </div>
-                                </div>
-                                <p className="text-[10px] text-slate-500 mt-1">This code will be used for customer scanning.</p>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
+
+                            <div className="grid grid-cols-2 gap-5">
                                 <div>
-                                    <label className="text-sm font-medium mb-1.5 block text-slate-700 dark:text-slate-300">Price (₹)</label>
+                                    <label className="text-sm font-bold mb-2 block text-slate-700">Price (₹)</label>
                                     <Input
                                         type="number"
                                         min="0"
                                         step="0.01"
                                         value={newProduct.price}
                                         onChange={e => setNewProduct({ ...newProduct, price: parseFloat(e.target.value) || 0 })}
+                                        className="h-11 rounded-xl bg-slate-50 border-slate-200 focus:bg-white"
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-sm font-medium mb-1.5 block text-slate-700 dark:text-slate-300">Initial Stock</label>
+                                    <label className="text-sm font-bold mb-2 block text-slate-700">Initial Stock</label>
                                     <Input
                                         type="number"
                                         min="0"
                                         value={newProduct.stock}
                                         onChange={e => setNewProduct({ ...newProduct, stock: parseInt(e.target.value) || 0 })}
+                                        className="h-11 rounded-xl bg-slate-50 border-slate-200 focus:bg-white"
                                     />
                                 </div>
                             </div>
-                            <div className="pt-2">
-                                <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={handleAddProduct}>
+                            <div className="pt-4">
+                                <Button className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-lg font-bold shadow-xl shadow-blue-500/20 rounded-xl" onClick={handleAddProduct}>
                                     Save Product
                                 </Button>
                             </div>

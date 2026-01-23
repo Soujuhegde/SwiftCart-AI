@@ -13,7 +13,7 @@ const prisma = new PrismaClient({ adapter });
 const imageMapping: { [key: string]: string } = {
     '8901030695552': 'https://placehold.co/400x400/FFD700/000000?text=Parle-G', // Parle-G (Gold)
     '8901138501093': 'https://placehold.co/400x400/FF6B35/FFFFFF?text=Good+Day', // Good Day (Orange)
-    '8901491101837': 'https://placehold.co/400x400/FFE5B4/8B4513?text=Marie+Gold', // Marie Gold
+    '8901491101837': 'https://www.haridwarmart.com/wp-content/uploads/2021/01/haridwar-mart-marie-gold.png', // Marie Gold
     '8901063092345': 'https://placehold.co/400x400/FFD700/FF0000?text=Maggi', // Maggi (Yellow/Red)
     '8901262010016': 'https://placehold.co/400x400/8B4513/FFFFFF?text=Aashirvaad', // Aashirvaad (Brown)
     '8901719123456': 'https://placehold.co/400x400/0000FF/FFFFFF?text=Tata+Salt', // Tata Salt (Blue)
@@ -41,7 +41,7 @@ const imageMapping: { [key: string]: string } = {
     '6934567890125': 'https://placehold.co/400x400/8B4513/FFFFFF?text=Bru+Coffee', // Bru (Brown)
     '6945678901236': 'https://placehold.co/400x400/FF0000/FFFFFF?text=Nescafe', // Nescafe (Red)
     '6956789012347': 'https://placehold.co/400x400/FF0000/FFFFFF?text=Colgate', // Colgate (Red)
-    '6967890123458': 'https://placehold.co/400x400/0000FF/FFFFFF?text=Dove', // Dove (Blue)
+    '6967890123458': 'https://images.apollo247.in/pub/media/catalog/product/D/O/DOV0057_1-JULY23_1.jpg?tr=q-80,f-webp,w-400,dpr-3,c-at_max%20400w', // Dove (Blue)
 };
 
 async function main() {

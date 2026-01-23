@@ -1,5 +1,4 @@
-
-import React from 'react';
+import TopBar from '@/components/retailer/TopBar';
 import { Sidebar } from '@/components/retailer/Sidebar';
 
 export default function RetailerLayout({
@@ -8,11 +7,11 @@ export default function RetailerLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div className="flex h-screen bg-slate-50 dark:bg-slate-900 overflow-hidden">
+        <div className="flex h-screen bg-slate-50 overflow-hidden">
             <Sidebar />
             <div className="flex-1 flex flex-col overflow-hidden relative">
-                {/* Top Header can go here if distinct from sidebar */}
-                <main className="flex-1 overflow-y-auto">
+                <TopBar />
+                <main className="flex-1 overflow-y-auto bg-slate-50 p-6">
                     {children}
                 </main>
             </div>

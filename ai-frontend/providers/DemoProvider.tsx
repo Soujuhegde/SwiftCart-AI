@@ -81,7 +81,7 @@ export const DemoProvider = ({ children }: { children: React.ReactNode }) => {
                 const res = await axios.get(`${API_URL}/api/products`);
                 // Ensure price is number
                 const data = res.data.products || [];
-                const products = data.map((p: any) => ({
+                const products = data.map((p: Product & { imageUrl?: string; barcode?: string }) => ({
                     ...p,
                     price: Number(p.price),
                     stock: p.stock || 0,
@@ -113,8 +113,25 @@ export const DemoProvider = ({ children }: { children: React.ReactNode }) => {
             }
         };
 
+        const fetchUser = async () => {
+            try {
+                const res = await axios.get(`${API_URL}/api/user`);
+                if (res.data && !res.data.error) {
+                    setUser({
+                        name: res.data.name || "Alex Morgan",
+                        role: res.data.role || "Store Manager",
+                        branch: res.data.branch || "Downtown Branch",
+                        avatar: res.data.avatar || "https://github.com/shadcn.png"
+                    });
+                }
+            } catch (error) {
+                console.error("Failed to fetch user:", error);
+            }
+        };
+
         fetchInventory();
         fetchStats();
+        fetchUser();
 
         // Socket Listeners (Disabled for REST-only backend)
         /*
@@ -242,8 +259,16 @@ export const DemoProvider = ({ children }: { children: React.ReactNode }) => {
         // We might want to reset DB too via API, but for now just frontend reset
     };
 
-    const updateUser = (updates: Partial<typeof user>) => {
+    const updateUser = async (updates: Partial<typeof user>) => {
+        // Optimistic update
         setUser(prev => ({ ...prev, ...updates }));
+
+        try {
+            await axios.put(`${API_URL}/api/user`, updates);
+        } catch (error) {
+            console.error("Failed to update user profile:", error);
+            toast.error("Failed to save profile changes");
+        }
     };
 
     return (

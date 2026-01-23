@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { query } from '@/lib/db';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
     try {
@@ -10,34 +12,29 @@ export async function GET(req: Request) {
             return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
         }
 
-        const cart = await prisma.cart.findFirst({
-            where: {
-                userId,
-                status: 'ACTIVE'
-            },
-            include: {
-                items: {
-                    include: {
-                        product: true
-                    },
-                    orderBy: {
-                        createdAt: 'desc'
-                    }
-                }
-            }
-        });
+        // Get Cart
+        const cartResult = await query('SELECT * FROM "Cart" WHERE "userId" = $1 AND status = \'ACTIVE\' LIMIT 1', [userId]);
+        const cart = cartResult.rows[0];
 
         if (!cart) {
-            // Return empty structure if no cart found
             return NextResponse.json({ items: [], total: 0 });
         }
 
-        const total = cart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        // Get Cart Items with Product Details
+        const itemsResult = await query(
+            'SELECT ci.*, json_build_object(\'id\', p.id, \'name\', p.name, \'price\', p.price, \'imageUrl\', p."imageUrl", \'barcode\', p.barcode, \'isCustom\', p."isCustom") as product ' +
+            'FROM "CartItem" ci JOIN "Product" p ON ci."productId" = p.id ' +
+            'WHERE ci."cartId" = $1 ORDER BY ci."createdAt" DESC',
+            [cart.id]
+        );
 
-        return NextResponse.json({ ...cart, total });
-    } catch (error) {
-        console.error('Get Cart API Error:', error);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+        const items = itemsResult.rows;
+        const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+        return NextResponse.json({ ...cart, items, total });
+    } catch (error: any) {
+        console.error('Get Cart API Error (Raw SQL):', error);
+        return NextResponse.json({ error: 'Internal Server Error', details: error.message }, { status: 500 });
     }
 }
 
@@ -49,25 +46,21 @@ export async function PUT(req: Request) {
             return NextResponse.json({ error: 'Cart Item ID and quantity are required' }, { status: 400 });
         }
 
-        // If quantity is 0 or less, might remove item, but usually explicit delete is better.
-        // Here we'll handle remove if quantity <= 0
         if (quantity <= 0) {
-            await prisma.cartItem.delete({
-                where: { id: cartItemId }
-            });
+            await query('DELETE FROM "CartItem" WHERE id = $1', [cartItemId]);
             return NextResponse.json({ success: true, message: 'Item removed from cart' });
         }
 
-        const updatedItem = await prisma.cartItem.update({
-            where: { id: cartItemId },
-            data: { quantity }
-        });
+        const result = await query(
+            'UPDATE "CartItem" SET quantity = $1, "updatedAt" = NOW() WHERE id = $2 RETURNING *',
+            [quantity, cartItemId]
+        );
 
-        return NextResponse.json({ success: true, item: updatedItem });
+        return NextResponse.json({ success: true, item: result.rows[0] });
 
-    } catch (error) {
-        console.error('Update Cart API Error:', error);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    } catch (error: any) {
+        console.error('Update Cart API Error (Raw SQL):', error);
+        return NextResponse.json({ error: 'Internal Server Error', details: error.message }, { status: 500 });
     }
 }
 
@@ -80,14 +73,12 @@ export async function DELETE(req: Request) {
             return NextResponse.json({ error: 'Cart Item ID is required' }, { status: 400 });
         }
 
-        await prisma.cartItem.delete({
-            where: { id: cartItemId }
-        });
+        await query('DELETE FROM "CartItem" WHERE id = $1', [cartItemId]);
 
         return NextResponse.json({ success: true, message: 'Item removed from cart' });
 
-    } catch (error) {
-        console.error('Delete Cart Item API Error:', error);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    } catch (error: any) {
+        console.error('Delete Cart Item API Error (Raw SQL):', error);
+        return NextResponse.json({ error: 'Internal Server Error', details: error.message }, { status: 500 });
     }
 }

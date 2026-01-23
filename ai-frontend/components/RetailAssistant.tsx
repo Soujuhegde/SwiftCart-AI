@@ -1,13 +1,12 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Send, Bot, User, Sparkles, X } from "lucide-react";
+import { Send, Bot, Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import { useDemo } from "@/providers/DemoProvider";
-import { cn } from "@/lib/utils";
 import { getGeminiResponse } from "@/actions/chat";
 
 interface Message {

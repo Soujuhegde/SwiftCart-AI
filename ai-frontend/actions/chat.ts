@@ -4,7 +4,22 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
-export async function getGeminiResponse(message: string, context: any) {
+
+interface InventoryItem {
+    name: string;
+    stock: number;
+}
+
+interface ChatContext {
+    inventory: InventoryItem[];
+    salesStats: {
+        revenue: number;
+        transactions: number;
+        itemsSold: number;
+    };
+}
+
+export async function getGeminiResponse(message: string, context: ChatContext) {
     try {
         if (!process.env.GEMINI_API_KEY) {
             throw new Error("GEMINI_API_KEY is not set in environment variables");
@@ -21,7 +36,7 @@ export async function getGeminiResponse(message: string, context: any) {
       
       INVENTORY OVERVIEW:
       Total Products: ${context.inventory.length}
-      Low Stock Items (<20 units): ${context.inventory.filter((i: any) => i.stock < 20).map((i: any) => `${i.name} (${i.stock})`).join(", ")}
+      Low Stock Items (<20 units): ${context.inventory.filter((i) => i.stock < 20).map((i) => `${i.name} (${i.stock})`).join(", ")}
       
       SALES STATISTICS (Today):
       Total Revenue: $${context.salesStats.revenue.toFixed(2)}

@@ -1,35 +1,19 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { query } from '@/lib/db';
 import axios from 'axios';
 
-/* ----------------------------------------------------
-   Helper: Fetch product from OpenFoodFacts
----------------------------------------------------- */
+export const dynamic = 'force-dynamic';
+
 async function fetchFromOpenFoodFacts(barcode: string) {
     try {
-        const response = await axios.get(
-            `https://world.openfoodfacts.org/api/v0/product/${barcode}.json`,
-            { timeout: 5000 }
-        );
-
+        const response = await axios.get(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`, { timeout: 5000 });
         if (response.data?.status !== 1) return null;
-
         const product = response.data.product;
-
         return {
-            name:
-                product.product_name_en ||
-                product.product_name ||
-                `Item ${barcode}`,
-            description:
-                product.generic_name_en ||
-                product.generic_name ||
-                '',
-            imageUrl:
-                product.image_front_url ||
-                product.image_url ||
-                '',
-            price: Math.floor(Math.random() * 140) + 10, // simulated price
+            name: product.product_name_en || product.product_name || `Item ${barcode}`,
+            description: product.generic_name_en || product.generic_name || '',
+            imageUrl: product.image_front_url || product.image_url || '',
+            price: Math.floor(Math.random() * 140) + 10,
         };
     } catch (error) {
         console.error('OpenFoodFacts error:', error);
@@ -37,123 +21,70 @@ async function fetchFromOpenFoodFacts(barcode: string) {
     }
 }
 
-/* ----------------------------------------------------
-   POST: Scan Barcode
----------------------------------------------------- */
 export async function POST(req: Request) {
     try {
-        let { barcode, userId } = await req.json();
+        const body = await req.json();
+        let { barcode, userId } = body;
+        // Keep original characters for alphanumeric support (e.g. manual-add codes)
+        barcode = String(barcode || '').trim();
 
-        /* ---------- CLEAN & VALIDATE BARCODE ---------- */
-        barcode = String(barcode || '')
-            .trim()
-            .replace(/\D/g, ''); // remove non-numeric chars
-
-        if (!barcode || barcode.length < 8) {
-            return NextResponse.json(
-                { error: 'Invalid barcode scanned' },
-                { status: 400 }
-            );
+        if (!barcode || barcode.length < 3) {
+            return NextResponse.json({ error: 'Invalid code entered/scanned' }, { status: 400 });
         }
 
-        /* ---------- FIND PRODUCT LOCALLY ---------- */
-        let product = await prisma.product.findUnique({
-            where: { barcode },
-        });
+        // 1. Find or create product
+        let productResult = await query('SELECT * FROM "Product" WHERE barcode = $1', [barcode]);
+        let product = productResult.rows[0];
 
-        /* ---------- FETCH FROM OPENFOODFACTS ---------- */
         if (!product) {
             const offData = await fetchFromOpenFoodFacts(barcode);
+            const data = offData || {
+                name: `Item ${barcode}`,
+                description: 'Auto-detected item',
+                imageUrl: 'https://placehold.co/400x400?text=Item',
+                price: Math.floor(Math.random() * 140) + 10,
+            };
 
-            if (offData) {
-                product = await prisma.product.create({
-                    data: {
-                        barcode,
-                        name: offData.name,
-                        description: offData.description,
-                        imageUrl: offData.imageUrl,
-                        price: offData.price,
-                        category: 'Grocery',
-                        source: 'openfoodfacts',
-                    },
-                });
-            } else {
-                // fallback auto-create product
-                product = await prisma.product.create({
-                    data: {
-                        barcode,
-                        name: `Item ${barcode}`,
-                        description: 'Auto-detected item',
-                        imageUrl:
-                            'https://placehold.co/400x400?text=Item',
-                        price: Math.floor(Math.random() * 140) + 10,
-                        category: 'General',
-                        source: 'manual-auto',
-                    },
-                });
-            }
+            const insertResult = await query(
+                'INSERT INTO "Product" (id, barcode, name, description, "imageUrl", price, category, source, "updatedAt") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW()) RETURNING *',
+                [`prod-${Date.now()}`, barcode, data.name, data.description, data.imageUrl, data.price, 'Grocery', offData ? 'openfoodfacts' : 'manual-auto']
+            );
+            product = insertResult.rows[0];
         }
 
-        /* ---------- USER HANDLING ---------- */
+        // 2. User Handling
         const targetUserId = userId || 'demo-user-id';
+        await query(
+            'INSERT INTO "User" (id, email, name, "updatedAt") VALUES ($1, $2, $3, NOW()) ON CONFLICT (id) DO NOTHING',
+            [targetUserId, `${targetUserId}@example.com`, 'Demo User']
+        );
 
-        await prisma.user.upsert({
-            where: { id: targetUserId },
-            create: {
-                id: targetUserId,
-                email: `${targetUserId}@example.com`,
-                name: 'Demo User',
-            },
-            update: {},
-        });
-
-        /* ---------- CART HANDLING ---------- */
-        let cart = await prisma.cart.findFirst({
-            where: {
-                userId: targetUserId,
-                status: 'ACTIVE',
-            },
-        });
+        // 3. Cart Handling
+        let cartResult = await query('SELECT * FROM "Cart" WHERE "userId" = $1 AND status = \'ACTIVE\' LIMIT 1', [targetUserId]);
+        let cart = cartResult.rows[0];
 
         if (!cart) {
-            cart = await prisma.cart.create({
-                data: {
-                    userId: targetUserId,
-                    status: 'ACTIVE',
-                },
-            });
+            const newCartResult = await query(
+                'INSERT INTO "Cart" (id, "userId", status, "updatedAt") VALUES ($1, $2, $3, NOW()) RETURNING *',
+                [`cart-${Date.now()}`, targetUserId, 'ACTIVE']
+            );
+            cart = newCartResult.rows[0];
         }
 
-        /* ---------- CART ITEM UPSERT ---------- */
-        const cartItem = await prisma.cartItem.upsert({
-            where: {
-                cartId_productId: {
-                    cartId: cart.id,
-                    productId: product.id,
-                },
-            },
-            update: {
-                quantity: { increment: 1 },
-            },
-            create: {
-                cartId: cart.id,
-                productId: product.id,
-                quantity: 1,
-                price: product.price,
-            },
-        });
+        // 4. Cart Item Upsert
+        const itemResult = await query(
+            'INSERT INTO "CartItem" (id, "cartId", "productId", quantity, price, "updatedAt") VALUES ($1, $2, $3, $4, $5, NOW()) ON CONFLICT ("cartId", "productId") DO UPDATE SET quantity = "CartItem".quantity + 1 RETURNING *',
+            [`item-${Date.now()}`, cart.id, product.id, 1, product.price]
+        );
 
         return NextResponse.json({
             success: true,
             product,
-            cartItem,
+            cartItem: itemResult.rows[0],
             message: 'Product scanned and added to cart',
         });
-    } catch (error) {
-        console.error('Scan API Error:', error);
-        return NextResponse.json(
-            { error: 'Internal Server Error' },
-            { status: 500 }
-        );
+    } catch (error: any) {
+        console.error('Scan API Error (Raw SQL):', error);
+        return NextResponse.json({ error: 'Internal Server Error', details: error.message }, { status: 500 });
     }
 }

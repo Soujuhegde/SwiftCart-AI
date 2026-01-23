@@ -77,8 +77,8 @@ const Footer = () => {
                     <div className="flex flex-col md:flex-row gap-4 md:gap-8 items-center">
                         <span>&copy; {new Date().getFullYear()} SwiftCart AI. All rights reserved.</span>
                         <div className="hidden md:block w-px h-4 bg-slate-200"></div>
-                        <a href="mailto:hello@swiftcart.ai" className="hover:text-blue-600 transition-colors flex items-center gap-2">
-                            <Mail size={14} /> hello@swiftcart.ai
+                        <a href="mailto:swiftcart.noreply@gmail.com" className="hover:text-blue-600 transition-colors flex items-center gap-2">
+                            <Mail size={14} /> swiftcart.noreply@gmail.com
                         </a>
                     </div>
                     <div className="flex gap-8 mt-6 md:mt-0">

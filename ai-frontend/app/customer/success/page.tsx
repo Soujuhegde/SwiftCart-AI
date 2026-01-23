@@ -211,7 +211,7 @@ export default function OrderSuccessPage() {
                         Start New Order
                     </Button>
                 </Link>
-                <div className="flex gap-3">
+                <div className="flex gap-3 mt-3">
                     <Button variant="outline" className="flex-1 gap-2 h-12 rounded-xl border-slate-200 hover:bg-slate-50 font-bold text-slate-600" onClick={handleDownloadInvoice} disabled={!lastOrder}>
                         <Download size={16} />
                         Invoice
